@@ -89,7 +89,7 @@ namespace PitchPitch.scene
                     break;
                 case 1:
                     // Config
-                    _parent.EnterScene(SceneType.AudioConfig);
+                    _parent.EnterScene(SceneType.Option);
                     break;
                 case 2:
                     // Quit

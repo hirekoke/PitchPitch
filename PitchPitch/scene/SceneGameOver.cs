@@ -22,6 +22,8 @@ namespace PitchPitch.scene
         private Color _foreColor = Color.White;
         private Color _backColor = Color.DarkRed;
 
+        private Surface _overSurface = null;
+
         public SceneGameOver()
         {
             sceneType = SceneType.GameOver;
@@ -105,15 +107,19 @@ namespace PitchPitch.scene
         {
             s.Fill(_backColor);
 
-            int lh = ResourceManager.LargePFont.Height; int sh = ResourceManager.SmallPFont.Height;
-            s.Blit(ResourceManager.LargePFont.Render("GAME OVER", _foreColor), new Point(10, 10));
+            if (_overSurface == null)
+            {
+                _overSurface = ResourceManager.LargePFont.Render("GAME OVER", _foreColor);
+            }
+            s.Blit(_overSurface, new Point(10, 10));
 
-            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(50, 80),
+            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(50, _overSurface.Height + 20),
                 _selectedIdx, ImageAlign.TopLeft);
         }
 
         public override void Dispose()
         {
+            if (_overSurface != null) _overSurface.Dispose();
             base.Dispose();
         }
     }

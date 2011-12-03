@@ -20,16 +20,7 @@ namespace PitchPitch.map
         {
             _backChip = 0;
             _wallChip = 1;
-        }
-
-        public override int GetHardness(uint chip)
-        {
-            switch (chip)
-            {
-                case 0: return 0;
-                case 1: return 1;
-                default: return 0;
-            }
+            _hardness = new int[]{ 0, 1 };
         }
 
         public override void Draw(Surface s, uint chip, Rectangle r)

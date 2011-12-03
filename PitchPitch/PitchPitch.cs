@@ -28,6 +28,8 @@ namespace PitchPitch
         private object _audioLockObj = new object();
         private audio.AudioInput _audioInput;
         public audio.AudioInput AudioInput { get { return _audioInput; } }
+        private int _selectedDeviceIndex = -1;
+        public int SelectedDeviceIndex { get { return _selectedDeviceIndex; } }
         private audio.PitchResult _pitchResult = null;
         /// <summary>
         /// オーディオ解析結果の各種波形を取得
@@ -90,10 +92,16 @@ namespace PitchPitch
                         _audioInput.SelectDevice(Config.Instance.DeviceId);
                     }
                 }
+                else
+                {
+                    // 繋ぎたいデバイスが消えた
+                    Console.WriteLine("test");
+                }
             };
             _audioInput.DeviceSelected += (s, e) =>
             {
                 Config.Instance.DeviceId = e.Device.Id;
+                _selectedDeviceIndex = e.Index;
                 _audioInput.StartCapture();
             };
             _audioInput.CaptureStarted += (s, e) => { };
@@ -226,9 +234,6 @@ namespace PitchPitch
                         break;
                     case SceneType.Option:
                         scene = new SceneOption();
-                        break;
-                    case SceneType.AudioConfig:
-                        scene = new SceneAudioConfig();
                         break;
                     case SceneType.GameStage:
                         scene = new SceneGameStage(map);

@@ -17,7 +17,6 @@ namespace PitchPitch.scene
         Title,
         MapSelect,
         Option,
-        AudioConfig,
         GameStage,
         EndlessGameStage,
         GameOver,

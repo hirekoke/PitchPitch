@@ -58,6 +58,8 @@ namespace PitchPitch.map
 
         private Color _foreColor = Color.Black;
         public Color ForeColor { get { return _foreColor; } set { _foreColor = value; } }
+        private Color _strongColor = Color.Red;
+        public Color StrongColor { get { return _strongColor; } set { _strongColor = value; } }
         private Color _backColor = Color.White;
         public Color BackColor { get { return _backColor; } set { _backColor = value; } }
     }

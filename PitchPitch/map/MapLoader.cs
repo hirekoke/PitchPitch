@@ -18,9 +18,6 @@ namespace PitchPitch.map
 
             DirectoryInfo mapDir = new DirectoryInfo(Properties.Resources.MapDir);
             
-            //FileInfo[] fileInfos = mapDir.GetFiles("*", SearchOption.TopDirectoryOnly);
-            //foreach (FileInfo fi in fileInfos) Console.WriteLine(fi.FullName);
-
             DirectoryInfo[] dirInfos = mapDir.GetDirectories("*", SearchOption.TopDirectoryOnly);
             foreach (DirectoryInfo dir in dirInfos)
             {
@@ -181,6 +178,7 @@ namespace PitchPitch.map
             if (colorElem != null)
             {
                 mi.BackColor = colorElem["Background"] == null ? Color.White : ImageManager.GetColor(colorElem["Background"].InnerText.Trim());
+                mi.StrongColor = colorElem["Strong"] == null ? Color.Red : ImageManager.GetColor(colorElem["Strong"].InnerText.Trim());
                 mi.ForeColor = colorElem["Foreground"] == null ? Color.Black : ImageManager.GetColor(colorElem["Foreground"].InnerText.Trim());
             }
             #endregion

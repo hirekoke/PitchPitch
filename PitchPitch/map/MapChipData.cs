@@ -9,10 +9,10 @@ namespace PitchPitch.map
 {
     struct Chip
     {
-        public long X;
-        public long Y;
+        public double X;
+        public double Y;
         public Point Idx;
-        public Point ViewPoint;
+        public PointD ViewPoint;
         public uint ChipData;
         public int Hardness;
     }
@@ -29,6 +29,9 @@ namespace PitchPitch.map
         protected uint _backChip;
         public uint BackChip { get { return _backChip; } }
 
+        protected int[] _hardness = null;
+        public virtual int[] Hardness { get { return _hardness; } }
+
         public MapChipData() { }
 
         public virtual void Draw(Surface s, uint chip, Point p)
@@ -36,8 +39,6 @@ namespace PitchPitch.map
             Draw(s, chip, new Rectangle(p.X, p.Y, _chipWidth, _chipHeight));
         }
         public abstract void Draw(Surface s, uint chip, Rectangle r);
-
-        public virtual int GetHardness(uint chip) { return 0; }
 
         public abstract void Dispose();
     }

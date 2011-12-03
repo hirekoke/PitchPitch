@@ -8,8 +8,7 @@ namespace PitchPitch.map
 {
     class BinaryMap : Map
     {
-        protected Color _foreColor = Color.Black;
-        public Color ForeColor
+        public override Color ForeColor
         {
             get { return _foreColor; }
             set { _foreColor = value; (_chipData as BinaryChipData).ForeColor = _foreColor; }

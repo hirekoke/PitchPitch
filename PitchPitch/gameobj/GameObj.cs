@@ -17,18 +17,18 @@ namespace PitchPitch.gameobj
         protected PitchPitch _parent;
 
         #region 位置・大きさ
-        protected long _x;
-        protected int _y;
-        protected int _width, _height;
-        public long X { get { return _x; } set { _x = value; } }
-        public int Y { get { return _y; } set { _y = value; } }
-        public int Width { get { return _width; } set { _width = value; } }
-        public int Height { get { return _height; } set { _height = value; } }
+        protected double _x;
+        protected double _y;
+        protected double _width, _height;
+        public double X { get { return _x; } set { _x = value; } }
+        public double Y { get { return _y; } set { _y = value; } }
+        public double Width { get { return _width; } set { _width = value; } }
+        public double Height { get { return _height; } set { _height = value; } }
 
-        public long Left { get { return _x - (long)(_width / 2.0); } }
-        public int Top { get { return _y - (int)(_height / 2.0); } }
-        public long Right { get { return _x + (long)(_width / 2.0); } }
-        public int Bottom { get { return _y + (int)(_height / 2.0); } }
+        public double Left { get { return _x - _width / 2.0; } }
+        public double Top { get { return _y - _height / 2.0; } }
+        public double Right { get { return _x + _width / 2.0; } }
+        public double Bottom { get { return _y + _height / 2.0; } }
         #endregion
 
         #region 当たり判定位置

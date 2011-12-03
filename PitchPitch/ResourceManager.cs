@@ -30,6 +30,18 @@ namespace PitchPitch
             }
         }
 
+        private static SdlGraphics.Font _middleTTFont = null;
+        public static SdlGraphics.Font MiddleTTFont
+        {
+            get
+            {
+                if (_middleTTFont == null)
+                    _middleTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
+                        Properties.Resources.DefaultTTFont), 24);
+                return _middleTTFont;
+            }
+        }
+
         private static SdlGraphics.Font _largeTTFont = null;
         public static SdlGraphics.Font LargeTTFont
         {
@@ -51,6 +63,18 @@ namespace PitchPitch
                     _smallPFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
                         Properties.Resources.DefaultPFont), 16);
                 return _smallPFont;
+            }
+        }
+
+        private static SdlGraphics.Font _middlePFont = null;
+        public static SdlGraphics.Font MiddlePFont
+        {
+            get
+            {
+                if (_middlePFont == null)
+                    _middlePFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
+                        Properties.Resources.DefaultPFont), 24);
+                return _middlePFont;
             }
         }
 
@@ -284,10 +308,15 @@ namespace PitchPitch
         public static void Release()
         {
             if (_cursorGraphic != null) _cursorGraphic.Dispose();
+
             if (_smallTTFont != null) _smallTTFont.Dispose();
+            if (_middleTTFont != null) _middleTTFont.Dispose();
             if (_largeTTFont != null) _largeTTFont.Dispose();
+
             if (_smallPFont != null) _smallPFont.Dispose();
+            if (_middlePFont != null) _middlePFont.Dispose();
             if (_largePFont != null) _largePFont.Dispose();
+
             foreach (KeyValuePair<Color, AnimatedSprite> kv in _coloredCursors)
                 kv.Value.Dispose();
         }

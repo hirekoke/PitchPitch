@@ -178,6 +178,7 @@ namespace PitchPitch.audio
             releaseDevice();
 
             _capDevice = _devices.GetDevice(devId.Trim());
+            int idx = _deviceInfos.FindIndex((di) => { return di.DeviceId == devId; });
             if (_capDevice == null)
             {
 #warning 例外
@@ -192,20 +193,30 @@ namespace PitchPitch.audio
           
             // フォーマット
             if(_audioClient != null) _capDevice.ReleaseAudioClient();
-            _audioClient = _capDevice.AudioClient;
-            _capFormat = _audioClient.MixFormat;
-            _pitchAnalyzer.SampleFrequency = (double)(_capFormat.nSamplesPerSec);
 
-            // 初期化
-            _audioClient.Initialize(AudioClientShareMode.Shared,
-                streamFlags, 300 /*ms*/ * 10000, 0, _capFormat, Guid.Empty);
-            _capClient = _audioClient.AudioCaptureClient;
-
-            // イベント発火
-            DeviceSelectedEventHandler del = DeviceSelected;
-            if (del != null)
+            try
             {
-                del.Invoke(this, new DeviceSelectedEventArgs(_capDevice));
+                _audioClient = _capDevice.AudioClient;
+                _capFormat = _audioClient.MixFormat;
+                _pitchAnalyzer.SampleFrequency = (double)(_capFormat.nSamplesPerSec);
+
+                // 初期化
+                _audioClient.Initialize(AudioClientShareMode.Shared,
+                    streamFlags, 300 /*ms*/ * 10000, 0, _capFormat, Guid.Empty);
+                _capClient = _audioClient.AudioCaptureClient;
+
+                // イベント発火
+                DeviceSelectedEventHandler del = DeviceSelected;
+                if (del != null)
+                {
+                    del.Invoke(this, new DeviceSelectedEventArgs(_capDevice, idx));
+                }
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+#warning エラー処理
+                _audioClient = null;
+                _capClient = null;
             }
         }
 
@@ -215,18 +226,26 @@ namespace PitchPitch.audio
             {
                 return;
             }
-            _audioClient.Stop();
 
-            // イベント発火
-            CaptureStoppedEventHandler del1 = CaptureStopped;
-            if (del1 != null)
+            try
             {
-                del1.Invoke(this, new CaptureStoppedEventArgs());
+                _audioClient.Stop();
+
+                // イベント発火
+                CaptureStoppedEventHandler del1 = CaptureStopped;
+                if (del1 != null)
+                {
+                    del1.Invoke(this, new CaptureStoppedEventArgs());
+                }
+                DataUpdatedEventHandler del2 = DataUpdated;
+                if (del2 != null)
+                {
+                    del2.Invoke(this, new DataUpdatedEventArgs(new PitchResult(0, 0), ToneResult.Default));
+                }
             }
-            DataUpdatedEventHandler del2 = DataUpdated;
-            if (del2 != null)
+            catch (System.Runtime.InteropServices.COMException ex)
             {
-                del2.Invoke(this, new DataUpdatedEventArgs(new PitchResult(0, 0), ToneResult.Default));
+#warning エラー処理
             }
         }
 
@@ -240,21 +259,29 @@ namespace PitchPitch.audio
             }
 
             long defaultDp; long minimumDp;
-            _audioClient.GetDevicePeriod(out defaultDp, out minimumDp);
-            _sleepTime = new TimeSpan((long)(defaultDp / 4.0));
 
-            clearBuffer();
-
-            _prevResetTime = Environment.TickCount;
-            _prevAnalyzeTime = Environment.TickCount;
-
-            _audioClient.Start();
-
-            // イベント発火
-            CaptureStartedEventHandler del = CaptureStarted;
-            if (del != null)
+            try
             {
-                del.Invoke(this, new CaptureStartedEventArgs());
+                _audioClient.GetDevicePeriod(out defaultDp, out minimumDp);
+                _sleepTime = new TimeSpan((long)(defaultDp / 4.0));
+
+                clearBuffer();
+
+                _prevResetTime = Environment.TickCount;
+                _prevAnalyzeTime = Environment.TickCount;
+
+                _audioClient.Start();
+
+                // イベント発火
+                CaptureStartedEventHandler del = CaptureStarted;
+                if (del != null)
+                {
+                    del.Invoke(this, new CaptureStartedEventArgs());
+                }
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+#warning エラー処理
             }
         }
         // 今溜まっている分を解析する
@@ -350,6 +377,7 @@ namespace PitchPitch.audio
                             break;
                         default: // その他(GetBuffer)
                             {
+                                #region キャプチャ
                                 if (_capturing)
                                 {
                                     if (_capClient != null)
@@ -360,67 +388,71 @@ namespace PitchPitch.audio
                                         try
                                         {
                                             size = _capClient.NextPacketSize;
-                                        }
-                                        catch (Exception) { }
 
-                                        if (size == 0) // 音が無い or バッファが一定量溜まっていない
-                                        {
-                                            if (!_reset)
+                                            if (size == 0) // 音が無い or バッファが一定量溜まっていない
                                             {
-                                                // データが来なくなってから一定時間 -> リセット
-                                                if (curTick - _prevResetTime > RESETLIMIT)
+                                                if (!_reset)
                                                 {
-                                                    _prevResetTime = curTick;
-                                                    resetImpl();
-
-                                                    DataUpdatedEventHandler del = DataUpdated;
-                                                    if (del != null)
+                                                    // データが来なくなってから一定時間 -> リセット
+                                                    if (curTick - _prevResetTime > RESETLIMIT)
                                                     {
-                                                        del.Invoke(this, new DataUpdatedEventArgs(new PitchResult(0, 0), ToneResult.Default));
+                                                        _prevResetTime = curTick;
+                                                        resetImpl();
+
+                                                        DataUpdatedEventHandler del = DataUpdated;
+                                                        if (del != null)
+                                                        {
+                                                            del.Invoke(this, new DataUpdatedEventArgs(new PitchResult(0, 0), ToneResult.Default));
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            _reset = false;
-                                            _prevResetTime = curTick;
-
-                                            try
+                                            else
                                             {
-                                                while (_capClient.NextPacketSize > 0)
+                                                _reset = false;
+                                                _prevResetTime = curTick;
+
+                                                try
                                                 {
-                                                    byte[] bytes; uint numFrames;
-                                                    AudioClientBufferFlags flags;
-                                                    UInt64 devicePosition; UInt64 qpcPosition;
-
-                                                    _capClient.GetBuffer(out bytes, out numFrames, out flags, out devicePosition, out qpcPosition);
-                                                    //if ((flags & AudioClientBufferFlags.DataDiscontinuity) != 0)
-                                                    //    clearBuffer();
-
-                                                    switch (_capFormat.wBitsPerSample)
+                                                    while (_capClient.NextPacketSize > 0)
                                                     {
-                                                        case 8:
-                                                            get8bitBuf(bytes);
-                                                            break;
-                                                        case 16:
-                                                            get16bitBuf(bytes);
-                                                            break;
-                                                        case 24:
-                                                            get24bitBuf(bytes);
-                                                            break;
-                                                        case 32:
-                                                            get32bitBuf(bytes);
-                                                            break;
+                                                        byte[] bytes; uint numFrames;
+                                                        AudioClientBufferFlags flags;
+                                                        UInt64 devicePosition; UInt64 qpcPosition;
+
+                                                        _capClient.GetBuffer(out bytes, out numFrames, out flags, out devicePosition, out qpcPosition);
+                                                        //if ((flags & AudioClientBufferFlags.DataDiscontinuity) != 0)
+                                                        //    clearBuffer();
+
+                                                        switch (_capFormat.wBitsPerSample)
+                                                        {
+                                                            case 8:
+                                                                get8bitBuf(bytes);
+                                                                break;
+                                                            case 16:
+                                                                get16bitBuf(bytes);
+                                                                break;
+                                                            case 24:
+                                                                get24bitBuf(bytes);
+                                                                break;
+                                                            case 32:
+                                                                get32bitBuf(bytes);
+                                                                break;
+                                                        }
                                                     }
                                                 }
+                                                catch (Exception) { }
+                                                truncateBuffer();
+                                                if (curTick - _prevAnalyzeTime > ANALYZESPAN) analyzeBuffer();
                                             }
-                                            catch (Exception) { }
-                                            truncateBuffer();
-                                            if (curTick - _prevAnalyzeTime > ANALYZESPAN) analyzeBuffer();
+                                        }
+                                        catch (System.Runtime.InteropServices.COMException ex)
+                                        {
+#warning エラー処理
                                         }
                                     }
                                 }
+                                #endregion
                             }
                             break;
                     }
@@ -553,9 +585,11 @@ namespace PitchPitch.audio
     class DeviceSelectedEventArgs : EventArgs
     {
         public readonly MMDevice Device;
-        public DeviceSelectedEventArgs(MMDevice dev)
+        public readonly int Index;
+        public DeviceSelectedEventArgs(MMDevice dev, int index)
         {
             Device = dev;
+            Index = index;
         }
     }
     delegate void CaptureStartedEventHandler(object s, CaptureStartedEventArgs e);

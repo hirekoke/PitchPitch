@@ -39,17 +39,29 @@ namespace PitchPitch.map
         protected int _needColumnNum = 0;
 
         protected Color _backColor = Color.LightSalmon;
-        public Color BackColor
+        public virtual Color BackColor
         {
             get { return _backColor; }
             set { _backColor = value; }
         }
+        protected Color _strongColor = Color.Black;
+        public virtual Color StrongColor
+        {
+            get { return _strongColor; }
+            set { _strongColor = value; }
+        }
+        protected Color _foreColor = Color.Red;
+        public virtual Color ForeColor
+        {
+            get { return _foreColor; }
+            set { _foreColor = value; }
+        }
 
         #region 表示index
         /// <summary>表示しているチップのX方向のオフセット</summary>
-        protected int _xOffset = 0;
+        protected double _xOffset = 0;
         /// <summary>表示しているチップのY方向のオフセット</summary>
-        protected int _yOffset = 0;
+        protected double _yOffset = 0;
         /// <summary>表示したいチップのX開始インデックス</summary>
         protected int _xFirstIdx = 0;
         /// <summary>表示したいチップのY開始インデックス</summary>
@@ -77,45 +89,45 @@ namespace PitchPitch.map
 
         #region 座標変換
         /// <summary>Chip index から 表示座標への変換</summary>
-        protected int convertIdx2VX(int xIdx)
+        protected double convertIdx2VX(int xIdx)
         {
-            return (int)(xIdx * _chipData.ChipWidth - view.X);
+            return xIdx * _chipData.ChipWidth - view.X;
         }
         /// <summary>Chip index から 表示座標への変換</summary>
-        protected int convertIdx2VY(int yIdx)
+        protected double convertIdx2VY(int yIdx)
         {
-            return (int)(yIdx * _chipData.ChipHeight - view.Y);
+            return yIdx * _chipData.ChipHeight - view.Y;
         }
 
         /// <summary>Chip index から 座標への変換</summary>
-        protected long convertIdx2PX(int xIdx)
+        protected double convertIdx2PX(int xIdx)
         {
             return xIdx * _chipData.ChipWidth + _xOffset;
         }
         /// <summary>Chip index から 座標への変換</summary>
-        protected long convertIdx2PY(int yIdx)
+        protected double convertIdx2PY(int yIdx)
         {
             return yIdx * _chipData.ChipHeight + _yOffset;
         }
 
         /// <summary>表示座標 から Chip index への変換</summary>
-        protected int convertV2IdxX(int x)
+        protected int convertV2IdxX(double x)
         {
             return (int)((x + view.X - _xOffset) / (double)_chipData.ChipWidth);
         }
         /// <summary>表示座標 から Chip index への変換</summary>
-        protected int convertV2IdxY(int y)
+        protected int convertV2IdxY(double y)
         {
             return (int)((y + view.Y - _yOffset) / (double)_chipData.ChipHeight);
         }
 
         /// <summary>座標 から Chip index への変換</summary>
-        protected int convertP2IdxX(long x)
+        protected int convertP2IdxX(double x)
         {
             return (int)((x - _xOffset) / (double)_chipData.ChipWidth);
         }
         /// <summary>座標 から Chip index への変換</summary>
-        protected int convertP2IdxY(long y)
+        protected int convertP2IdxY(double y)
         {
             return (int)((y - _yOffset) / (double)_chipData.ChipHeight);
         }
@@ -158,8 +170,8 @@ namespace PitchPitch.map
             this.view = view;
             int vb = (int)(view.Y + view.Height);
 
-            _xOffset = (int)(view.X % _chipData.ChipWidth);
-            _yOffset = (int)(view.Y % _chipData.ChipHeight);
+            _xOffset = view.X % _chipData.ChipWidth;
+            _yOffset = view.Y % _chipData.ChipHeight;
             _xFirstIdx = convertP2IdxX(view.X);
             _yFirstIdx = convertP2IdxY(view.Y);
             _xLastIdx = _xFirstIdx + _needColumnNum;
@@ -168,49 +180,67 @@ namespace PitchPitch.map
 
         public virtual IEnumerable<Chip> EnumViewChipData()
         {
-            for (int i = _xFirstIdx; i < _xLastIdx && i < _chips.Count; i++)
+            double[] vpxs = new double[_xLastIdx - _xFirstIdx];
+            double[] vpys = new double[_yLastIdx - _yFirstIdx];
+            double[] ppxs = new double[_xLastIdx - _xFirstIdx];
+            double[] ppys = new double[_yLastIdx - _yFirstIdx];
+
+            int rlen = _chips.Count > 0 ? _chips[0].Length : 0;
+            for (int i = _xFirstIdx, s = 0; i < _xLastIdx && i < _chips.Count; i++, s++)
             {
                 if (i < 0) continue;
-                for (int j = _yFirstIdx; j < _yLastIdx && j < _chips[i].Length; j++)
+                vpxs[s] = convertIdx2VX(i); ppxs[s] = convertIdx2PX(i);
+            }
+            for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < rlen; j++, t++)
+            {
+                if (j < 0) continue;
+                vpys[t] = convertIdx2VY(j); ppys[t] = convertIdx2PY(j);
+            }
+
+            for (int i = _xFirstIdx, s= 0; i < _xLastIdx && i < _chips.Count; i++, s++)
+            {
+                if (i < 0) continue;
+                for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < _chips[i].Length; j++, t++)
                 {
                     if (j < 0) continue;
                     Chip cd = new Chip();
                     cd.Idx = new Point(i, j);
-                    cd.ViewPoint = new Point(convertIdx2VX(i), convertIdx2VY(j));
-                    cd.X = convertIdx2PX(i);
-                    cd.Y = convertIdx2PY(j);
+                    cd.ViewPoint = new PointD(vpxs[s], vpys[t]);
+                    cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[i][j];
-                    cd.Hardness = _chipData.GetHardness(cd.ChipData);
+                    cd.Hardness = _chipData.Hardness[cd.ChipData];
                     yield return cd;
                 }
             }
         }
 
-        protected virtual void renderBackground(Surface s)
+        #region 描画
+        protected virtual void renderBackground(Surface s, Rectangle r)
         {
-            s.Fill(new Rectangle(Point.Empty, s.Size), _backColor);
+            s.Fill(r, _backColor);
         }
-        protected virtual void renderForeground(Surface s)
+        protected virtual void renderForeground(Surface s, Rectangle r)
         {
             foreach (Chip cd in this.EnumViewChipData())
             {
-                _chipData.Draw(s, cd.ChipData, cd.ViewPoint);
+                _chipData.Draw(s, cd.ChipData, new Point((int)(r.X + cd.ViewPoint.X), (int)(r.Y + cd.ViewPoint.Y)));
             }
         }
 
-        protected virtual void renderMiniMapBackground(Surface s)
+        protected virtual void renderMiniMapBackground(Surface s, Rectangle r)
         {
-            renderBackground(s);
+            renderBackground(s, r);
         }
-        protected virtual void renderMiniMapForeground(Surface s)
+        protected virtual void renderMiniMapForeground(Surface s, Rectangle r)
         {
-            updateMiniMapRect(s.Size);
-
+            updateMiniMapRect(r.Size);
             double cdw = _miniMapRect.Width / (double)_columnNum;
             double cdh = _miniMapRect.Height / (double)_rowNum;
 
             foreach (Rectangle rr in _miniMapMarginRects)
+            {
                 _chipData.Draw(s, _chipData.WallChip, rr);
+            }
 
             int x0, x1;
             for (int i = 0; i < _chips.Count; i++)
@@ -230,29 +260,42 @@ namespace PitchPitch.map
                         new Rectangle(_miniMapRect.X + (int)x0, _miniMapRect.Y + (int)y0, (int)(x1 - x0), (int)(y1 - y0)));
                 }
             }
+        }
+        protected virtual void renderMiniMapViewBox(Surface s, Rectangle r)
+        {
+            updateMiniMapRect(r.Size);
+            double cdw = _miniMapRect.Width / (double)_columnNum;
+            double cdh = _miniMapRect.Height / (double)_rowNum;
 
             Point lt = new Point((int)(_xFirstIdx * cdw) + _miniMapRect.X, (int)(_yFirstIdx * cdh) + _miniMapRect.Y);
             Point rb = new Point((int)(_xLastIdx * cdw) + _miniMapRect.X, (int)(_yLastIdx * cdh) + _miniMapRect.Y);
+            lt.Offset(r.Location);
+            rb.Offset(r.Location);
+
             SdlDotNet.Graphics.Primitives.Box viewBox = new SdlDotNet.Graphics.Primitives.Box(lt, rb);
             SdlDotNet.Graphics.Primitives.Box viewBoxIn = new SdlDotNet.Graphics.Primitives.Box(new Point(lt.X + 1, lt.Y + 1), new Point(rb.X - 1, rb.Y - 1));
-            s.Draw(viewBox, Color.Red, true, false);
-            s.Draw(viewBoxIn, Color.Red, true, false);
+            s.Draw(viewBox, _strongColor, true, false);
+            s.Draw(viewBoxIn, _strongColor, true, false);
         }
 
-        public virtual void Render(Surface s)
+        public virtual void Render(Surface s, Rectangle r)
         {
-            renderBackground(s);
-            renderForeground(s);
+            renderBackground(s, r);
+            renderForeground(s, r);
         }
 
-        public virtual void RenderMiniMap(Surface s)
+        public virtual void RenderMiniMap(Surface s, Rectangle r)
         {
-            Size size = s.Size;
-            renderMiniMapBackground(s);
-            renderMiniMapForeground(s);
+            renderMiniMapBackground(s, r);
+            renderMiniMapForeground(s, r);
         }
+        public virtual void RenderMiniMapViewBox(Surface s, Rectangle r)
+        {
+            renderMiniMapViewBox(s, r);
+        }
+        #endregion
 
-        public virtual long GetDefaultY(int xInView)
+        public virtual double GetDefaultY(double xInView)
         {
             int xidx = convertV2IdxX(xInView);
             if (xidx >= 0 && xidx < _chips.Count)

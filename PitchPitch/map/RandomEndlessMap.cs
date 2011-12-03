@@ -71,31 +71,51 @@ namespace PitchPitch.map
 
         public override IEnumerable<Chip> EnumViewChipData()
         {
+            double[] vpxs = new double[_xLastIdx - _xFirstIdx];
+            double[] vpys = new double[_yLastIdx - _yFirstIdx];
+            double[] ppxs = new double[_xLastIdx - _xFirstIdx];
+            double[] ppys = new double[_yLastIdx - _yFirstIdx];
+
             int lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
-            for (int i = _xFirstIdx; i < _xLastIdx; i++, lidx++)
+            int rlen = _chips.Count > 0 ? _chips[0].Length : 0;
+            for (int i = _xFirstIdx, s = 0; i < _xLastIdx; i++, lidx++, s++)
             {
                 if (lidx < 0) continue;
-                for (int j = _yFirstIdx; j < _yLastIdx && j < _chips[lidx].Length; j++)
+                vpxs[s] = convertIdx2VX(i);
+                ppxs[s] = vpxs[s] + view.X;
+            }
+            for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < rlen; j++, t++)
+            {
+                if (j < 0) continue;
+                vpys[t] = convertIdx2VY(j);
+                ppys[t] = vpys[t] + view.Y;
+            }
+
+
+            lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
+            for (int i = _xFirstIdx, s=0; i < _xLastIdx; i++, lidx++, s++)
+            {
+                if (lidx < 0) continue;
+                for (int j = _yFirstIdx,t=0; j < _yLastIdx && j < _chips[lidx].Length; j++,t++)
                 {
                     if (j < 0) continue;
                     Chip cd = new Chip();
-                    cd.ViewPoint = new Point(convertIdx2VX(i), convertIdx2VY(j));
                     cd.Idx = new System.Drawing.Point(lidx, j);
-                    cd.X = cd.ViewPoint.X + view.X;
-                    cd.Y = cd.ViewPoint.Y + view.Y;
+                    cd.ViewPoint = new PointD(vpxs[s], vpys[t]);
+                    cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[lidx][j];
-                    cd.Hardness = _chipData.GetHardness(cd.ChipData);
+                    cd.Hardness = _chipData.Hardness[cd.ChipData];
                     yield return cd;
                 }
             }
         }
 
-        protected override void renderMiniMapForeground(SdlDotNet.Graphics.Surface s)
+        protected override void renderMiniMapForeground(SdlDotNet.Graphics.Surface s, Rectangle r)
         {
-            s.Fill(Color.Red);
+            s.Fill(r, Color.Red);
         }
 
-        public override long GetDefaultY(int xInView)
+        public override double GetDefaultY(double xInView)
         {
             int xidx = convertV2IdxX(xInView) - (_lastColumnIndex - _chips.Count);
             if (xidx >= 0 && xidx < _chips.Count)

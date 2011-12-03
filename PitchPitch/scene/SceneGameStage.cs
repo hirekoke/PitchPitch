@@ -38,6 +38,9 @@ namespace PitchPitch.scene
         protected Surface _keyboardSurface = null;
         protected Surface _mapSurface = null;
 
+        protected Surface _pauseSurface = null;
+        protected Surface _clearSurface = null;
+
         #region メニュー
         protected SurfaceCollection _pauseMenuSurfaces = null;
         protected Rectangle[] _pauseMenuRects = null;
@@ -58,10 +61,23 @@ namespace PitchPitch.scene
             set
             {
                 _foreColor = value;
-                if (_map is map.RandomMap) (_map as map.RandomMap).ForeColor = _foreColor;
-                else if (_map is map.RandomEndlessMap) (_map as map.RandomEndlessMap).ForeColor = _foreColor;
+                _map.ForeColor = _foreColor;
                 _parent.Player.ForeColor = _foreColor;
                 _foreCursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+
+                if (_keyboardSurface != null) createKeyRects();
+                if (_pauseSurface != null) { _pauseSurface.Dispose(); _pauseSurface = null; }
+                if (_clearSurface != null) { _clearSurface.Dispose(); _clearSurface = null; }
+            }
+        }
+        protected Color _strongColor = Color.Red;
+        public Color StrongColor
+        {
+            get { return _strongColor; }
+            set
+            {
+                _strongColor = value;
+                _map.StrongColor = _strongColor;
             }
         }
         protected Color _backColor = Color.White;
@@ -74,6 +90,7 @@ namespace PitchPitch.scene
                 _map.BackColor = _backColor;
                 _parent.Player.ExplosionColor = _backColor;
                 _backCursor = ResourceManager.GetColoredCursorGraphic(_backColor);
+                if (_keyboardSurface != null) createKeyRects();
             }
         }
         #endregion
@@ -139,7 +156,6 @@ namespace PitchPitch.scene
             _pauseSelectedIdx = 0;
             _clearSelectedIdx = 0;
 
-            #region レイアウト決定
             #region 配置
             int mmw = 300; int mmh = 100; int kw = 80;
             _keyRect = new Rectangle(
@@ -157,7 +173,7 @@ namespace PitchPitch.scene
             #endregion
 
             #region View/Map/Player
-            _mapMargin = (int)(_viewRect.Width * 3 / 4.0);
+            _mapMargin = (int)(_viewRect.Width * 3 / 4.0) * _map.MapInfo.PlayerVx;
 
             _view.Width = _viewRect.Width;
             _view.Height = _viewRect.Height;
@@ -167,15 +183,15 @@ namespace PitchPitch.scene
             _view.Y = (long)(_map.Height / 2.0 - _view.Height / 2.0);
             _map.SetView(_view);
 
-            _parent.Player.X = (int)(_playerXRatio * _view.Width) - _mapMargin;
-            _parent.Player.Y = (int)(_map.Height / 2.0);
+            _parent.Player.X = _playerXRatio * _view.Width - _mapMargin;
+            _parent.Player.Y = _map.Height / 2.0;
             _parent.Player.Vx = _map.MapInfo.PlayerVx;
 
             _view.X = -_mapMargin;
 
             ForeColor = _map.MapInfo.ForeColor;
+            StrongColor = _map.MapInfo.StrongColor;
             BackColor = _map.MapInfo.BackColor;
-            #endregion
             #endregion
 
             #region メニュー作成
@@ -203,6 +219,7 @@ namespace PitchPitch.scene
             _coefI = _coefP * 0.4;
             _coefD = _coefP * 0.01;
             _diffT = 1 / (double)SdlDotNet.Core.Events.TargetFps;
+            _prevProcTime = Environment.TickCount;
             #endregion
         }
 
@@ -264,11 +281,6 @@ namespace PitchPitch.scene
             double minY = (nearMinFreq - _minFreq) / (_maxFreq - _minFreq);
             maxY = _view.Height - maxY * _view.Height;
             minY = _view.Height - minY * _view.Height;
-            Console.WriteLine("{0} {1}, {2}, {3}",
-                (maxTone.Pitch - maxTone.PitchDiff),
-                nearMaxFreq,
-                (minTone.Pitch - minTone.PitchDiff),
-                nearMinFreq);
 
             int num = 12 * maxTone.Octave + maxTone.ToneIdx -
                 (12 * minTone.Octave + minTone.ToneIdx);
@@ -337,6 +349,8 @@ namespace PitchPitch.scene
         private double _coefD = 0;
         private double _diffT = 1; // sec
         private int _maxDiffY = 10;
+
+        private long _prevProcTime = 0;
         protected void updatePlayerPos()
         {
             gameobj.Player player = _parent.Player;
@@ -389,10 +403,12 @@ namespace PitchPitch.scene
                 player.X += 1;
             #endregion
 
-            if (player.Y < _view.Y) player.Y = (int)(_view.Y);
-            if (player.Y > _view.Height + _view.Y) player.Y = (int)(_view.Height + _view.Y);
+            if (player.Y < _view.Y) player.Y = _view.Y;
+            if (player.Y > _view.Height + _view.Y) player.Y = _view.Height + _view.Y;
 
-            player.X += (long)player.Vx;
+            long tick = Environment.TickCount;
+            player.X += player.Vx * (tick - _prevProcTime) * SdlDotNet.Core.Events.TargetFps / 1000.0;
+            _prevProcTime = tick;
         }
         #endregion
 
@@ -421,11 +437,11 @@ namespace PitchPitch.scene
             {
                 if (chip.Hardness <= 0) continue;
 
-                Point pp = convertToViewCoord(_parent.Player.X, _parent.Player.Y);
+                PointD pp = convertToViewCoord(_parent.Player.X, _parent.Player.Y);
 
                 if (_parent.Player.Hit(chip, pp, mw, mh))
                 {
-                    _parent.Player.Y = (int)_map.GetDefaultY(pp.X);
+                    _parent.Player.Y = _map.GetDefaultY(pp.X);
                     _parent.Player.Rad = _parent.Player.MinRadius;
                     break;
                 }
@@ -461,6 +477,8 @@ namespace PitchPitch.scene
                     break;
                 case Key.Return:
                     idx = _clearSelectedIdx; break;
+                case Key.Escape:
+                    idx = 0; break;
                 default:
                     idx = 0;
                     foreach (MenuItem mi in _clearMenuItems)
@@ -618,15 +636,15 @@ namespace PitchPitch.scene
             using (Surface viewSurface = new Surface(_viewRect.Size.Width, _viewRect.Size.Height, 32))
             {
                 // マップ描画
-                _map.Render(viewSurface);
+                _map.Render(viewSurface, new Rectangle(0, 0, _viewRect.Width, _viewRect.Height));
 
                 // プレイヤー描画
-                _parent.Player.Render(viewSurface, convertToViewCoord(_parent.Player.X, _parent.Player.Y));
+                _parent.Player.Render(viewSurface, convertToViewCoord(_parent.Player.X, _parent.Player.Y).Round());
 
                 if (_isPaused)
                 {
                     // ポーズ画面描画
-                    renderMenu(viewSurface);
+                    renderPause(viewSurface);
                 }
                 else if (_isCleared)
                 {
@@ -650,23 +668,25 @@ namespace PitchPitch.scene
             }
         }
 
-        /// <summary>ポーズ中のメニュー画面を描画する</summary>
-        protected virtual void renderMenu(Surface s)
+        /// <summary>ポーズ中画面を描画する</summary>
+        protected virtual void renderPause(Surface s)
         {
             using (Surface vs = new Surface(s.Size))
             {
-                vs.Alpha = 150;
+                vs.Alpha = 180;
                 vs.AlphaBlending = true;
                 vs.Fill(_foreColor);
                 s.Blit(vs, Point.Empty);
             }
-            int y = 10;
-            int lh = ResourceManager.LargePFont.Height; int sh = ResourceManager.SmallPFont.Height;
-            s.Blit(ResourceManager.LargePFont.Render("PAUSE", _backColor), new Point(10, y));
 
-            y += lh + 5;
+            if (_pauseSurface == null)
+            {
+                _pauseSurface = ResourceManager.LargePFont.Render("PAUSE", _backColor);
+            }
+            s.Blit(_pauseSurface, new Point(10, 10));
+
             ImageManager.DrawSelections(s, _pauseMenuSurfaces, _pauseMenuRects, 
-                _backCursor, new Point(40, y), _pauseSelectedIdx, ImageAlign.MiddleLeft);
+                _backCursor, new Point(40, 20 + _pauseSurface.Height), _pauseSelectedIdx, ImageAlign.MiddleLeft);
         }
 
         /// <summary>クリア画面を描画する</summary>
@@ -674,17 +694,20 @@ namespace PitchPitch.scene
         {
             using (Surface vs = new Surface(s.Size))
             {
-                vs.Alpha = 150;
+                vs.Alpha = 180;
                 vs.AlphaBlending = true;
                 vs.Fill(_backColor);
                 s.Blit(vs, Point.Empty);
             }
-            int y = 10;
-            int lh = ResourceManager.LargePFont.Height; int sh = ResourceManager.SmallPFont.Height;
-            s.Blit(ResourceManager.LargePFont.Render("CLEAR", _foreColor), new Point(10, y));
-            y += lh + 5;
+
+            if (_clearSurface == null)
+            {
+                _clearSurface = ResourceManager.LargePFont.Render("CLEAR", _foreColor);
+            }
+            s.Blit(_clearSurface, new Point(10, 10));
+
             ImageManager.DrawSelections(s, _clearMenuSurfaces, _clearMenuRects,
-                _foreCursor, new Point(40, y), _clearSelectedIdx, ImageAlign.MiddleLeft);
+                _foreCursor, new Point(40, 20 + _clearSurface.Height), _clearSelectedIdx, ImageAlign.MiddleLeft);
         }
 
         protected virtual void renderPlayerInformation(Surface s)
@@ -697,11 +720,20 @@ namespace PitchPitch.scene
 
             int x = _margin;
             int y = m;
-            s.Blit(ResourceManager.SmallTTFont.Render(string.Format("Life: {0} / {1}", _parent.Player.Hp, _parent.Player.MaxHp), _backColor), new Point(x, y));
+            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("Life: {0} / {1}", _parent.Player.Hp, _parent.Player.MaxHp), _backColor))
+            {
+                s.Blit(ts, new Point(x, y));
+            }
             y += ResourceManager.SmallTTFont.Height + 2;
-            s.Blit(ResourceManager.SmallTTFont.Render(string.Format("距離: {0} / {1}", _parent.Player.X, _map.Width), _backColor), new Point(x, y));
+            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("距離: {0:F0} / {1}", _parent.Player.X, _map.Width), _backColor))
+            {
+                s.Blit(ts, new Point(x, y));
+            }
             y += ResourceManager.SmallTTFont.Height + 2;
-            s.Blit(ResourceManager.SmallTTFont.Render(string.Format("{0}{1} - {2} Hz", _toneResult.Tone, _toneResult.Octave, _toneResult.Pitch), _backColor), new Point(x, y));
+            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0}{1} ({2:F0}Hz)", _toneResult.Tone, _toneResult.Octave, _toneResult.Pitch), _backColor))
+            {
+                s.Blit(ts, new Point(x, y));
+            }
         }
 
         protected virtual void renderKeyboard(Surface s)
@@ -732,8 +764,7 @@ namespace PitchPitch.scene
                     Rectangle r = new Rectangle(kv.Key.Location, kv.Key.Size);
                     r.Offset(_keyRect.Location);
                     Circle cir = new Circle(new Point(r.Right - 14, (int)(r.Y + r.Height / 2.0)), 6);
-                    s.Draw(cir, _backColor, true, true);
-                    s.Draw(cir, _foreColor, true, false);
+                    s.Draw(cir, _strongColor, true, true);
                     black = true;
                     break;
                 }
@@ -748,8 +779,7 @@ namespace PitchPitch.scene
                         Rectangle r = new Rectangle(kv.Key.Location, kv.Key.Size);
                         r.Offset(_keyRect.Location);
                         Circle cir = new Circle(new Point(r.Right - 14, (int)(r.Y + r.Height / 2.0)), 6);
-                        s.Draw(cir, _foreColor, true, true);
-                        s.Draw(cir, _backColor, true, false);
+                        s.Draw(cir, _strongColor, true, true);
                         break;
                     }
                 }
@@ -761,21 +791,24 @@ namespace PitchPitch.scene
             if (_mapSurface == null)
             {
                 _mapSurface = new Surface(_miniMapRect.Size);
-                _map.RenderMiniMap(_mapSurface);
+                _map.RenderMiniMap(_mapSurface, new Rectangle(0, 0, _miniMapRect.Width, _miniMapRect.Height));
             }
             s.Blit(_mapSurface, _miniMapRect.Location);
+            _map.RenderMiniMapViewBox(s, _miniMapRect);
         }
         #endregion
 
-        protected Point convertToViewCoord(long x, long y)
+        protected PointD convertToViewCoord(double x, double y)
         {
-            return new Point((int)(x - _view.X), (int)(y - _view.Y));
+            return new PointD(x - _view.X, y - _view.Y);
         }
 
         public override void Dispose()
         {
             if (_keyboardSurface != null) _keyboardSurface.Dispose();
             if (_mapSurface != null) _mapSurface.Dispose();
+            if (_pauseSurface != null) _pauseSurface.Dispose();
+            if (_clearSurface != null) _clearSurface.Dispose();
             if (_map != null) _map.Dispose();
             base.Dispose();
         }

@@ -121,8 +121,12 @@ namespace PitchPitch.scene
             string[] infoStrs = Array.ConvertAll<MapInfo, string>(
                 _mapInfos.GetRange(_mapDrawFirstIdx, _mapDrawLength).ToArray(),
                 (mi) => { return mi.Name; });
+            
+            if (_mapDrawSurfaces != null)
+                foreach (Surface s in _mapDrawSurfaces) s.Dispose();
+
             _mapDrawSurfaces = new SurfaceCollection();
-            _mapDrawRects = new Rectangle[_mapDrawLength];
+            _mapDrawRects = new Rectangle[infoStrs.Length];
             ImageManager.CreateStrMenu(infoStrs, _foreColor, ref _mapDrawSurfaces, ref _mapDrawRects, _mapRect.Width);
         }
 
@@ -145,7 +149,7 @@ namespace PitchPitch.scene
                     }
                     break;
                 case Key.DownArrow:
-                    if (_mapFocus)
+                    if (_mapFocus && _mapRects.Length > 0)
                     {
                         _mapSelectedIdx = (_mapSelectedIdx + 1) % _mapRects.Length;
                         updateMapIndex();
@@ -216,21 +220,9 @@ namespace PitchPitch.scene
             }
         }
 
-        public override void ProcKeyEvent(KeyboardEventArgs e)
-        {
-            if (e != null)
-            {
-                int idx = procKeyEvent(e.Key);
-                procMenu(idx);
-            }
-        }
-
         public override void Draw(SdlDotNet.Graphics.Surface s)
         {
             s.Fill(_backColor);
-
-            s.Fill(_randRect, Color.Pink);
-            s.Fill(_mapRect, Color.LightBlue);
 
             ImageManager.DrawSelections(s, _randSurfaces, _randRects, _cursor,
                 _randRect.Location, (_mapFocus ? -1 : _randSelectedIdx), ImageAlign.MiddleLeft);

@@ -357,27 +357,50 @@ namespace PitchPitch
         #endregion
 
         #region メニュー作成
-        public static void CreateStrMenu(MenuItem[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
-        {
-            CreateStrMenu(Array.ConvertAll<MenuItem, string>(items, (mi) =>
-            {
-                string key = ResourceManager.ConvertToString(mi.Key);
-                return string.Format("{0}: {1}", key, mi.Value);
-            }), c, ref surfaces, ref rects, width, height);
-        }
-
-        public static void CreateStrMenu(string[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        public static void CreateStrMenu(string[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
         {
             int y = 0; int idx = 0;
             foreach (string mi in items)
             {
-                Surface s = ResourceManager.SmallPFont.Render(mi, c, true);
+                Surface s = font.Render(mi, c, true);
                 surfaces.Add(s);
                 Rectangle r = new Rectangle(0, y, width, height);
                 y = r.Bottom;
                 rects[idx++] = r;
             }
         }
+        public static void CreateStrMenu(string[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        {
+            CreateStrMenu(items, c, ResourceManager.SmallPFont, ref surfaces, ref rects, width, height);
+        }
+
+        public static void CreateStrMenu(MenuItem[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        {
+            CreateStrMenu(Array.ConvertAll<MenuItem, string>(items, (mi) =>
+            {
+                string key = ResourceManager.ConvertToString(mi.Key);
+                return string.Format("{0}: {1}", key, mi.Value);
+            }), c, font, ref surfaces, ref rects, width, height);
+        }
+
+        public static void CreateStrMenu(MenuItem[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        {
+            CreateStrMenu(items, c, ResourceManager.SmallPFont, ref surfaces, ref rects, width, height);
+        }
         #endregion
+
+        public static void DrawMultilineString(Surface s, string[] lines, SdlDotNet.Graphics.Font font, Color c, Point p)
+        {
+            int y = p.Y;
+            int fh = font.Height;
+            foreach (string line in lines)
+            {
+                using (Surface ts = font.Render(line, c))
+                {
+                    s.Blit(ts, new Point(p.X, y));
+                }
+                y += fh;
+            }
+        }
     }
 }

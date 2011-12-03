@@ -18,12 +18,6 @@ namespace PitchPitch.map
             _wallChip = 1;
         }
 
-        public override int GetHardness(uint chip)
-        {
-            if (chip == 0) return 0;
-            return 1;
-        }
-
         public override void Draw(Surface s, uint chip, Rectangle r)
         {
             if (chip < 0 || chip >= _chipSurfaces.Count) return;
@@ -48,10 +42,12 @@ namespace PitchPitch.map
             c._chipSurfaces = ResourceManager.LoadSurfacesFromFile(path, info.ChipSize);
             c._avgColors = new Dictionary<uint, Color>();
 
+            c._hardness = new int[c._chipSurfaces.Count];
             uint chip = 0;
             foreach (Surface s in c._chipSurfaces)
             {
                 c._avgColors.Add(chip, ImageManager.GetAvgColor(s));
+                c._hardness[chip] = chip == 0 ? 0 : 1;
                 chip++;
             }
 

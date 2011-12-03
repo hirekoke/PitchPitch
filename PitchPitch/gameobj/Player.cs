@@ -61,36 +61,36 @@ namespace PitchPitch.gameobj
         #endregion
 
         #region 半径
-        private int _minRad = 6;
-        public int MinRadius
+        private double _minRad = 6;
+        public double MinRadius
         {
             get { return _minRad; }
             set { _minRad = value; }
         }
-        private int _maxRad = 40;
-        public int MaxRadius
+        private double _maxRad = 40;
+        public double MaxRadius
         {
             get { return _maxRad; }
             set { _maxRad = value; }
         }
 
-        private int _radInc = 1;
-        private int _radDec = 2;
+        private double _radInc = 1;
+        private double _radDec = 2;
         /// <summary>大きさ増分</summary>
-        public int RadInc
+        public double RadInc
         {
             get { return _radInc; }
             set { _radInc = value; }
         }
         /// <summary>大きさ減分</summary>
-        public int RadDec
+        public double RadDec
         {
             get { return _radDec; }
             set { _radDec = value; }
         }
 
-        private int _rad = 10;
-        public int Rad
+        private double _rad = 10;
+        public double Rad
         {
             get { return _rad; }
             set
@@ -105,8 +105,8 @@ namespace PitchPitch.gameobj
             }
         }
 
-        private new int Width { get { return _width; } }
-        private new int Height { get { return _height; } }
+        private new double Width { get { return _width; } }
+        private new double Height { get { return _height; } }
         #endregion
 
         #region 色
@@ -203,14 +203,14 @@ namespace PitchPitch.gameobj
             _explosionSurfaces = ResourceManager.LoadSurfaces("explosion.png", new Size(24, 24));
         }
 
-        public bool Hit(map.Chip chip, Point pointInView, int chipWidth, int chipHeight)
+        public bool Hit(map.Chip chip, PointD pointInView, int chipWidth, int chipHeight)
         {
             if (_isPaused) return false;
             if (_isInvincible) return false; // 無敵中
 
             foreach (Point cp in _collisionPoints)
             {
-                Point pcp = new Point(pointInView.X + cp.X, pointInView.Y + cp.Y);
+                PointD pcp = new PointD(pointInView.X + cp.X, pointInView.Y + cp.Y);
                 bool collision =
                     (chip.ViewPoint.X <= pcp.X && chip.ViewPoint.Y <= pcp.Y &&
                     pcp.X <= chip.ViewPoint.X + chipWidth && pcp.Y <= chip.ViewPoint.Y + chipHeight);
@@ -222,7 +222,7 @@ namespace PitchPitch.gameobj
                     _isExplosion = true;
                     _explosionStartTick = Environment.TickCount;
                     _ptclEmitter.Emitting = false;
-                    _ptclEmitter.X = pcp.X; _ptclEmitter.Y = pcp.Y;
+                    _ptclEmitter.X = (float)pcp.X; _ptclEmitter.Y = (float)pcp.Y;
                     _ptclEmitter.Emitting = true;
                     
                     // 無敵時間開始
@@ -274,7 +274,7 @@ namespace PitchPitch.gameobj
             {
                 using (Surface ts = ps.CreateScaledSurface(_rad * 3 / (double)ps.Width, _rad * 3 / (double)ps.Height, true))
                 {
-                    s.Blit(ts, new Point(p.X - _rad * 2, p.Y - _rad * 2));
+                    s.Blit(ts, new Point((int)(p.X - _rad * 2), (int)(p.Y - _rad * 2)));
                 }
             }
         }

@@ -13,6 +13,11 @@ namespace PitchPitch.map
             _mapInfo.PlayerVx = 0;
         }
 
+        public override bool HasEnd
+        {
+            get { return false; }
+        }
+
         public override void Init(PitchPitch parent, System.Drawing.Size viewSize)
         {
             base.Init(parent, viewSize);
