@@ -14,8 +14,12 @@ namespace PitchPitch.scene
     {
         private Color _foreColor = Color.Black;
         private Color _backColor = Color.White;
-        private Color _strongColor = Color.FromArgb(50, 50, 50);
-        private Color _strong2Color = Color.FromArgb(100, 100, 100);
+        private Color _strongColor = Color.FromArgb(50, 50, 255);
+        private Color _selectionColor = Color.FromArgb(200, 200, 255);
+
+        private Color _powerColor = Color.FromArgb(100, 100, 100);
+        private Color _nsdfColor = Color.FromArgb(50, 50, 255);
+        private Color _signalColor = Color.FromArgb(255, 50, 50);
 
         private SdlDotNet.Graphics.Sprites.AnimatedSprite _cursor = null;
         private SdlDotNet.Graphics.Sprites.AnimatedSprite _headCursor = null;
@@ -439,11 +443,11 @@ namespace PitchPitch.scene
             // 今選択中のドメイン
             if (_state == SelectionState.Device)
             {
-                s.Fill(_devRect, Color.Pink);
+                s.Fill(_devRect, _selectionColor);
             }
             else if (_state == SelectionState.Calibration)
             {
-                s.Fill(_calMenuRect, Color.Pink);
+                s.Fill(_calMenuRect, _selectionColor);
             }
 
             // Audio Device / Calibration Header
@@ -567,9 +571,9 @@ namespace PitchPitch.scene
                 #endregion
 
                 // 波形描画
-                drawLines(s, nsdf, _strongColor);
-                drawLines(s, power, _strong2Color);
-                drawLines(s, signal, _foreColor);
+                drawLines(s, nsdf, _nsdfColor);
+                drawLines(s, power, _powerColor);
+                drawLines(s, signal, _signalColor);
             }
 
             // 枠
