@@ -77,28 +77,51 @@ namespace PitchPitch
             return Color.FromArgb(ia, ir, ig, ib);
         }
 
-        public static void SetColor(Surface s, Color c0, Color c1)
+        public static Surface CreateColored(Surface s, Color c0, Color c1)
         {
-            if (s == null) return;
+            if (s == null) return null;
             Color[,] colors = s.GetColors(new Rectangle(0, 0, s.Width, s.Height));
-            s.Lock();
+
             for (int i = 0; i < colors.GetLength(0); i++)
             {
                 for (int j = 0; j < colors.GetLength(1); j++)
                 {
                     Color c = colors[i, j];
                     float br = (c.R / 255.0f + c.G / 255.0f + c.B / 255.0f) / 3.0f;
-                    if (br > 0.9f) br = 1.0f;
-                    if (br < 0.1f) br = 0.0f;
+                    if (br > 0.8f)
+                    {
+                        br = 1.0f;
+                    }
+                    else if (br < 0.2f)
+                    {
+                        br = 0.0f;
+                    }
                     int r = (int)((1 - br) * c0.R + br * c1.R);
                     int g = (int)((1 - br) * c0.G + br * c1.G);
                     int b = (int)((1 - br) * c0.B + br * c1.B);
-                    colors[i, j] = Color.FromArgb(c.A,
-                        r < 0 ? 0 : (r > 255 ? 255 : r), g < 0 ? 0 : (g > 255 ? 255 : g), b < 0 ? 0 : (b > 255 ? 255 : b));
+                    r = r < 0 ? 0 : (r > 255 ? 255 : r);
+                    g = g < 0 ? 0 : (g > 255 ? 255 : g);
+                    b = b < 0 ? 0 : (b > 255 ? 255 : b);
+                    if (g == 85)
+                    {
+                        Console.WriteLine(c.R + " " + c.G + " " + c.B);
+                    }
+                    colors[i, j] = Color.FromArgb(c.A, r, g, b);
+                    Color nc = Color.FromArgb(c.A, r, g, b);
                 }
             }
-            s.SetPixels(Point.Empty, colors);
-            s.Unlock();
+
+            Surface ns = new Surface(s.Width, s.Height, s.BitsPerPixel, s.RedMask, s.GreenMask, s.BlueMask, s.AlphaMask);
+            ns.AlphaBlending = s.AlphaBlending;
+            ns.Alpha = s.Alpha;
+            ns.Transparent = s.Transparent;
+            ns.TransparentColor = s.TransparentColor;
+
+            ns.Lock();
+            ns.SetPixels(Point.Empty, colors);
+            ns.Unlock();
+            ns.Update();
+            return ns;
         }
 
         public static void SetColor(Surface s, Color c)
@@ -115,6 +138,7 @@ namespace PitchPitch
             }
             s.SetPixels(Point.Empty, colors);
             s.Unlock();
+            s.Update();
         }
 
         public static void SetColor(SurfaceCollection surfaces, Color c)
@@ -210,6 +234,7 @@ namespace PitchPitch
             }
             s.SetPixels(Point.Empty, colors);
             s.Unlock();
+            s.Update();
         }
         #endregion
 

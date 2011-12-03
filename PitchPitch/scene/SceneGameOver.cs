@@ -13,6 +13,8 @@ namespace PitchPitch.scene
 
     class SceneGameOver : Scene
     {
+        private Surface _prevSurface = null;
+
         private SurfaceCollection _menuSurfaces = null;
         private Rectangle[] _menuRects = null;
         private int _selectedIdx = 0;
@@ -44,6 +46,9 @@ namespace PitchPitch.scene
 
         public override void Init(PitchPitch parent)
         {
+            if (_prevSurface != null) _prevSurface.Dispose();
+            _prevSurface = null;
+
             _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
 
             _menuSurfaces = new SurfaceCollection();
@@ -105,7 +110,16 @@ namespace PitchPitch.scene
 
         public override void Draw(Surface s)
         {
+            if (_prevSurface == null)
+            {
+                _prevSurface = new Surface(s);
+                _prevSurface.Transparent = true;
+                _prevSurface.AlphaBlending = true;
+                _prevSurface.Alpha = 64;
+            }
+
             s.Fill(_backColor);
+            s.Blit(_prevSurface, Point.Empty);
 
             if (_overSurface == null)
             {
@@ -119,6 +133,7 @@ namespace PitchPitch.scene
 
         public override void Dispose()
         {
+            if (_prevSurface != null) _prevSurface.Dispose();
             if (_overSurface != null) _overSurface.Dispose();
             base.Dispose();
         }

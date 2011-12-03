@@ -80,6 +80,8 @@ namespace PitchPitch.audio
 
         private const double A4 = 440.0;
 
+        public static double ClarityThreshold = 0.9;
+
         public ToneAnalyzer()
         {
             // 初期化

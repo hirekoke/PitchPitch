@@ -19,8 +19,33 @@ namespace PitchPitch.scene
         private MenuItem[] _menuItems;
         private AnimatedSprite _cursor;
 
+        private Surface _titleSurface = null;
+        private Surface _coloredTitleSurface = null;
+
         private Color _foreColor = Color.Black;
+        public Color ForeColor
+        {
+            get { return _foreColor; }
+            set
+            {
+                _foreColor = value;
+                _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+                ImageManager.SetColor(_menuSurfaces, _foreColor);
+                if (_coloredTitleSurface != null) _coloredTitleSurface.Dispose();
+                _coloredTitleSurface = ImageManager.CreateColored(_titleSurface, _foreColor, _backColor);
+            }
+        }
         private Color _backColor = Color.White;
+        public Color BackColor
+        {
+            get { return _backColor; }
+            set
+            {
+                _backColor = value;
+                if (_coloredTitleSurface != null) _coloredTitleSurface.Dispose();
+                _coloredTitleSurface = ImageManager.CreateColored(_titleSurface, _foreColor, _backColor);
+            }
+        }
 
         public SceneTitle()
         {
@@ -46,6 +71,8 @@ namespace PitchPitch.scene
             _menuSurfaces = new SurfaceCollection();
             _menuRects = new Rectangle[_menuItems.Length];
             ImageManager.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, parent.Size.Width);
+
+            _titleSurface = ResourceManager.LoadSurface("logo.png");
 
             base.Init(parent);
         }
@@ -102,15 +129,21 @@ namespace PitchPitch.scene
         {
             s.Fill(_backColor);
 
-            int lh = ResourceManager.LargePFont.Height; int sh = ResourceManager.SmallPFont.Height;
-            s.Blit(ResourceManager.LargePFont.Render("Pitch Pitch", _foreColor), new Point(10, 10));
+            s.Blit(_coloredTitleSurface == null ? _titleSurface : _coloredTitleSurface,
+                new Point((int)(s.Width / 2.0 - _titleSurface.Width / 2.0), 50));
 
-            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(0, 50), 
+            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(0, 80 + _titleSurface.Height), 
                 _selectedIdx, ImageAlign.MiddleCenter);
         }
 
         public override void Dispose()
         {
+            if (_titleSurface != null) _titleSurface.Dispose();
+            if (_coloredTitleSurface != null) _coloredTitleSurface.Dispose();
+            if (_menuSurfaces != null)
+            {
+                foreach (Surface s in _menuSurfaces) s.Dispose();
+            }
             base.Dispose();
         }
     }

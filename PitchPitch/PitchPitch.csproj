@@ -127,11 +127,13 @@
     <Compile Include="ResourceManager.cs" />
     <Compile Include="scene\Scene.cs" />
     <Compile Include="scene\SceneEndlessGameStage.cs" />
+    <Compile Include="scene\SceneError.cs" />
     <Compile Include="scene\SceneGameOver.cs" />
     <Compile Include="scene\SceneGameStage.cs" />
     <Compile Include="scene\SceneMapSelect.cs" />
     <Compile Include="scene\SceneOption.cs" />
     <Compile Include="scene\SceneTitle.cs" />
+    <EmbeddedResource Include="image\logo.png" />
     <EmbeddedResource Include="image\cursor.png" />
     <EmbeddedResource Include="image\explosion.png" />
     <EmbeddedResource Include="image\player-0.png" />

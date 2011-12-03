@@ -52,18 +52,27 @@ namespace PitchPitch.scene
 
         private Surface _devHeadSurface = null;
         private Surface _calHeadSurface = null;
+        private Surface _optSurface = null;
+
+        private bool _needUpdate = false;
 
         private SurfaceCollection _endHeadSurfaces;
         private Rectangle[] _endHeadRects;
         private string[] _endHeadStrs = new string[] { "Return to Title" };
 
         private int _margin = 30;
+
         private Rectangle _devHeadRect;
         private Rectangle _devRect;
+
         private Rectangle _calHeadRect;
         private Rectangle _calRect;
+        private Rectangle _calMenuRect;
         private Rectangle _calWaveRect;
+
         private Rectangle _endHeadRect;
+
+        private double _pitch;
 
         public SceneOption()
             : base()
@@ -74,7 +83,7 @@ namespace PitchPitch.scene
             _keys = new Key[]
             {
                 Key.UpArrow, Key.DownArrow, Key.RightArrow, Key.LeftArrow, 
-                Key.Return, Key.Space, Key.Escape
+                Key.Return, Key.Escape//, Key.Space
             };
         }
 
@@ -83,23 +92,25 @@ namespace PitchPitch.scene
             base.Init(parent);
 
             int ts = 30;
-            _devHeadRect = new Rectangle(_margin + ts, _margin,
+            _devHeadRect = new Rectangle(_margin + ts, 80,
                 (int)((parent.Size.Width - _margin * 3 - ts * 2) / 2.0), ts);
-            _devRect = new Rectangle(_devHeadRect.X + 10, _devHeadRect.Bottom + ts, 
-                _devHeadRect.Right - _devHeadRect.X + 10, 200);
+            _devRect = new Rectangle(_devHeadRect.X + 10, _devHeadRect.Bottom + 10, 
+                _devHeadRect.Right - _devHeadRect.X + 10, parent.Size.Height - (_devHeadRect.Bottom + 10 + ts * 2 + _margin));
+
             _calHeadRect = new Rectangle(_devRect.Right + _margin, _devHeadRect.Top,
                 _devHeadRect.Width, _devHeadRect.Height);
-            _calRect = new Rectangle(_calHeadRect.X + 10, _devHeadRect.Bottom + ts,
-                _devRect.Width, 200);
+            _calRect = new Rectangle(_calHeadRect.X + 10, _devRect.Y,
+                _devRect.Width, _devRect.Height);
+            _calMenuRect = new Rectangle(_calRect.X, _calRect.Y, _calRect.Width, _calRect.Height - 100 - ts - _margin);
             _calWaveRect = new Rectangle(_calRect.X, _calRect.Bottom - 100, _calRect.Width, 100);
+
             _endHeadRect = new Rectangle(_calHeadRect.X, parent.Size.Height - ts - _margin, _calHeadRect.Width, ts);
 
             _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
             _headCursor = ResourceManager.GetColoredCursorGraphic(_strongColor);
 
             _audioInput = parent.AudioInput;
-            _audioInput.DeviceInfoUpdated += (s, e) =>
-                { updateDevices(); };
+            _audioInput.DeviceInfoUpdated += (s, e) => { _needUpdate = true; };
 
             updateDevices();
 
@@ -193,6 +204,7 @@ namespace PitchPitch.scene
         }
         #endregion
 
+        #region 更新
         protected override int procKeyEvent(SdlDotNet.Input.Key key)
         {
             int idx = -1;
@@ -266,6 +278,7 @@ namespace PitchPitch.scene
                         {
                             case SelectionState.Device:
                                 _state = SelectionState.Calibration;
+                                if(_calSelectedIdx < 0) _calSelectedIdx = 0;
                                 break;
                             case SelectionState.Calibration:
                                 stopCalibration();
@@ -281,7 +294,7 @@ namespace PitchPitch.scene
                     switch (_state)
                     {
                         case SelectionState.Device:
-                            _state = SelectionState.Calibration;
+                            //_state = SelectionState.Calibration;
                             break;
                         case SelectionState.Calibration:
                             break;
@@ -355,6 +368,12 @@ namespace PitchPitch.scene
                             Config.Instance.MinFreq = _minFreqSum / (double)_minFreqNum;
                         break;
                 }
+                if (Config.Instance.MinFreq > Config.Instance.MaxFreq)
+                {
+                    double t = Config.Instance.MaxFreq;
+                    Config.Instance.MaxFreq = Config.Instance.MinFreq;
+                    Config.Instance.MinFreq = t;
+                }
                 _isCalStarted = false;
             }
         }
@@ -363,20 +382,23 @@ namespace PitchPitch.scene
         {
             base.Process(e);
 
-            if (Keyboard.IsKeyPressed(Key.Space))
+            if (_needUpdate) updateDevices();
+
+            double pitch = -1;
+            if (_audioInput.Capturing)
+            {
+                if (_parent.ToneResult.Clarity > ToneAnalyzer.ClarityThreshold)
+                {
+                    _pitch = _parent.ToneResult.Pitch;
+                    pitch = _pitch;
+                }
+            }
+
+            if (Keyboard.IsKeyPressed(Key.Return))
             {
                 #region キー押し中
                 if (_state == SelectionState.Calibration)
                 {
-                    double pitch = -1;
-                    if (_audioInput.Capturing)
-                    {
-                        if (_parent.ToneResult.Clarity > 0.9)
-                        {
-                            pitch = _parent.ToneResult.Pitch;
-                        }
-                    }
-
                     _isCalStarted = true;
                     switch (_calSelectedIdx)
                     {
@@ -403,10 +425,16 @@ namespace PitchPitch.scene
                 stopCalibration();
             }
         }
+        #endregion
 
         public override void Draw(SdlDotNet.Graphics.Surface s)
         {
             s.Fill(_backColor);
+            if (_optSurface == null)
+            {
+                _optSurface = ResourceManager.LargePFont.Render("Option", _foreColor);
+            }
+            s.Blit(_optSurface, new Point(10, 10));
 
             // 今選択中のドメイン
             if (_state == SelectionState.Device)
@@ -415,7 +443,7 @@ namespace PitchPitch.scene
             }
             else if (_state == SelectionState.Calibration)
             {
-                s.Fill(_calRect, Color.Pink);
+                s.Fill(_calMenuRect, Color.Pink);
             }
 
             // Audio Device / Calibration Header
@@ -438,7 +466,7 @@ namespace PitchPitch.scene
 
             ImageManager.DrawSelections(s, _calSurfaces, _calRects, _cursor,
                 _calRect.Location,
-                _calSelectedIdx,
+                (_state == SelectionState.Calibration ? _calSelectedIdx : -1),
                 ImageAlign.TopLeft);
 
             ImageManager.DrawSelections(s, _devDrawSurfaces, _devDrawRects, _cursor,
@@ -475,13 +503,18 @@ namespace PitchPitch.scene
             {
                 using (Surface ts = ResourceManager.SmallPFont.Render("計測中…", _strongColor))
                 {
-                    s.Blit(ts, _calRect.Location);
+                    s.Blit(ts, new Point(_calMenuRect.X, _calMenuRect.Bottom));
                 }
             }
 
             // 波形
             if (_audioInput.Capturing)
             {
+                using (Surface ts = ResourceManager.SmallTTFont.Render(
+                    string.Format("{0, 5:F1} Hz", _pitch), _strongColor))
+                {
+                    s.Blit(ts, new Point(_calMenuRect.X, _calMenuRect.Bottom + ResourceManager.SmallPFont.Height + 5));
+                }
                 drawWave(s, _parent.PitchResult, _parent.ToneResult, ResourceManager.SmallTTFont, _calWaveRect);
             }
         }
@@ -565,6 +598,7 @@ namespace PitchPitch.scene
 
             if (_devHeadSurface != null) _devHeadSurface.Dispose();
             if (_calHeadSurface != null) _calHeadSurface.Dispose();
+            if (_optSurface != null) _optSurface.Dispose();
 
             base.Dispose();
         }

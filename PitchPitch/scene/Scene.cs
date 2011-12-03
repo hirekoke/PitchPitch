@@ -14,6 +14,7 @@ namespace PitchPitch.scene
     {
         Base,
 
+        Error,
         Title,
         MapSelect,
         Option,

@@ -163,6 +163,7 @@ namespace PitchPitch
                 ret = new Surface(bmp);
                 ret.AlphaBlending = true;
             }
+            ret.Update();
             return ret;
         }
 
@@ -176,6 +177,7 @@ namespace PitchPitch
                 {
                     Surface s = new Surface(bmp);
                     s.AlphaBlending = true;
+                    s.Update();
                     ret.Add(s);
                 }
             }
@@ -200,6 +202,7 @@ namespace PitchPitch
                         Color[,] tmp = s.GetColors(new Rectangle(i, j, tileSize.Width, tileSize.Height));
                         ss.SetPixels(Point.Empty, tmp);
                         tmp = ss.GetColors(new Rectangle(0, 0, ss.Width, ss.Height));
+                        ss.Update();
                         ret.Add(ss);
                     }
                 }

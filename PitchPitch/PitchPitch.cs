@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using System.Diagnostics;
 
 using SdlDotNet.Core;
 using SdlDotNet.Graphics;
@@ -25,6 +26,8 @@ namespace PitchPitch
         public gameobj.Player Player { get { return _player; } }
 
         #region AudioInput関係
+        private bool _deviceRemoved = false;
+
         private object _audioLockObj = new object();
         private audio.AudioInput _audioInput;
         public audio.AudioInput AudioInput { get { return _audioInput; } }
@@ -95,7 +98,7 @@ namespace PitchPitch
                 else
                 {
                     // 繋ぎたいデバイスが消えた
-                    Console.WriteLine("test");
+                    _deviceRemoved = true;
                 }
             };
             _audioInput.DeviceSelected += (s, e) =>
@@ -168,23 +171,45 @@ namespace PitchPitch
 
         private void Tick(object sender, TickEventArgs e)
         {
-            _currentScene.Process(null);
-            _currentScene.Draw(Video.Screen);
-            Video.Screen.Update();
+            if (_deviceRemoved && 
+                _currentScene.SceneType != SceneType.Option && _currentScene.SceneType != SceneType.Title)
+            {
+                EnterScene(SceneType.Error, 
+                    new string[] { "デバイスが切断されました", "Returnを押して確認してください" });
+            }
+            else
+            {
+                _currentScene.Process(null);
+                _currentScene.Draw(Video.Screen);
+                Video.Screen.Update();
+            }
+            _deviceRemoved = false;
         }
 
         private map.Map _prevMap = null;
         public map.Map PrevMap { get { return _prevMap; } }
         private SceneType _prevSceneType = SceneType.Base;
-        public void EnterScene(scene.SceneType sceneType, map.Map map = null)
+        public void EnterScene(scene.SceneType sceneType, object arg = null)//map.Map map = null)
         {
             _prevSceneType = _currentScene.SceneType;
+            scene.Scene s = null;
+
             if (sceneType == SceneType.GameStage || sceneType == SceneType.EndlessGameStage)
             {
+                map.Map map = null;
+                if (arg != null) map = arg as map.Map;
                 if (_prevMap != null && _prevMap != map) _prevMap.Dispose();
                 _prevMap = map;
+                s = CreateScene(sceneType, this, map);
             }
-            scene.Scene s = CreateScene(sceneType, this, map);
+            else if (sceneType == SceneType.Error)
+            {
+                s = CreateScene(sceneType, this, (string[])arg);
+            }
+            else
+            {
+                s = CreateScene(sceneType, this, null);
+            }
             if (s != null) _currentScene = s;
         }
 
@@ -208,7 +233,7 @@ namespace PitchPitch
         }
 
         private Dictionary<SceneType, Scene> _scenes;
-        public scene.Scene CreateScene(SceneType type, PitchPitch parent, map.Map map = null)
+        public scene.Scene CreateScene(SceneType type, PitchPitch parent, object arg = null)
         {
             if (_scenes == null)
             {
@@ -219,13 +244,25 @@ namespace PitchPitch
             if (_scenes.ContainsKey(type))
             {
                 scene = _scenes[type];
-                if (type == SceneType.GameStage)
-                    (scene as scene.SceneGameStage).Map = map;
+                switch (type)
+                {
+                    case SceneType.GameStage:
+                        (scene as scene.SceneGameStage).Map = arg as map.Map;
+                        break;
+                    case SceneType.Error:
+                        (scene as scene.SceneError).ErrorMessages = (string[])arg;
+                        break;
+
+                }
             }
             else
             {
                 switch (type)
                 {
+                    case SceneType.Error:
+                        scene = new SceneError();
+                        (scene as scene.SceneError).ErrorMessages = (string[])arg;
+                        break;
                     case SceneType.Title:
                         scene = new SceneTitle();
                         break;
@@ -236,7 +273,7 @@ namespace PitchPitch
                         scene = new SceneOption();
                         break;
                     case SceneType.GameStage:
-                        scene = new SceneGameStage(map);
+                        scene = new SceneGameStage(arg as map.Map);
                         break;
                     case SceneType.EndlessGameStage:
                         scene = new SceneEndlessGameStage();

@@ -17,6 +17,7 @@ namespace PitchPitch.gameobj
     class Player : GameObj
     {
         protected SurfaceCollection _playerSurfaces;
+        protected SurfaceCollection _coloredPlayerSurfaces;
         protected int _renderSurfaceIdx = 0;
 
         protected long _prevFrameTick = 0;
@@ -49,6 +50,7 @@ namespace PitchPitch.gameobj
         protected const int _explosionLength = 500; /* msec */
         /// <summary>表示する要素の実態</summary>
         protected SurfaceCollection _explosionSurfaces;
+        protected SurfaceCollection _explosionColoredSurfaces;
         #endregion
 
         #region 無敵時間制御用
@@ -118,9 +120,12 @@ namespace PitchPitch.gameobj
             {
                 _foreColor = value;
                 if (_playerSurfaces != null)
-                    foreach (Surface s in _playerSurfaces) ImageManager.SetColor(s, value);
-                if (_explosionSurfaces != null)
-                    foreach (Surface s in _explosionSurfaces) ImageManager.SetColor(s, value, _explosionColor);
+                {
+                    if (_coloredPlayerSurfaces != null) 
+                        foreach (Surface s in _coloredPlayerSurfaces) s.Dispose();
+                    _coloredPlayerSurfaces = ImageManager.CreateColored(_playerSurfaces, _foreColor);
+                }
+                updateExpColor();
             }
         }
 
@@ -131,9 +136,29 @@ namespace PitchPitch.gameobj
             set
             {
                 _explosionColor = value;
-                if (_explosionSurfaces != null)
-                    foreach (Surface s in _explosionSurfaces) ImageManager.SetColor(s, _foreColor, value);
+                updateExpColor();
             }
+        }
+
+        private void updateExpColor()
+        {
+            if (_explosionSurfaces != null)
+            {
+                if (_explosionColoredSurfaces != null)
+                {
+                    foreach (Surface s in _explosionColoredSurfaces)
+                    {
+                        s.Dispose();
+                    }
+                }
+                _explosionColoredSurfaces = new SurfaceCollection();
+                foreach (Surface s in _explosionSurfaces)
+                {
+                    _explosionColoredSurfaces.Add(ImageManager.CreateColored(s,
+                        _foreColor, _explosionColor));
+                }
+            }
+            initExplosion();
         }
         #endregion
 
@@ -159,7 +184,7 @@ namespace PitchPitch.gameobj
         protected virtual void initExplosion()
         {
             _ptclSystem = new ParticleSystem();
-            _ptclEmitter = new ParticleSurfaceEmitter(_explosionSurfaces);
+            _ptclEmitter = new ParticleSurfaceEmitter(_explosionColoredSurfaces == null ? _explosionSurfaces : _explosionColoredSurfaces);
             _ptclEmitter.Frequency = 300;
             _ptclEmitter.LifeFullMin = 20;
             _ptclEmitter.LifeFullMax = 40;
@@ -253,7 +278,7 @@ namespace PitchPitch.gameobj
 
         protected virtual void renderPlayer(Surface s, Point p)
         {
-            Surface ps = _playerSurfaces[_renderSurfaceIdx];
+            Surface ps = (_coloredPlayerSurfaces == null ? _playerSurfaces : _coloredPlayerSurfaces)[_renderSurfaceIdx];
 
             long tick = Environment.TickCount;
             if (tick - _invincibleStartTick > _invincibleLength)
@@ -306,6 +331,14 @@ namespace PitchPitch.gameobj
             if (_explosionSurfaces != null)
             {
                 foreach (Surface s in _explosionSurfaces) s.Dispose();
+            }
+            if (_coloredPlayerSurfaces != null)
+            {
+                foreach (Surface s in _coloredPlayerSurfaces) s.Dispose();
+            }
+            if (_explosionColoredSurfaces != null)
+            {
+                foreach (Surface s in _explosionColoredSurfaces) s.Dispose();
             }
         }
     }
