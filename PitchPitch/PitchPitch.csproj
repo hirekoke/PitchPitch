@@ -95,9 +95,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="audio\AudioInput.cs" />
+    <Compile Include="audio\Music.cs" />
     <Compile Include="audio\PitchAnalyzer.cs" />
     <Compile Include="audio\AudioOutput.cs" />
+    <Compile Include="audio\SMFMusic.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="audio\ToneAnalyzer.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="map\BasicMap.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Form1.cs">
@@ -108,10 +113,11 @@
     </Compile>
     <Compile Include="gameobj\GameObj.cs" />
     <Compile Include="gameobj\Player.cs" />
-    <Compile Include="ImageManager.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="map\BinaryChipData.cs" />
     <Compile Include="map\BinaryMap.cs" />
+    <Compile Include="map\ColorChipData.cs" />
     <Compile Include="map\EmptyMap.cs" />
     <Compile Include="map\ImageMapChipData.cs" />
     <Compile Include="map\Map.cs" />
@@ -130,9 +136,11 @@
     <Compile Include="scene\SceneError.cs" />
     <Compile Include="scene\SceneGameOver.cs" />
     <Compile Include="scene\SceneGameStage.cs" />
+    <Compile Include="scene\SceneLoading.cs" />
     <Compile Include="scene\SceneMapSelect.cs" />
     <Compile Include="scene\SceneOption.cs" />
     <Compile Include="scene\SceneTitle.cs" />
+    <EmbeddedResource Include="image\gameover.png" />
     <EmbeddedResource Include="image\logo.png" />
     <EmbeddedResource Include="image\cursor.png" />
     <EmbeddedResource Include="image\explosion.png" />

@@ -9,6 +9,7 @@ namespace PitchPitch.map
     {
         None,
         Image,
+        Music,
     }
 
     enum MapChipType
@@ -22,45 +23,52 @@ namespace PitchPitch.map
     {
         None,
         Binary,
+        Colors,
+    }
+
+    enum PitchType
+    {
+        Fixed,
+        Variable,
     }
 
     class MapInfo
     {
-        private string _id = "";
-        public string Id { get { return _id; } set { _id = value; } }
-        private string _dirPath = "";
-        public string DirPath { get { return _dirPath; } set { _dirPath = value; } }
+        public string Id = "";
+        public string DirectoryPath = "";
+        public string MapName = "";
 
-        private string _name = "";
-        public string Name { get { return _name; } set { _name = value; } }
+        public string MapSourceFileName = "";
+        public MapSourceType MapSourceType = MapSourceType.None;
+        public string MappingFileName = "";
 
-        private string _fileName = "";
-        public string FileName { get { return _fileName; } set { _fileName = value; } }
-        private MapSourceType _mapSourceType = MapSourceType.None;
-        public MapSourceType MapSourceType { get { return _mapSourceType; } set { _mapSourceType = value; } }
-        private string _mapping = "";
-        public string Mapping { get { return _mapping; } set { _mapping = value; } }
+        public ChipDataInfo ChipDataInfo = new ChipDataInfo();
 
-        private string _chipFileName = "";
-        public string ChipFileName { get { return _chipFileName; } set { _chipFileName = value; } }
-        private MapChipBuiltinType _builtinChipName = MapChipBuiltinType.Binary;
-        public MapChipBuiltinType BuiltinChipName { get { return _builtinChipName; } set { _builtinChipName = value; } }
-        private MapChipType _chipType = MapChipType.Builtin;
-        public MapChipType ChipType { get { return _chipType; } set { _chipType = value; } }
-        private Size _chipSize = new Size(16, 16);
-        public Size ChipSize { get { return _chipSize; } set { _chipSize = value; } }
+        //public Size Size = new Size(200, 30);
 
-        private Size _size = new Size(200, 30);
-        public Size Size { get { return _size; } set { _size = value; } }
+        public int PlayerVx = 1;
 
-        private int _playerVx = 1;
-        public int PlayerVx { get { return _playerVx; } set { _playerVx = value; } }
+        public PitchType PitchType = PitchType.Variable;
+        public double MaxPitch = 880;
+        public double MinPitch = 220;
 
-        private Color _foreColor = Color.Black;
-        public Color ForeColor { get { return _foreColor; } set { _foreColor = value; } }
-        private Color _strongColor = Color.Red;
-        public Color StrongColor { get { return _strongColor; } set { _strongColor = value; } }
-        private Color _backColor = Color.White;
-        public Color BackColor { get { return _backColor; } set { _backColor = value; } }
+        public Color ForegroundColor = Color.Black;
+        public Color StrongColor = Color.Red;
+        public Color BackgroundColor = Color.White;
+    }
+
+    class ChipInfo
+    {
+        public Color? Color;
+        public int Hardness;
+    }
+    class ChipDataInfo
+    {
+        public string FileName = "";
+        public MapChipType ChipType = MapChipType.Builtin;
+        public MapChipBuiltinType BuiltinType = MapChipBuiltinType.Binary;
+        public Size Size = new Size(16, 16);
+
+        public List<ChipInfo> ChipInfos = new List<ChipInfo>();
     }
 }

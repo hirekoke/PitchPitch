@@ -16,9 +16,6 @@ namespace PitchPitch
     {
         private Surface _screen;
 
-        private Size _size = Size.Empty;
-        public Size Size { get { return _size; } }
-
         private Scene _currentScene;
         public Scene CurrentScene { get { return _currentScene; } }
 
@@ -65,9 +62,8 @@ namespace PitchPitch
             #endregion
 
             #region 画面初期化
-            _size = new Size(640, 480);
             Video.WindowCaption = Properties.Resources.WindowTitle;
-            _screen = Video.SetVideoMode(_size.Width, _size.Height, true, false, false, true);
+            _screen = Video.SetVideoMode(Constants.ScreenWidth, Constants.ScreenHeight, true, false, false, true);
             _screen.AlphaBlending = true;
             #endregion
 
@@ -143,19 +139,33 @@ namespace PitchPitch
                     if (kv.Value != null) kv.Value.Dispose();
                 }
             }
-            if(_player != null) _player.Dispose();
+            if (_player != null) _player.Dispose();
             if (_prevMap != null) _prevMap.Dispose();
 
+            ResourceManager.Release();
             if (_audioInput != null)
             {
+                _audioInput.Disposed += (s, e) =>
+                {
+                    Console.WriteLine("3");
+                    _disposed = true;
+                };
+                _audioInput.CaptureStopped += (s, e) =>
+                {
+                    Console.WriteLine("2");
+                    _audioInput.Dispose();
+                };
+                Console.WriteLine("0");
                 _audioInput.StopCapture();
-                _audioInput.Dispose();
+                Console.WriteLine("1");
             }
         }
         public void Dispose()
         {
             dispose();
         }
+        private bool _disposed = false;
+        private bool _disposing = false;
         private void Quit(object sender, QuitEventArgs e)
         {
             Quit();
@@ -163,14 +173,22 @@ namespace PitchPitch
 
         public void Quit()
         {
-            Config.Instance.Save();
-            Events.Close();
+            // Events.Close(); // causes crash of vshost32-clr2.exe !!
+            _disposing = true;
             dispose();
+            Config.Instance.Save();
+            while (!_disposed)
+            {
+                System.Threading.Thread.Sleep(100);
+            }
             Events.QuitApplication();
+            Environment.Exit(0);
         }
 
         private void Tick(object sender, TickEventArgs e)
         {
+            if (_disposing) return;
+
             if (_deviceRemoved && 
                 _currentScene.SceneType != SceneType.Option && _currentScene.SceneType != SceneType.Title)
             {

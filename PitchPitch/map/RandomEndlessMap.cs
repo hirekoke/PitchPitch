@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using SdlDotNet.Graphics;
 
 namespace PitchPitch.map
 {
@@ -22,7 +23,13 @@ namespace PitchPitch.map
             _rand = new Random();
 
             _mapInfo = new MapInfo();
-            _mapInfo.Name = "Random Endress";
+            _mapInfo.MapName = "Random Endress";
+
+            Color light, dark, strong;
+            ImageUtil.GetRandomColors(out light, out dark, out strong);
+            _mapInfo.BackgroundColor = light;
+            _mapInfo.ForegroundColor = dark;
+            _mapInfo.StrongColor = strong;
         }
 
         public override bool HasEnd { get { return false; } }
@@ -91,7 +98,6 @@ namespace PitchPitch.map
                 ppys[t] = vpys[t] + view.Y;
             }
 
-
             lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
             for (int i = _xFirstIdx, s=0; i < _xLastIdx; i++, lidx++, s++)
             {
@@ -100,8 +106,9 @@ namespace PitchPitch.map
                 {
                     if (j < 0) continue;
                     Chip cd = new Chip();
-                    cd.Idx = new System.Drawing.Point(lidx, j);
-                    cd.ViewPoint = new PointD(vpxs[s], vpys[t]);
+                    cd.XIdx = lidx; cd.YIdx = j;
+                    cd.ViewX = vpxs[s];
+                    cd.ViewY = vpys[t];
                     cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[lidx][j];
                     cd.Hardness = _chipData.Hardness[cd.ChipData];
@@ -110,10 +117,18 @@ namespace PitchPitch.map
             }
         }
 
+        protected override void renderMiniMapBackground(Surface s, Rectangle r)
+        {
+            s.Fill(r, _foreColor);
+        }
         protected override void renderMiniMapForeground(SdlDotNet.Graphics.Surface s, Rectangle r)
         {
-            s.Fill(r, Color.Red);
+            using (Surface ts = ResourceManager.LargePFont.Render("Endless Map", _backColor))
+            {
+                s.Blit(ts, new Point((int)(r.Width / 2.0 - ts.Width / 2.0), (int)(r.Height / 2.0 - ts.Height / 2.0)));
+            }
         }
+        protected override void renderMiniMapViewBox(SdlDotNet.Graphics.Surface s, Rectangle r) { }
 
         public override double GetDefaultY(double xInView)
         {

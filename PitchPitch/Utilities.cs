@@ -23,30 +23,115 @@ namespace PitchPitch
         MiddleRight,
     }
 
-    class ImageManager
+    class ImageUtil
     {
         #region 色変換
+        public static Color GetInterpolatedColor(Color c0, Color c1, double ratio)
+        {
+            double da = ratio * c0.A + (1 - ratio) * c1.A;
+            double dr = ratio * c0.R + (1 - ratio) * c1.R;
+            double dg = ratio * c0.G + (1 - ratio) * c1.G;
+            double db = ratio * c0.B + (1 - ratio) * c1.B;
+            int a = (int)da; int r = (int)dr; int g = (int)dg; int b = (int)db;
+            a = a < 0 ? 0 : (a > 255 ? 255 : a);
+            r = r < 0 ? 0 : (r > 255 ? 255 : r);
+            g = g < 0 ? 0 : (g > 255 ? 255 : g);
+            b = b < 0 ? b : (b > 255 ? 255 : b);
+            return Color.FromArgb(a, r, g, b);
+        }
         public static Color GetColor(string s)
         {
             if (string.IsNullOrEmpty(s)) return Color.Transparent;
-
             Color c = Color.FromName(s);
-            if (c.ToArgb() == 0)
+            if (c.ToArgb() != 0) return c;
+            if (s.Length == 0 || s[0] != '#') return Color.Transparent;
+
+            string subStr = s.Substring(1, s.Length - 1);
+            int n = Convert.ToInt32(subStr, 16);
+            return Color.FromArgb(subStr.Length == 8 ? (n >> 24) : 255, (n & 0xff0000) >> 16, (n & 0x00ff00) >> 8, n & 0xff);
+        }
+
+        public static Color ConvertHSBtoARGB(byte alpha, float hue, float saturation, float brightness)
+        {
+            int maxB;
+            int minB;
+            int red, green, blue;
+
+            if (brightness <= 0.5f)
             {
-                if (s.Length > 0 && s.StartsWith("#"))
-                {
-                    int n = Convert.ToInt32(s.Substring(1, s.Length-1), 16);
-                    return Color.FromArgb(n);
-                }
-                else
-                {
-                    return Color.Transparent;
-                }
+                maxB = (int)(brightness * (1.0f + saturation) * 255.0f + 0.01f);
+                minB = (int)(brightness * (1.0f - saturation) * 255.0f + 0.01f);
             }
             else
             {
-                return c;
+                maxB = (int)((brightness * (1.0f - saturation) + saturation) * 255.0f + 0.01f);
+                minB = (int)((brightness + (brightness - 1.0f) * saturation) * 255.0f + 0.01f);
             }
+
+            if (hue < 60.0f)
+            {
+                red = maxB;
+                green = (int)(minB + hue * (float)(maxB - minB) / 60.0f + 0.01f);
+                blue = minB;
+            }
+            else if (hue < 120.0F)
+            {
+                red = (int)(maxB - (hue - 60.0F) * (maxB - minB) / 60.0f + 0.01f);
+                green = maxB;
+                blue = minB;
+            }
+            else if (hue < 180.0F)
+            {
+                red = minB;
+                green = maxB;
+                blue = (int)(minB + (hue - 120.0F) * (maxB - minB) / 60.0f + 0.01f);
+            }
+            else if (hue < 240.0F)
+            {
+                red = minB;
+                green = (int)(maxB - (hue - 180.0F) * (maxB - minB) / 60.0f + 0.01f);
+                blue = maxB;
+            }
+            else if (hue < 300.0F)
+            {
+                red = (int)(minB + (hue - 240.0F) * (maxB - minB) / 60.0f + 0.01f);
+                green = minB;
+                blue = maxB;
+            }
+            else
+            {
+                red = maxB;
+                green = minB;
+                blue = (int)(maxB - (hue - 300.0F) * (maxB - minB) / 60.0f + 0.01f);
+            }
+
+            return Color.FromArgb((int)alpha, red, green, blue);
+        }
+
+        public static void GetRandomColors(out Color light, out Color dark, out Color strong)
+        {
+            Random r = new Random();
+            float h = (float)(r.NextDouble() * 360);
+            float hstrong = (h + 180) % 360;
+            float s = 0.5f + (float)(r.NextDouble() * 0.4 - 0.2);
+            float sstrong = 0.8f + (float)(r.NextDouble() * 0.4 - 0.2);
+            float v0 = 0.8f + (float)(0.2 * r.NextDouble());
+            float v1 = 0.2f - (float)(0.2 * r.NextDouble());
+            float v2 = 0.5f + (float)(r.NextDouble() * 0.2 - 0.1);
+
+            light = ConvertHSBtoARGB(255, h, s, v0);
+            dark = ConvertHSBtoARGB(255, h, s, v1);
+            strong = ConvertHSBtoARGB(255, hstrong, sstrong, v2);
+        }
+        public static void GetRandomColors(out Color light, out Color dark)
+        {
+            Random r = new Random();
+            float h = (float)(r.NextDouble() * 360);
+            float s = 0.5f + (float)(r.NextDouble() * 0.4 - 0.2);
+            float v0 = 0.8f + (float)(0.2 * r.NextDouble());
+            float v1 = 0.2f - (float)(0.2 * r.NextDouble());
+            light = ConvertHSBtoARGB(255, h, s, v0);
+            dark = ConvertHSBtoARGB(255, h, s, v1);
         }
 
         public static Color GetAvgColor(Surface s)
@@ -102,10 +187,6 @@ namespace PitchPitch
                     r = r < 0 ? 0 : (r > 255 ? 255 : r);
                     g = g < 0 ? 0 : (g > 255 ? 255 : g);
                     b = b < 0 ? 0 : (b > 255 ? 255 : b);
-                    if (g == 85)
-                    {
-                        Console.WriteLine(c.R + " " + c.G + " " + c.B);
-                    }
                     colors[i, j] = Color.FromArgb(c.A, r, g, b);
                     Color nc = Color.FromArgb(c.A, r, g, b);
                 }
@@ -141,28 +222,6 @@ namespace PitchPitch
             s.Update();
         }
 
-        public static void SetColor(SurfaceCollection surfaces, Color c)
-        {
-            if (surfaces == null) return;
-            foreach (Surface s in surfaces)
-            {
-                SetColor(s, c);
-            }
-        }
-
-        public static void SetColor(AnimatedSprite sprite, Color c)
-        {
-            if (sprite == null) return;
-            foreach (KeyValuePair<string, AnimationCollection> kv in sprite.Animations)
-            {
-                AnimationCollection anim = kv.Value;
-                foreach (Surface s in anim)
-                {
-                    SetColor(s, c);
-                }
-            }
-        }
-
         public static Surface CreateColored(Surface os, Color c)
         {
             if (os == null) return null;
@@ -174,8 +233,11 @@ namespace PitchPitch
         {
             if (os == null) return null;
             SurfaceCollection col = new SurfaceCollection();
-            col.Add(os);
-            SetColor(col, c);
+            foreach (Surface s in os)
+            {
+                Surface ns = CreateColored(s, c);
+                col.Add(ns);
+            }
             return col;
         }
         public static AnimatedSprite CreateColored(AnimatedSprite os, Color c)
@@ -403,8 +465,7 @@ namespace PitchPitch
         {
             CreateStrMenu(Array.ConvertAll<MenuItem, string>(items, (mi) =>
             {
-                string key = ResourceManager.ConvertToString(mi.Key);
-                return string.Format("{0}: {1}", key, mi.Value);
+                return TextUtil.MenuToString(mi);
             }), c, font, ref surfaces, ref rects, width, height);
         }
 
@@ -426,6 +487,15 @@ namespace PitchPitch
                 }
                 y += fh;
             }
+        }
+    }
+
+    class TextUtil
+    {
+        public static string MenuToString(MenuItem item)
+        {
+            string key = ResourceManager.ConvertToString(item.Key);
+            return string.Format("{0}: {1}", key, item.Value);
         }
     }
 }

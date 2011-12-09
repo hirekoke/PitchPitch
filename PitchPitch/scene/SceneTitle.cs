@@ -21,38 +21,17 @@ namespace PitchPitch.scene
 
         private Surface _titleSurface = null;
         private Surface _coloredTitleSurface = null;
+        private Surface _alertSurface = null;
 
-        private Color _foreColor = Color.Black;
-        public Color ForeColor
-        {
-            get { return _foreColor; }
-            set
-            {
-                _foreColor = value;
-                _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
-                ImageManager.SetColor(_menuSurfaces, _foreColor);
-                if (_coloredTitleSurface != null) _coloredTitleSurface.Dispose();
-                _coloredTitleSurface = ImageManager.CreateColored(_titleSurface, _foreColor, _backColor);
-            }
-        }
-        private Color _backColor = Color.White;
-        public Color BackColor
-        {
-            get { return _backColor; }
-            set
-            {
-                _backColor = value;
-                if (_coloredTitleSurface != null) _coloredTitleSurface.Dispose();
-                _coloredTitleSurface = ImageManager.CreateColored(_titleSurface, _foreColor, _backColor);
-            }
-        }
+        //private Color _foreColor = Color.Black;
+        //private Color _backColor = Color.White;
 
         public SceneTitle()
         {
             sceneType = SceneType.Title;
             _menuItems = new MenuItem[]
             {
-                new MenuItem(Key.M, "Select Map"),
+                new MenuItem(Key.S, "Start"),
                 new MenuItem(Key.O, "Option"),
                 new MenuItem(Key.Q, "Quit")
             };
@@ -66,13 +45,14 @@ namespace PitchPitch.scene
         public override void Init(PitchPitch parent)
         {
             Random rand = new Random();
-            _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
 
-            _menuSurfaces = new SurfaceCollection();
-            _menuRects = new Rectangle[_menuItems.Length];
-            ImageManager.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, parent.Size.Width);
-
-            _titleSurface = ResourceManager.LoadSurface("logo.png");
+            if (_menuSurfaces == null)
+            {
+                _menuSurfaces = new SurfaceCollection();
+                _menuRects = new Rectangle[_menuItems.Length];
+                ImageUtil.CreateStrMenu(_menuItems, Constants.DefaultForeColor, ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
+            }
 
             base.Init(parent);
         }
@@ -127,13 +107,25 @@ namespace PitchPitch.scene
 
         public override void Draw(Surface s)
         {
-            s.Fill(_backColor);
+            s.Fill(Constants.DefaultBackColor);
+
+            if(_titleSurface == null)
+                _titleSurface = ResourceManager.LoadSurface("logo.png");
 
             s.Blit(_coloredTitleSurface == null ? _titleSurface : _coloredTitleSurface,
                 new Point((int)(s.Width / 2.0 - _titleSurface.Width / 2.0), 50));
 
-            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(0, 80 + _titleSurface.Height), 
+            ImageUtil.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(0, 70 + _titleSurface.Height), 
                 _selectedIdx, ImageAlign.MiddleCenter);
+
+            if (_alertSurface == null)
+            {
+                _alertSurface = ResourceManager.SmallPFont.Render(
+                    Properties.Resources.Explanation_TitleAlert, Constants.DefaultStrongColor);
+            }
+            s.Blit(_alertSurface,
+                new Point((int)(s.Width / 2.0 - _alertSurface.Width / 2.0),
+                    s.Height - _alertSurface.Height - 30));
         }
 
         public override void Dispose()
@@ -144,6 +136,7 @@ namespace PitchPitch.scene
             {
                 foreach (Surface s in _menuSurfaces) s.Dispose();
             }
+            if (_alertSurface != null) _alertSurface.Dispose();
             base.Dispose();
         }
     }

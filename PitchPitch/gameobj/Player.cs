@@ -123,7 +123,7 @@ namespace PitchPitch.gameobj
                 {
                     if (_coloredPlayerSurfaces != null) 
                         foreach (Surface s in _coloredPlayerSurfaces) s.Dispose();
-                    _coloredPlayerSurfaces = ImageManager.CreateColored(_playerSurfaces, _foreColor);
+                    _coloredPlayerSurfaces = ImageUtil.CreateColored(_playerSurfaces, _foreColor);
                 }
                 updateExpColor();
             }
@@ -154,7 +154,7 @@ namespace PitchPitch.gameobj
                 _explosionColoredSurfaces = new SurfaceCollection();
                 foreach (Surface s in _explosionSurfaces)
                 {
-                    _explosionColoredSurfaces.Add(ImageManager.CreateColored(s,
+                    _explosionColoredSurfaces.Add(ImageUtil.CreateColored(s,
                         _foreColor, _explosionColor));
                 }
             }
@@ -200,7 +200,7 @@ namespace PitchPitch.gameobj
             _ptclSystem.Manipulators.Add(new ParticleGravity(0.2f)); // Gravity
             _ptclSystem.Manipulators.Add(new ParticleFriction(0.3f)); // Slow down _ptclSystem
             //_ptclSystem.Manipulators.Add(new ParticleVortex(1f, 200f)); // A particle vortex fixed on the mouse
-            _ptclSystem.Manipulators.Add(new ParticleBoundary(_parent.Size)); // fix _ptclSystem on screen.
+            _ptclSystem.Manipulators.Add(new ParticleBoundary(new Size(Constants.StageViewWidth, Constants.StageViewHeight))); // fix _ptclSystem on screen.
         }
 
         protected virtual void updateCollisionPoints()
@@ -235,10 +235,10 @@ namespace PitchPitch.gameobj
 
             foreach (Point cp in _collisionPoints)
             {
-                PointD pcp = new PointD(pointInView.X + cp.X, pointInView.Y + cp.Y);
+                double cpx = pointInView.X + cp.X; double cpy = pointInView.Y + cp.Y;
                 bool collision =
-                    (chip.ViewPoint.X <= pcp.X && chip.ViewPoint.Y <= pcp.Y &&
-                    pcp.X <= chip.ViewPoint.X + chipWidth && pcp.Y <= chip.ViewPoint.Y + chipHeight);
+                    (chip.ViewX <= cpx && chip.ViewY <= cpy &&
+                    cpx <= chip.ViewX + chipWidth && cpy <= chip.ViewY + chipHeight);
                 if (collision)
                 {
                     Hp -= chip.Hardness;
@@ -247,7 +247,7 @@ namespace PitchPitch.gameobj
                     _isExplosion = true;
                     _explosionStartTick = Environment.TickCount;
                     _ptclEmitter.Emitting = false;
-                    _ptclEmitter.X = (float)pcp.X; _ptclEmitter.Y = (float)pcp.Y;
+                    _ptclEmitter.X = (float)cpx; _ptclEmitter.Y = (float)cpy;
                     _ptclEmitter.Emitting = true;
                     
                     // 無敵時間開始
@@ -276,9 +276,13 @@ namespace PitchPitch.gameobj
             }
         }
 
+        private double _psWidthInv = -1;
+        private double _psHeightInv = -1;
         protected virtual void renderPlayer(Surface s, Point p)
         {
             Surface ps = (_coloredPlayerSurfaces == null ? _playerSurfaces : _coloredPlayerSurfaces)[_renderSurfaceIdx];
+            if (_psWidthInv < 0) _psWidthInv = 1 / (double)ps.Width;
+            if (_psHeightInv < 0) _psHeightInv = 1 / (double)ps.Height;
 
             long tick = Environment.TickCount;
             if (tick - _invincibleStartTick > _invincibleLength)
@@ -297,7 +301,7 @@ namespace PitchPitch.gameobj
             }
             if (_isInvincibleFrameVisible)
             {
-                using (Surface ts = ps.CreateScaledSurface(_rad * 3 / (double)ps.Width, _rad * 3 / (double)ps.Height, true))
+                using (Surface ts = ps.CreateScaledSurface(_rad * 3 * _psWidthInv, _rad * 3 * _psHeightInv, true))
                 {
                     s.Blit(ts, new Point((int)(p.X - _rad * 2), (int)(p.Y - _rad * 2)));
                 }

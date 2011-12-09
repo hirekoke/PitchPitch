@@ -38,6 +38,11 @@ namespace PitchPitch.audio
             result.PitchDiff = PitchDiff;
             return result;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}{1} ({2:F0}Hz)", Tone, Octave, Pitch);
+        }
     }
 
     class ToneAnalyzer
@@ -109,17 +114,33 @@ namespace PitchPitch.audio
             double f4 = Cents[toneIdx] * A4 / Cents[9];
             if (ret.Octave > 4)
             {
-                for (int i = ret.Octave; i > 4; i--)
-                    f4 *= 2.0;
+                int m = 1 << (ret.Octave - 4);
+                f4 *= m;
             }
             else if (ret.Octave < 4)
             {
-                for (int i = ret.Octave; i < 4; i++)
-                    f4 /= 2.0;
+                int m = 1 << (4 - ret.Octave);
+                f4 /= (double)m;
             }
             ret.Pitch = f4;
             ret.PitchDiff = 0;
             return ret;
+        }
+
+        public static double PitchFromTone(int toneIdx, int octave)
+        {
+            double f4 = Cents[toneIdx] * A4 / Cents[9];
+            if (octave > 4)
+            {
+                int m = 1 << (octave - 4);
+                f4 *= m;
+            }
+            else if (octave < 4)
+            {
+                int m = 1 << (4 - octave);
+                f4 /= (double)m;
+            }
+            return f4;
         }
 
         public ToneResult Analyze(double freq, double clarity)
@@ -128,6 +149,7 @@ namespace PitchPitch.audio
 
             int octave = 4;
             double ft = freq;
+#warning この処理もうちょっと綺麗に書けないか
             if (freq < A4)
             {
                 while (ft < A4)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Xml;
+using PitchPitch.audio;
 
 namespace PitchPitch.map
 {
@@ -14,9 +15,9 @@ namespace PitchPitch.map
         {
             List<MapInfo> ret = new List<MapInfo>();
 
-            if (!Directory.Exists(Properties.Resources.MapDir)) return ret;
+            if (!Directory.Exists(Properties.Resources.Dirname_Map)) return ret;
 
-            DirectoryInfo mapDir = new DirectoryInfo(Properties.Resources.MapDir);
+            DirectoryInfo mapDir = new DirectoryInfo(Properties.Resources.Dirname_Map);
             
             DirectoryInfo[] dirInfos = mapDir.GetDirectories("*", SearchOption.TopDirectoryOnly);
             foreach (DirectoryInfo dir in dirInfos)
@@ -41,33 +42,10 @@ namespace PitchPitch.map
             XmlElement rootElem = mapXml["Map"];
             if (rootElem == null) return null;
 
-            mi.DirPath = dirPath;
+            mi.DirectoryPath = dirPath;
             mi.Id = Path.GetFileName(dirPath);
 
-            mi.Name = rootElem["Name"] == null ? "" : rootElem["Name"].InnerText.Trim();
-
-            #region Size
-            {
-                XmlElement sizeElem = rootElem["Size"];
-                if (sizeElem != null)
-                {
-                    int width = 0; int height = 0;
-                    foreach (XmlNode node in sizeElem.ChildNodes)
-                    {
-                        switch (node.Name)
-                        {
-                            case "Width":
-                                int.TryParse(node.InnerText.Trim(), out width);
-                                break;
-                            case "Height":
-                                int.TryParse(node.InnerText.Trim(), out height);
-                                break;
-                        }
-                    }
-                    mi.Size = new Size(width, height);
-                }
-            }
-            #endregion
+            mi.MapName = rootElem["Name"] == null ? "" : rootElem["Name"].InnerText.Trim();
 
             #region Source
             XmlElement srcElem = rootElem["Source"];
@@ -89,55 +67,57 @@ namespace PitchPitch.map
                 }
                 #endregion
 
-                mi.FileName = srcElem["Name"] == null ? "" : srcElem["Name"].InnerText.Trim();
-                mi.Mapping = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
+                mi.MapSourceFileName = srcElem["Name"] == null ? "" : srcElem["Name"].InnerText.Trim();
+                mi.MappingFileName = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
             }
             #endregion
 
-            #region Chip
-            XmlElement chipElem = rootElem["Chip"];
-            if (chipElem == null)
+            #region ChipDataInfo
+            XmlElement chipDataElem = rootElem["ChipData"];
+            ChipDataInfo cdi = new ChipDataInfo();
+            if (chipDataElem == null)
             {
-                mi.ChipType = MapChipType.Builtin;
-                mi.ChipFileName = "";
-                mi.BuiltinChipName = MapChipBuiltinType.Binary;
+                cdi.ChipType = MapChipType.Builtin;
+                cdi.FileName = "";
+                cdi.BuiltinType = MapChipBuiltinType.Binary;
             }
             else
             {
                 #region ChipType
                 try
                 {
-                    string ct = chipElem["Type"] == null ? "" : chipElem["Type"].InnerText.Trim();
-                    mi.ChipType = (MapChipType)Enum.Parse(typeof(MapChipType), ct, true);
+                    string ct = chipDataElem["Type"] == null ? "" : chipDataElem["Type"].InnerText.Trim();
+                    cdi.ChipType = (MapChipType)Enum.Parse(typeof(MapChipType), ct, true);
                 }
                 catch (ArgumentException)
                 {
-                    mi.ChipType = MapChipType.None;
+                    cdi.ChipType = MapChipType.None;
                 }
                 #endregion
 
                 #region Name
-                if (mi.ChipType == MapChipType.Builtin)
+                if (cdi.ChipType == MapChipType.Builtin)
                 {
-                    string cnt = chipElem["Name"] == null ? "" : chipElem["Name"].InnerText.Trim();
+                    string cnt = chipDataElem["Name"] == null ? "" : chipDataElem["Name"].InnerText.Trim();
                     try
                     {
-                        mi.BuiltinChipName = (MapChipBuiltinType)Enum.Parse(typeof(MapChipBuiltinType), cnt, true);
+                        if (string.IsNullOrEmpty(cnt)) cdi.BuiltinType = MapChipBuiltinType.Binary;
+                        else cdi.BuiltinType = (MapChipBuiltinType)Enum.Parse(typeof(MapChipBuiltinType), cnt, true);
                     }
                     catch (ArgumentException)
                     {
-                        mi.BuiltinChipName = MapChipBuiltinType.None;
+                        cdi.BuiltinType = MapChipBuiltinType.Binary;
                     }
                 }
                 else
                 {
-                    mi.ChipFileName = chipElem["Name"] == null ? "" : chipElem["Name"].InnerText.Trim();
-                    mi.BuiltinChipName = MapChipBuiltinType.None;
+                    cdi.FileName = chipDataElem["Name"] == null ? "" : chipDataElem["Name"].InnerText.Trim();
+                    cdi.BuiltinType = MapChipBuiltinType.None;
                 }
                 #endregion
 
                 #region Size
-                XmlElement sizeElem = chipElem["Size"];
+                XmlElement sizeElem = chipDataElem["Size"];
                 if (sizeElem != null)
                 {
                     int width = 0; int height = 0;
@@ -153,14 +133,38 @@ namespace PitchPitch.map
                                 break;
                         }
                     }
-                    mi.ChipSize = new Size(width, height);
+                    cdi.Size = new Size(width, height);
                 }
                 else
                 {
-                    mi.ChipSize = Size.Empty;
+                    cdi.Size = new Size(16, 16);
+                }
+                #endregion
+
+                #region ChipInfo
+                {
+                    cdi.ChipInfos = new List<ChipInfo>();
+                    XmlNodeList chipsLst = chipDataElem.GetElementsByTagName("Chip");
+                    foreach (XmlNode chipNode in chipsLst)
+                    {
+                        ChipInfo ci = new ChipInfo();
+                        if (chipNode["Color"] == null)
+                        {
+                            ci.Color = null;
+                        }
+                        else
+                        {
+                            string ciColorStr = chipNode["Color"].InnerText.Trim();
+                            ci.Color = ImageUtil.GetColor(ciColorStr);
+                        }
+                        string ciHardStr = chipNode["Hardness"] == null ? "0" : chipNode["Hardness"].InnerText.Trim();
+                        if (!int.TryParse(ciHardStr, out ci.Hardness)) ci.Hardness = 0;
+                        cdi.ChipInfos.Add(ci);
+                    }
                 }
                 #endregion
             }
+            mi.ChipDataInfo = cdi;
             #endregion
 
             #region Player
@@ -177,12 +181,24 @@ namespace PitchPitch.map
             XmlElement colorElem = rootElem["Color"];
             if (colorElem != null)
             {
-                mi.BackColor = colorElem["Background"] == null ? Color.White : ImageManager.GetColor(colorElem["Background"].InnerText.Trim());
-                mi.StrongColor = colorElem["Strong"] == null ? Color.Red : ImageManager.GetColor(colorElem["Strong"].InnerText.Trim());
-                mi.ForeColor = colorElem["Foreground"] == null ? Color.Black : ImageManager.GetColor(colorElem["Foreground"].InnerText.Trim());
+                mi.BackgroundColor = colorElem["Background"] == null ? Color.White : ImageUtil.GetColor(colorElem["Background"].InnerText.Trim());
+                mi.StrongColor = colorElem["Strong"] == null ? Color.Red : ImageUtil.GetColor(colorElem["Strong"].InnerText.Trim());
+                mi.ForegroundColor = colorElem["Foreground"] == null ? Color.Black : ImageUtil.GetColor(colorElem["Foreground"].InnerText.Trim());
             }
             #endregion
 
+            #region Pitch
+            XmlElement pitchElem = rootElem["Pitch"];
+            if (pitchElem != null)
+            {
+                object pitchObj = Enum.Parse(typeof(PitchType), pitchElem.InnerText.Trim(), true);
+                try
+                {
+                    mi.PitchType = (PitchType)pitchObj;
+                }
+                catch (Exception) { mi.PitchType = PitchType.Variable; }
+            }
+            #endregion
             if (isValidMapInfo(mi)) return mi;
             return null;
         }
@@ -190,23 +206,25 @@ namespace PitchPitch.map
         private bool isValidMapInfo(MapInfo info)
         {
             if (info.MapSourceType == MapSourceType.None) return false;
-            if (info.ChipType == MapChipType.None) return false;
+            if (info.ChipDataInfo == null) return false;
+            if (info.ChipDataInfo.ChipType == MapChipType.None) return false;
 
-            if (info.ChipType == MapChipType.Image)
+            ChipDataInfo ci = info.ChipDataInfo;
+            if (ci.ChipType == MapChipType.Image)
             {
-                if (info.ChipSize == Size.Empty) return false;
-                if (string.IsNullOrEmpty(info.ChipFileName)) return false;
-                if (!File.Exists(Path.Combine(info.DirPath, info.ChipFileName))) return false;
+                if (ci.Size == Size.Empty) return false;
+                if (string.IsNullOrEmpty(ci.FileName)) return false;
+                if (!File.Exists(Path.Combine(info.DirectoryPath, ci.FileName))) return false;
             }
-            else if (info.ChipType == MapChipType.Builtin)
+            else if (ci.ChipType == MapChipType.Builtin)
             {
-                if (info.BuiltinChipName == MapChipBuiltinType.None) return false;
+                if (ci.BuiltinType == MapChipBuiltinType.None) return false;
             }
 
-            if (string.IsNullOrEmpty(info.Name)) return false;
-            if (string.IsNullOrEmpty(info.FileName)) return false;
+            if (string.IsNullOrEmpty(info.MapName)) return false;
+            if (string.IsNullOrEmpty(info.MapSourceFileName)) return false;
 
-            if (!File.Exists(Path.Combine(info.DirPath, info.FileName))) return false;
+            if (!File.Exists(Path.Combine(info.DirectoryPath, info.MapSourceFileName))) return false;
 
             return true;
         }
@@ -216,14 +234,21 @@ namespace PitchPitch.map
             Map map = null;
             MapChipData chipData = null;
 
-            switch (info.ChipType)
+            switch (info.ChipDataInfo.ChipType)
             {
                 case MapChipType.Builtin:
                     {
-                        switch (info.BuiltinChipName)
+                        switch (info.ChipDataInfo.BuiltinType)
                         {
                             case MapChipBuiltinType.Binary:
+                                chipData = BinaryChipData.LoadChipData(info);
                                 map = new BinaryMap();
+                                map.ChipData = chipData;
+                                break;
+                            case MapChipBuiltinType.Colors:
+                                chipData = ColorChipData.LoadChipData(info);
+                                map = new BasicMap();
+                                map.ChipData = chipData;
                                 break;
                         }
                     }
@@ -237,15 +262,16 @@ namespace PitchPitch.map
                     break;
             }
 
+
             switch (info.MapSourceType)
             {
                 case MapSourceType.Image:
                     {
-                        string srcPath = Path.Combine(info.DirPath, info.FileName);
-                        string mappingPath = Path.Combine(info.DirPath, info.Mapping);
+                        string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
+                        string mappingPath = Path.Combine(info.DirectoryPath, info.MappingFileName);
                         using (Bitmap srcBmp = (Bitmap)Bitmap.FromFile(srcPath))
                         {
-                            if (!string.IsNullOrEmpty(info.Mapping) && File.Exists(mappingPath))
+                            if (!string.IsNullOrEmpty(info.MappingFileName) && File.Exists(mappingPath))
                             {
                                 using (Bitmap mappingBmp = (Bitmap)Bitmap.FromFile(mappingPath))
                                 {
@@ -254,6 +280,24 @@ namespace PitchPitch.map
                             }
                             else
                             {
+                                map.LoadMapImage(srcBmp, null);
+                            }
+                        }
+                    }
+                    break;
+                case MapSourceType.Music:
+                    {
+                        string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
+
+                        Music music = Music.LoadMusic(srcPath);
+                        info.MaxPitch = music.MaxPitch;
+                        info.MinPitch = music.MinPitch;
+                        using (Bitmap srcBmp = music.GetMap(SdlDotNet.Core.Events.TargetFps, info.PlayerVx,
+                            info.ChipDataInfo.Size.Width, info.ChipDataInfo.Size.Height))
+                        {
+                            if (srcBmp != null)
+                            {
+                                srcBmp.Save("test.png");
                                 map.LoadMapImage(srcBmp, null);
                             }
                         }

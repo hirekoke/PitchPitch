@@ -13,11 +13,13 @@ namespace PitchPitch.scene
 
     class SceneMapSelect : Scene
     {
-        private Color _foreColor = Color.Black;
-        private Color _backColor = Color.White;
         private SdlDotNet.Graphics.Sprites.AnimatedSprite _cursor;
+        private SdlDotNet.Graphics.Sprites.AnimatedSprite _strongCursor;
 
         private MapLoader _loader;
+
+        private Surface _headerSurface = null;
+        private Surface _expSurface = null;
 
         private List<MapInfo> _mapInfos;
         private SurfaceCollection _mapSurfaces;
@@ -33,10 +35,17 @@ namespace PitchPitch.scene
         private Rectangle[] _randRects;
         private int _randSelectedIdx = 0;
 
+        private MenuItem[] _escItems = new MenuItem[] { new MenuItem(Key.Escape, Properties.Resources.MenuItem_ReturnTitle) };
+        private SurfaceCollection _escSurfaces;
+        private Rectangle[] _escRects;
+
         private bool _mapFocus = true;
+        private bool _escFocus = false; 
 
         private Rectangle _mapRect;
         private Rectangle _randRect;
+        private Rectangle _escRect;
+        private Rectangle _expRect;
 
         public SceneMapSelect()
         {
@@ -50,21 +59,56 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.LeftArrow, Key.RightArrow, Key.Return, Key.Escape,
                 Key.One, Key.Two, Key.R
             };
-            _randItems = new string[] { "練習用", "Random Map", "Endless Map", "Reload Maps" };
+            _randItems = new string[] 
+            { 
+                Properties.Resources.MenuItem_PracticeMap,
+                Properties.Resources.MenuItem_RandomMap,
+                Properties.Resources.MenuItem_EndlessMap,
+                Properties.Resources.MenuItem_ReloadMap
+            };
         }
 
         public override void Init(PitchPitch parent)
         {
             base.Init(parent);
-            _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
+            _strongCursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultStrongColor);
 
-            int h = 100;
-            _randRect = new Rectangle(60, h, (int)(parent.Size.Width/3.0), parent.Size.Height - h - 30);
-            _mapRect = new Rectangle(_randRect.Right + 40, h, parent.Size.Width - _randRect.Width - 160, parent.Size.Height - h - 30);
+            Size escSize = ResourceManager.MiddlePFont.SizeText(TextUtil.MenuToString(_escItems[0]));
+            _escRect = new Rectangle(
+                Constants.ScreenWidth - Constants.RightBottomItemMargin - escSize.Width - Constants.CursorMargin,
+                Constants.ScreenHeight - Constants.RightBottomItemMargin - escSize.Height,
+                escSize.Width + Constants.CursorMargin, escSize.Height);
+
+            _expRect = new Rectangle(
+                Constants.HeaderX + Constants.UnderHeaderMargin,
+                Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin,
+                Constants.ScreenWidth - Constants.UnderHeaderMargin * 2,
+                ResourceManager.SmallPFont.Height);
+
+            int top = _expRect.Bottom + Constants.SubHeaderBottomMargin;
+            int bottom = _escRect.Top - Constants.UnderHeaderMargin;
+            _mapRect = new Rectangle(
+                Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
+                top,
+                (int)((Constants.ScreenWidth - (Constants.HeaderX + Constants.UnderHeaderMargin * 2) - Constants.MenuColumnGap) / 2.0) - Constants.CursorMargin,
+                bottom - top);
+            _randRect = new Rectangle(
+                _mapRect.Right + Constants.MenuColumnGap + Constants.CursorMargin,
+                _mapRect.Top, _mapRect.Width, _mapRect.Height);
 
             _randSurfaces = new SurfaceCollection();
             _randRects = new Rectangle[_randItems.Length];
-            ImageManager.CreateStrMenu(_randItems, _foreColor, ref _randSurfaces, ref _randRects, _randRect.Width);
+            ImageUtil.CreateStrMenu(_randItems, Constants.DefaultForeColor, 
+                ref _randSurfaces, ref _randRects, _randRect.Width);
+            _randRects[_randRects.Length - 1].Offset(0, ResourceManager.SmallPFont.Height);
+
+            _escSurfaces = new SurfaceCollection();
+            _escRects = new Rectangle[_escItems.Length];
+            ImageUtil.CreateStrMenu(_escItems, Constants.DefaultStrongColor, ResourceManager.MiddlePFont,
+                ref _escSurfaces, ref _escRects, _escRect.Width, ResourceManager.MiddlePFont.Height);
+
+            _escFocus = false;
 
             if(_mapInfos.Count == 0)
                 updateMapInfos();
@@ -76,11 +120,12 @@ namespace PitchPitch.scene
             _mapInfos = _loader.LoadMapInfos();
 
             string[] infoStrs = Array.ConvertAll<MapInfo, string>(_mapInfos.ToArray(),
-                (mi) => { return mi.Name; });
+                (mi) => { return mi.MapName; });
 
             _mapSurfaces = new SurfaceCollection();
             _mapRects = new Rectangle[infoStrs.Length];
-            ImageManager.CreateStrMenu(infoStrs, _foreColor, ref _mapSurfaces, ref _mapRects, _mapRect.Width);
+            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+                ref _mapSurfaces, ref _mapRects, _mapRect.Width);
 
             int ih = 30;
             if (_mapRects.Length > 0) ih = _mapRects[0].Height;
@@ -120,14 +165,15 @@ namespace PitchPitch.scene
 
             string[] infoStrs = Array.ConvertAll<MapInfo, string>(
                 _mapInfos.GetRange(_mapDrawFirstIdx, _mapDrawLength).ToArray(),
-                (mi) => { return mi.Name; });
+                (mi) => { return mi.MapName; });
             
             if (_mapDrawSurfaces != null)
                 foreach (Surface s in _mapDrawSurfaces) s.Dispose();
 
             _mapDrawSurfaces = new SurfaceCollection();
             _mapDrawRects = new Rectangle[infoStrs.Length];
-            ImageManager.CreateStrMenu(infoStrs, _foreColor, ref _mapDrawSurfaces, ref _mapDrawRects, _mapRect.Width);
+            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+                ref _mapDrawSurfaces, ref _mapDrawRects, _mapRect.Width);
         }
 
         protected override int procKeyEvent(Key key)
@@ -142,10 +188,22 @@ namespace PitchPitch.scene
                             (_mapSelectedIdx + _mapRects.Length - 1) : _mapSelectedIdx - 1) % _mapRects.Length;
                         updateMapIndex();
                     }
+                    else if (_escFocus)
+                    {
+                        _escFocus = false;
+                        _randSelectedIdx = _randRects.Length - 1;
+                    }
                     else
                     {
-                        _randSelectedIdx = (_randSelectedIdx - 1 < 0 ?
-                            (_randSelectedIdx + _randRects.Length - 1) : _randSelectedIdx - 1) % _randRects.Length;
+                        if (_randSelectedIdx == 0)
+                        {
+                            _escFocus = true;
+                        }
+                        else
+                        {
+                            _randSelectedIdx = (_randSelectedIdx - 1 < 0 ?
+                                (_randSelectedIdx + _randRects.Length - 1) : _randSelectedIdx - 1) % _randRects.Length;
+                        }
                     }
                     break;
                 case Key.DownArrow:
@@ -154,17 +212,46 @@ namespace PitchPitch.scene
                         _mapSelectedIdx = (_mapSelectedIdx + 1) % _mapRects.Length;
                         updateMapIndex();
                     }
+                    else if (_escFocus)
+                    {
+                        _escFocus = false;
+                        _randSelectedIdx = 0;
+                    }
                     else
                     {
-                        _randSelectedIdx = (_randSelectedIdx + 1) % _randRects.Length;
+                        if (_randSelectedIdx == _randRects.Length - 1)
+                        {
+                            _escFocus = true;
+                        }
+                        else
+                        {
+                            _randSelectedIdx = (_randSelectedIdx + 1) % _randRects.Length;
+                        }
                     }
                     break;
                 case Key.RightArrow:
                 case Key.LeftArrow:
-                    if (_mapFocus || _mapRects.Length > 0) _mapFocus = !_mapFocus;
+                    if (_escFocus) _escFocus = false;
+                    if (_mapFocus || _mapRects.Length > 0)
+                    {
+                        _mapFocus = !_mapFocus;
+                        if (_mapFocus)
+                        {
+                            _mapSelectedIdx = _randSelectedIdx;
+                            if (_mapSelectedIdx < 0) _mapSelectedIdx = 0;
+                            if (_mapSelectedIdx > _mapRects.Length - 1) _mapSelectedIdx = _mapRects.Length - 1;
+                        }
+                        else if(!_escFocus)
+                        {
+                            _randSelectedIdx = _mapSelectedIdx;
+                            if (_randSelectedIdx < 0) _randSelectedIdx = 0;
+                            if (_randSelectedIdx > _randRects.Length - 1) _randSelectedIdx = _randRects.Length - 1;
+                        }
+                    }
                     break;
                 case Key.Return:
-                    idx = 1;
+                    if (_escFocus) idx = 0;
+                    else idx = 1;
                     break;
                 case Key.Escape:
                     idx = 0;
@@ -172,6 +259,7 @@ namespace PitchPitch.scene
             }
             return idx;
         }
+
         protected override void procMenu(int idx)
         {
             if (idx < 0) return;
@@ -222,17 +310,40 @@ namespace PitchPitch.scene
 
         public override void Draw(SdlDotNet.Graphics.Surface s)
         {
-            s.Fill(_backColor);
+            s.Fill(Constants.DefaultBackColor);
 
-            ImageManager.DrawSelections(s, _randSurfaces, _randRects, _cursor,
-                _randRect.Location, (_mapFocus ? -1 : _randSelectedIdx), ImageAlign.MiddleLeft);
+            if (_headerSurface == null)
+            {
+                _headerSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_MapSelect, 
+                    Constants.DefaultStrongColor);
+            }
+            s.Blit(_headerSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
-            ImageManager.DrawSelections(s, _mapDrawSurfaces, _mapDrawRects, _cursor,
+            if (_expSurface == null)
+            {
+                _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_MapSelect,
+                    Constants.DefaultStrongColor);
+            }
+            s.Blit(_expSurface, _expRect.Location);
+
+            ImageUtil.DrawSelections(s, _randSurfaces, _randRects, _cursor,
+                _randRect.Location, ((_mapFocus || _escFocus) ? -1 : _randSelectedIdx), ImageAlign.MiddleLeft);
+
+            ImageUtil.DrawSelections(s, _mapDrawSurfaces, _mapDrawRects, _cursor,
                 _mapRect.Location, (_mapFocus ? _mapSelectedIdx - _mapDrawFirstIdx : -1), ImageAlign.MiddleLeft);
+
+            ImageUtil.DrawSelections(s, _escSurfaces, _escRects, _strongCursor,
+                _escRect.Location, (_escFocus ? 0 : -1), ImageAlign.MiddleLeft);
         }
 
         public override void Dispose()
         {
+            if (_headerSurface != null) _headerSurface.Dispose();
+            if (_randSurfaces != null) foreach (Surface s in _randSurfaces) s.Dispose();
+            if (_mapDrawSurfaces != null) foreach (Surface s in _mapDrawSurfaces) s.Dispose();
+            if (_mapSurfaces != null) foreach (Surface s in _mapSurfaces) s.Dispose();
+            if (_escSurfaces != null) foreach (Surface s in _escSurfaces) s.Dispose();
+            if (_expSurface != null) _expSurface.Dispose();
             base.Dispose();
         }
     }

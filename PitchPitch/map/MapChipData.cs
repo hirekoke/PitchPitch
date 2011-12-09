@@ -11,8 +11,10 @@ namespace PitchPitch.map
     {
         public double X;
         public double Y;
-        public Point Idx;
-        public PointD ViewPoint;
+        public int XIdx;
+        public int YIdx;
+        public double ViewX;
+        public double ViewY;
         public uint ChipData;
         public int Hardness;
     }
@@ -21,8 +23,8 @@ namespace PitchPitch.map
     {
         protected int _chipWidth = 16;
         protected int _chipHeight = 16;
-        public int ChipWidth { get { return _chipWidth; } }
-        public int ChipHeight { get { return _chipHeight; } }
+        public int ChipWidth { get { return _chipWidth; } set { _chipWidth = value; } }
+        public int ChipHeight { get { return _chipHeight; } set { _chipHeight = value; } }
 
         protected uint _wallChip;
         public uint WallChip { get { return _wallChip; } }

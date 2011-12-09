@@ -117,32 +117,125 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ConfigDirName" xml:space="preserve">
+  <data name="DeviceTypeName_Capture" xml:space="preserve">
+    <value>録音</value>
+    <comment>デバイスタイプ名</comment>
+  </data>
+  <data name="DeviceTypeName_Render" xml:space="preserve">
+    <value>再生</value>
+    <comment>デバイスタイプ名</comment>
+  </data>
+  <data name="Dirname_Config" xml:space="preserve">
     <value>PitchPitch</value>
-    <comment>設定ファイルを格納するディレクトリ名</comment>
+    <comment>ディレクトリ名-設定ファイル</comment>
   </data>
-  <data name="DefaultPFont" xml:space="preserve">
-    <value>mplus-2c-black.ttf</value>
-    <comment>デフォルトプロフォーショナルフォント</comment>
-  </data>
-  <data name="DefaultTTFont" xml:space="preserve">
-    <value>mplus-2m-bold.ttf</value>
-    <comment>デフォルト等幅フォント</comment>
-  </data>
-  <data name="FontDir" xml:space="preserve">
+  <data name="Dirname_Font" xml:space="preserve">
     <value>font</value>
-    <comment>フォントファイルが格納されるディレクトリ名</comment>
+    <comment>ディレクトリ名-フォントファイル</comment>
   </data>
-  <data name="ImageDir" xml:space="preserve">
-    <value>image</value>
-    <comment>画像ファイルが格納されるディレクトリ名</comment>
-  </data>
-  <data name="MapDir" xml:space="preserve">
+  <data name="Dirname_Map" xml:space="preserve">
     <value>map</value>
-    <comment>マップデータを格納するディレクトリ名</comment>
+    <comment>ディレクトリ名-マップデータ</comment>
   </data>
-  <data name="Namespace" xml:space="preserve">
-    <value>PitchPitch</value>
+  <data name="Explanation_MapSelect" xml:space="preserve">
+    <value>↑↓←→で選択，Returnで決定</value>
+    <comment>説明文字列</comment>
+  </data>
+  <data name="Explanation_TitleAlert" xml:space="preserve">
+    <value>注意: このゲームでは酸欠・喉の痛み・頭痛が発生することがあります</value>
+    <comment>説明文字列</comment>
+  </data>
+  <data name="Font_DefaultP" xml:space="preserve">
+    <value>mplus-2c-black.ttf</value>
+    <comment>フォント-デフォルトプロフォーショナル</comment>
+  </data>
+  <data name="Font_DefaultTT" xml:space="preserve">
+    <value>mplus-2m-bold.ttf</value>
+    <comment>フォント-デフォルト等幅</comment>
+  </data>
+  <data name="HeaderTitle_AudioDevices" xml:space="preserve">
+    <value>デバイス選択</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_Calibration" xml:space="preserve">
+    <value>音域設定</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_Clear" xml:space="preserve">
+    <value>CLEAR</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_GameOver" xml:space="preserve">
+    <value>GAME OVER</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_MapSelect" xml:space="preserve">
+    <value>MAP SELECT</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_Option" xml:space="preserve">
+    <value>OPTION</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="HeaderTitle_Pause" xml:space="preserve">
+    <value>PAUSE</value>
+    <comment>ヘッダタイトル</comment>
+  </data>
+  <data name="MenuItem_EndlessMap" xml:space="preserve">
+    <value>エンドレス</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_MapSelect" xml:space="preserve">
+    <value>Select Map</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_Option" xml:space="preserve">
+    <value>Option</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_PracticeMap" xml:space="preserve">
+    <value>練習用</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_Quit" xml:space="preserve">
+    <value>Quit</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_RandomMap" xml:space="preserve">
+    <value>ランダム</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_ReloadMap" xml:space="preserve">
+    <value>マップ再読み込み</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_ResumeGame" xml:space="preserve">
+    <value>Resume Game</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_RetryStage" xml:space="preserve">
+    <value>Retry</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_ReturnTitle" xml:space="preserve">
+    <value>Return to Title</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="MenuItem_StartGame" xml:space="preserve">
+    <value>Start</value>
+    <comment>メニュー文字列</comment>
+  </data>
+  <data name="Str_Calibrating" xml:space="preserve">
+    <value>計測中…</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_MaxPitch" xml:space="preserve">
+    <value>高音</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_MinPitch" xml:space="preserve">
+    <value>低音</value>
+    <comment>文字列</comment>
   </data>
   <data name="WindowTitle" xml:space="preserve">
     <value>Pitch Pitch</value>

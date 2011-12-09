@@ -9,7 +9,7 @@ namespace PitchPitch.map
         public EmptyMap()
         {
             _mapInfo = new MapInfo();
-            _mapInfo.Name = "練習用";
+            _mapInfo.MapName = "練習用";
             _mapInfo.PlayerVx = 0;
         }
 

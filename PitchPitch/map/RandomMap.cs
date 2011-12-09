@@ -18,7 +18,13 @@ namespace PitchPitch.map
             _rand = new Random();
             
             _mapInfo = new MapInfo();
-            _mapInfo.Name = "Random";
+            _mapInfo.MapName = "Random";
+
+            Color light, dark, strong;
+            ImageUtil.GetRandomColors(out light, out dark, out strong);
+            _mapInfo.BackgroundColor = light;
+            _mapInfo.ForegroundColor = dark;
+            _mapInfo.StrongColor = strong;
 
             _columnNum = 200;
         }
@@ -28,7 +34,6 @@ namespace PitchPitch.map
             base.Init(parent, viewSize);
 
             _rowNum = _needRowNum;
-            _mapInfo.Size = new Size(_chipData.ChipWidth * _columnNum, _chipData.ChipHeight * _rowNum);
 
             int holeY = (int)(_needRowNum / 2.0);
             int holeRad = _holeRadMax;

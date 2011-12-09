@@ -6,7 +6,7 @@ using SdlDotNet.Graphics;
 
 namespace PitchPitch.map
 {
-    class BinaryMap : Map
+    class BinaryMap : BasicMap
     {
         public override Color ForeColor
         {

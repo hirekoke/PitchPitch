@@ -24,8 +24,8 @@ namespace PitchPitch
             get
             {
                 if(_smallTTFont == null)
-                    _smallTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir, 
-                        Properties.Resources.DefaultTTFont), 16);
+                    _smallTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font, 
+                        Properties.Resources.Font_DefaultTT), 16);
                 return _smallTTFont;
             }
         }
@@ -36,8 +36,8 @@ namespace PitchPitch
             get
             {
                 if (_middleTTFont == null)
-                    _middleTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultTTFont), 24);
+                    _middleTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultTT), 24);
                 return _middleTTFont;
             }
         }
@@ -48,8 +48,8 @@ namespace PitchPitch
             get
             {
                 if(_largeTTFont == null)
-                    _largeTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultTTFont), 32);
+                    _largeTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultTT), 32);
                 return _largeTTFont;
             }
         }
@@ -60,8 +60,8 @@ namespace PitchPitch
             get
             {
                 if (_smallPFont == null)
-                    _smallPFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultPFont), 16);
+                    _smallPFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultP), 16);
                 return _smallPFont;
             }
         }
@@ -72,8 +72,8 @@ namespace PitchPitch
             get
             {
                 if (_middlePFont == null)
-                    _middlePFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultPFont), 24);
+                    _middlePFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultP), 24);
                 return _middlePFont;
             }
         }
@@ -84,21 +84,21 @@ namespace PitchPitch
             get
             {
                 if (_largePFont == null)
-                    _largePFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultPFont), 32);
+                    _largePFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultP), 32);
                 return _largePFont;
             }
         }
 
         public static SdlGraphics.Font LoadTTFont(int size)
         {
-            return new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultTTFont), size);
+            return new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultTT), size);
         }
         public static SdlGraphics.Font LoadPFont(int size)
         {
-            return new SdlGraphics.Font(Path.Combine(Properties.Resources.FontDir,
-                        Properties.Resources.DefaultPFont), size);
+            return new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
+                        Properties.Resources.Font_DefaultP), size);
         }
 
         #endregion
@@ -127,7 +127,7 @@ namespace PitchPitch
         public static AnimatedSprite GetColoredCursorGraphic(Color c)
         {
             if (_coloredCursors.ContainsKey(c)) return _coloredCursors[c];
-            AnimatedSprite a = ImageManager.CreateColored(CursorGraphic, c);
+            AnimatedSprite a = ImageUtil.CreateColored(CursorGraphic, c);
             _coloredCursors.Add(c, a);
             return a;
         }
@@ -136,7 +136,7 @@ namespace PitchPitch
         #region 画像読み込みメソッド
         private static string getImgResourceFullName(string resourceName)
         {
-            return string.Format("{0}.{1}.{2}", Properties.Resources.Namespace, Properties.Resources.ImageDir, resourceName);
+            return string.Format("{0}.{1}.{2}", Constants.Namespace, Constants.Dirname_Image, resourceName);
         }
 
         private static Bitmap getImgResource(string resourceName)

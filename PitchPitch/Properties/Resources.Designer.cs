@@ -61,65 +61,272 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   録音 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DeviceTypeName_Capture {
+            get {
+                return ResourceManager.GetString("DeviceTypeName_Capture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   再生 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DeviceTypeName_Render {
+            get {
+                return ResourceManager.GetString("DeviceTypeName_Render", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   PitchPitch に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ConfigDirName {
+        internal static string Dirname_Config {
             get {
-                return ResourceManager.GetString("ConfigDirName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   mplus-2c-black.ttf に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string DefaultPFont {
-            get {
-                return ResourceManager.GetString("DefaultPFont", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   mplus-2m-bold.ttf に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string DefaultTTFont {
-            get {
-                return ResourceManager.GetString("DefaultTTFont", resourceCulture);
+                return ResourceManager.GetString("Dirname_Config", resourceCulture);
             }
         }
         
         /// <summary>
         ///   font に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string FontDir {
+        internal static string Dirname_Font {
             get {
-                return ResourceManager.GetString("FontDir", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   image に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string ImageDir {
-            get {
-                return ResourceManager.GetString("ImageDir", resourceCulture);
+                return ResourceManager.GetString("Dirname_Font", resourceCulture);
             }
         }
         
         /// <summary>
         ///   map に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string MapDir {
+        internal static string Dirname_Map {
             get {
-                return ResourceManager.GetString("MapDir", resourceCulture);
+                return ResourceManager.GetString("Dirname_Map", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   PitchPitch に類似しているローカライズされた文字列を検索します。
+        ///   ↑↓←→で選択，Returnで決定 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Namespace {
+        internal static string Explanation_MapSelect {
             get {
-                return ResourceManager.GetString("Namespace", resourceCulture);
+                return ResourceManager.GetString("Explanation_MapSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   注意: このゲームでは酸欠・喉の痛み・頭痛が発生することがあります に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Explanation_TitleAlert {
+            get {
+                return ResourceManager.GetString("Explanation_TitleAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   mplus-2c-black.ttf に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Font_DefaultP {
+            get {
+                return ResourceManager.GetString("Font_DefaultP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   mplus-2m-bold.ttf に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Font_DefaultTT {
+            get {
+                return ResourceManager.GetString("Font_DefaultTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   デバイス選択 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_AudioDevices {
+            get {
+                return ResourceManager.GetString("HeaderTitle_AudioDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   音域設定 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_Calibration {
+            get {
+                return ResourceManager.GetString("HeaderTitle_Calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   CLEAR に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_Clear {
+            get {
+                return ResourceManager.GetString("HeaderTitle_Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   GAME OVER に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_GameOver {
+            get {
+                return ResourceManager.GetString("HeaderTitle_GameOver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   MAP SELECT に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_MapSelect {
+            get {
+                return ResourceManager.GetString("HeaderTitle_MapSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   OPTION に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_Option {
+            get {
+                return ResourceManager.GetString("HeaderTitle_Option", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   PAUSE に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HeaderTitle_Pause {
+            get {
+                return ResourceManager.GetString("HeaderTitle_Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   エンドレス に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_EndlessMap {
+            get {
+                return ResourceManager.GetString("MenuItem_EndlessMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select Map に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_MapSelect {
+            get {
+                return ResourceManager.GetString("MenuItem_MapSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Option に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_Option {
+            get {
+                return ResourceManager.GetString("MenuItem_Option", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   練習用 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_PracticeMap {
+            get {
+                return ResourceManager.GetString("MenuItem_PracticeMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Quit に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_Quit {
+            get {
+                return ResourceManager.GetString("MenuItem_Quit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ランダム に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_RandomMap {
+            get {
+                return ResourceManager.GetString("MenuItem_RandomMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   マップ再読み込み に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_ReloadMap {
+            get {
+                return ResourceManager.GetString("MenuItem_ReloadMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Resume Game に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_ResumeGame {
+            get {
+                return ResourceManager.GetString("MenuItem_ResumeGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Retry に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_RetryStage {
+            get {
+                return ResourceManager.GetString("MenuItem_RetryStage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Return to Title に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_ReturnTitle {
+            get {
+                return ResourceManager.GetString("MenuItem_ReturnTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Start に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MenuItem_StartGame {
+            get {
+                return ResourceManager.GetString("MenuItem_StartGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   計測中… に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_Calibrating {
+            get {
+                return ResourceManager.GetString("Str_Calibrating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   高音 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_MaxPitch {
+            get {
+                return ResourceManager.GetString("Str_MaxPitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   低音 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_MinPitch {
+            get {
+                return ResourceManager.GetString("Str_MinPitch", resourceCulture);
             }
         }
         

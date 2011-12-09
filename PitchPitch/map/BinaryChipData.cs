@@ -32,5 +32,13 @@ namespace PitchPitch.map
         }
 
         public override void Dispose() { }
+
+        public static BinaryChipData LoadChipData(MapInfo info)
+        {
+            BinaryChipData c = new BinaryChipData();
+            c._chipWidth = info.ChipDataInfo.Size.Width;
+            c._chipHeight = info.ChipDataInfo.Size.Height;
+            return c;
+        }
     }
 }

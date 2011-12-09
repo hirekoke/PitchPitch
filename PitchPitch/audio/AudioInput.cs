@@ -95,16 +95,6 @@ namespace PitchPitch.audio
             {
                 _opQueue.Enqueue(new Operation(Operation.OprationType.Dispose));
             }
-            _thread.Join();
-
-            if (_devices != null) _devices.Dispose();
-
-            // イベント発火
-            InputDisposedEventHandler del = Disposed;
-            if (del != null)
-            {
-                del.Invoke(this, new InputDisposedEventArgs());
-            }
         }
 
 
@@ -138,6 +128,18 @@ namespace PitchPitch.audio
         }
 
         #region 内部実装
+        private void disposeImpl()
+        {
+            if (_devices != null) _devices.Dispose();
+
+            // イベント発火
+            InputDisposedEventHandler del = Disposed;
+            if (del != null)
+            {
+                del.Invoke(this, new InputDisposedEventArgs());
+            }
+        }
+
         private void releaseDevice()
         {
             if (_capDevice != null) _capDevice.Dispose();
@@ -222,14 +224,13 @@ namespace PitchPitch.audio
 
         private void stopCaptureImpl()
         {
-            if (_audioClient == null || _capClient == null)
-            {
-                return;
-            }
 
             try
             {
-                _audioClient.Stop();
+                if (_audioClient != null && _capClient != null)
+                {
+                    _audioClient.Stop();
+                }
 
                 // イベント発火
                 CaptureStoppedEventHandler del1 = CaptureStopped;
@@ -246,6 +247,7 @@ namespace PitchPitch.audio
             catch (System.Runtime.InteropServices.COMException ex)
             {
 #warning エラー処理
+                throw new Exception(ex.Message);
             }
         }
 
@@ -358,6 +360,7 @@ namespace PitchPitch.audio
                     {
                         case Operation.OprationType.Dispose: // 終了条件
                             releaseDevice();
+                            disposeImpl();
                             _capturing = false;
                             return;
                         case Operation.OprationType.UpdateDevices: // Device一覧アップデート条件

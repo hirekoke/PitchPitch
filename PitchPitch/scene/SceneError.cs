@@ -27,6 +27,13 @@ namespace PitchPitch.scene
             }
         }
 
+        private SceneType _nextScene = SceneType.Option;
+        public SceneType NextScene
+        {
+            get { return _nextScene; }
+            set { _nextScene = value; }
+        }
+
         public SceneError()
         {
             _keys = new Key[] { Key.Return };
@@ -89,11 +96,11 @@ namespace PitchPitch.scene
             {
                 _errorMessageSurface = new SurfaceCollection();
                 _errorMessageRects = new Rectangle[_errorMessages.Length];
-                ImageManager.CreateStrMenu(_errorMessages, Color.White, ref _errorMessageSurface, ref _errorMessageRects, s.Width);
+                ImageUtil.CreateStrMenu(_errorMessages, Color.White, ref _errorMessageSurface, ref _errorMessageRects, s.Width);
             }
             if (_errorMessageSurface != null)
             {
-                ImageManager.DrawSurfaces(s, _errorMessageSurface, _errorMessageRects, new Point(0, 100), ImageAlign.TopCenter);
+                ImageUtil.DrawSurfaces(s, _errorMessageSurface, _errorMessageRects, new Point(0, 100), ImageAlign.TopCenter);
             }
         }
     }

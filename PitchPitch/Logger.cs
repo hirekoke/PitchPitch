@@ -19,7 +19,7 @@ namespace PitchPitch
             get
             {
                 string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                dirPath = Path.Combine(dirPath, Properties.Resources.ConfigDirName);
+                dirPath = Path.Combine(dirPath, Properties.Resources.Dirname_Config);
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);

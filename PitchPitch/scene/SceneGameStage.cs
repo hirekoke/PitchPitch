@@ -55,45 +55,39 @@ namespace PitchPitch.scene
 
         #region 色
         protected Color _foreColor = Color.Black;
-        public Color ForeColor
-        {
-            get { return _foreColor; }
-            set
-            {
-                _foreColor = value;
-                _map.ForeColor = _foreColor;
-                _parent.Player.ForeColor = _foreColor;
-                _foreCursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
-
-                if (_keyboardSurface != null) createKeyRects();
-                if (_pauseSurface != null) { _pauseSurface.Dispose(); _pauseSurface = null; }
-                if (_clearSurface != null) { _clearSurface.Dispose(); _clearSurface = null; }
-            }
-        }
         protected Color _strongColor = Color.Red;
-        public Color StrongColor
-        {
-            get { return _strongColor; }
-            set
-            {
-                _strongColor = value;
-                _map.StrongColor = _strongColor;
-            }
-        }
         protected Color _backColor = Color.White;
-        public Color BackColor
+        protected void setForeColor(Color value)
         {
-            get { return _backColor; }
-            set
-            {
-                _backColor = value;
-                _map.BackColor = _backColor;
-                _parent.Player.ExplosionColor = _backColor;
-                _backCursor = ResourceManager.GetColoredCursorGraphic(_backColor);
-                if (_keyboardSurface != null) createKeyRects();
-            }
+            _foreColor = value;
+            _map.ForeColor = _foreColor;
+            _parent.Player.ForeColor = _foreColor;
+            _foreCursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+
+            if (_keyboardSurface != null) createKeyRects();
+            if (_pauseSurface != null) { _pauseSurface.Dispose(); _pauseSurface = null; }
+            if (_clearSurface != null) { _clearSurface.Dispose(); _clearSurface = null; }
+        }
+        protected void setStrongColor(Color value)
+        {
+            _strongColor = value;
+            _map.StrongColor = _strongColor;
+        }
+        protected void setBackColor(Color value)
+        {
+            _backColor = value;
+            _map.BackColor = _backColor;
+            _parent.Player.ExplosionColor = _backColor;
+            _backCursor = ResourceManager.GetColoredCursorGraphic(_backColor);
+            if (_keyboardSurface != null) createKeyRects();
+
         }
         #endregion
+
+        protected double _minFreq = 220;
+        protected double _maxFreq = 880;
+        protected double _minFreqLog = Math.Log(220);
+        protected double _maxFreqLog = Math.Log(880);
 
         protected SdlDotNet.Graphics.Sprites.AnimatedSprite _foreCursor = null;
         protected SdlDotNet.Graphics.Sprites.AnimatedSprite _backCursor = null;
@@ -113,6 +107,7 @@ namespace PitchPitch.scene
             {
                 _isPaused = value;
                 _parent.Player.IsPaused = value;
+                _prevProcTime = Environment.TickCount;
             }
         }
 
@@ -123,15 +118,15 @@ namespace PitchPitch.scene
 
             _pauseMenuItems = new MenuItem[]
             {
-                new MenuItem(Key.Escape, "Resume Game"),
-                new MenuItem(Key.R, "Retry Stage"),
-                new MenuItem(Key.M, "Select Map"),
-                new MenuItem(Key.T, "Return to Title")
+                new MenuItem(Key.Escape, Properties.Resources.MenuItem_ResumeGame),
+                new MenuItem(Key.R, Properties.Resources.MenuItem_RetryStage),
+                new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
+                new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
             };
             _clearMenuItems = new MenuItem[]
             {
-                new MenuItem(Key.M, "Select Map"),
-                new MenuItem(Key.T, "Return to Title")
+                new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
+                new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
             };
 
             _keys = new Key[]
@@ -157,19 +152,32 @@ namespace PitchPitch.scene
             _clearSelectedIdx = 0;
 
             #region 配置
-            int mmw = 300; int mmh = 100; int kw = 80;
-            _keyRect = new Rectangle(
-                _margin, _margin,
-                kw, parent.Size.Height - mmh - _margin * 3);
             _viewRect = new Rectangle(
-                _keyRect.Right + 1, _margin,
-                parent.Size.Width - _keyRect.Right - 1 - _margin, _keyRect.Height);
+                Constants.ScreenWidth - Constants.StageViewWidth - Constants.StageMargin, 
+                Constants.StageMargin,
+                Constants.StageViewWidth,
+                Constants.StageViewHeight);
+            _keyRect = new Rectangle(
+                Constants.StageMargin,
+                Constants.StageMargin,
+                _viewRect.Left - 1 - Constants.StageMargin,
+                Constants.StageViewHeight);
             _miniMapRect = new Rectangle(
-                parent.Size.Width - _margin - mmw, parent.Size.Height - _margin - mmh,
-                mmw, mmh);
+                Constants.ScreenWidth - Constants.MiniMapWidth - Constants.StageMargin,
+                _viewRect.Bottom + Constants.StageGap,
+                Constants.MiniMapWidth, 
+                Constants.ScreenHeight - Constants.StageMargin - _viewRect.Bottom - Constants.StageGap);
             _playerInfoRect = new Rectangle(
-                _margin, _keyRect.Bottom + _margin,
-                parent.Size.Width - mmw - _margin * 3, mmh);
+                Constants.StageMargin,
+                _viewRect.Bottom + Constants.StageGap,
+                Constants.ScreenWidth - _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
+                _miniMapRect.Height);
+            #endregion
+
+            #region 色
+            setForeColor(_map.MapInfo.ForegroundColor);
+            setStrongColor(_map.MapInfo.StrongColor);
+            setBackColor(_map.MapInfo.BackgroundColor);
             #endregion
 
             #region View/Map/Player
@@ -188,23 +196,31 @@ namespace PitchPitch.scene
             _parent.Player.Vx = _map.MapInfo.PlayerVx;
 
             _view.X = -_mapMargin;
-
-            ForeColor = _map.MapInfo.ForeColor;
-            StrongColor = _map.MapInfo.StrongColor;
-            BackColor = _map.MapInfo.BackColor;
             #endregion
 
             #region メニュー作成
             _pauseMenuSurfaces = new SurfaceCollection(); _pauseMenuRects = new Rectangle[_pauseMenuItems.Length];
-            ImageManager.CreateStrMenu(_pauseMenuItems, _backColor, ref _pauseMenuSurfaces, ref _pauseMenuRects);
+            ImageUtil.CreateStrMenu(_pauseMenuItems, _backColor, ref _pauseMenuSurfaces, ref _pauseMenuRects);
 
             _clearMenuSurfaces = new SurfaceCollection(); _clearMenuRects = new Rectangle[_clearMenuItems.Length];
-            ImageManager.CreateStrMenu(_clearMenuItems, _foreColor, ref _clearMenuSurfaces, ref _clearMenuRects);
+            ImageUtil.CreateStrMenu(_clearMenuItems, _foreColor, ref _clearMenuSurfaces, ref _clearMenuRects);
             #endregion
 
-            _minFreq = Math.Log(Config.Instance.MinFreq);
-            _maxFreq = Math.Log(Config.Instance.MaxFreq);
-            
+            #region ピッチ設定
+            if (_map.MapInfo.PitchType == map.PitchType.Fixed)
+            {
+                _maxFreq = _map.MapInfo.MaxPitch;
+                _minFreq = _map.MapInfo.MinPitch;
+            }
+            else
+            {
+                _minFreq = Config.Instance.MinFreq;
+                _maxFreq = Config.Instance.MaxFreq;
+            }
+            _maxFreqLog = Math.Log(_maxFreq);
+            _minFreqLog = Math.Log(_minFreq);
+            #endregion
+
             createKeyRects();
             if (_mapSurface != null)
             {
@@ -271,14 +287,14 @@ namespace PitchPitch.scene
             _keyboardSurface = null;
 
             ToneAnalyzer analyzer = _parent.AudioInput.ToneAnalyzer;
-            ToneResult maxTone = analyzer.Analyze(Config.Instance.MaxFreq, 1.0);
-            ToneResult minTone = analyzer.Analyze(Config.Instance.MinFreq, 1.0);
+            ToneResult maxTone = analyzer.Analyze(_maxFreq, 1.0);
+            ToneResult minTone = analyzer.Analyze(_minFreq, 1.0);
 
             double nearMaxFreq = Math.Log(maxTone.Pitch - maxTone.PitchDiff);
             double nearMinFreq = Math.Log(minTone.Pitch - minTone.PitchDiff);
 
-            double maxY = (nearMaxFreq - _minFreq) / (_maxFreq - _minFreq);
-            double minY = (nearMinFreq - _minFreq) / (_maxFreq - _minFreq);
+            double maxY = (nearMaxFreq - _minFreqLog) / (_maxFreqLog - _minFreqLog);
+            double minY = (nearMinFreq - _minFreqLog) / (_maxFreqLog - _minFreqLog);
             maxY = _view.Height - maxY * _view.Height;
             minY = _view.Height - minY * _view.Height;
 
@@ -290,7 +306,7 @@ namespace PitchPitch.scene
             int toneIdx = minTone.ToneIdx;
             int oct = minTone.Octave;
 
-            num += 2;
+            num += 3;
             toneIdx--;
             if (toneIdx < 0)
             {
@@ -337,21 +353,19 @@ namespace PitchPitch.scene
         #region 更新
 
         #region 自機位置更新
-        private const double _vxUnit = 0.0166666666666667;
-        private double _minFreq = Math.Log(220);
-        private double _maxFreq = Math.Log(880);
+        protected const double _vxUnit = 0.0166666666666667;
 
-        private double _prevYDiff = 0;
-        private double _yDiff = 0;
-        private double _integral = 0;
-        private double _coefP = 0.3;
-        private double _coefI = 0;
-        private double _coefD = 0;
-        private double _diffT = 1; // sec
-        private int _maxDiffY = 10;
+        protected double _prevYDiff = 0;
+        protected double _yDiff = 0;
+        protected double _integral = 0;
+        protected double _coefP = 0.3;
+        protected double _coefI = 0;
+        protected double _coefD = 0;
+        protected double _diffT = 1; // sec
+        protected int _maxDiffY = 10;
 
-        private long _prevProcTime = 0;
-        protected void updatePlayerPos()
+        protected long _prevProcTime = 0;
+        protected virtual void updatePlayerPos()
         {
             gameobj.Player player = _parent.Player;
 
@@ -371,7 +385,7 @@ namespace PitchPitch.scene
             {
                 _toneResult = tmp;
 
-                double yr = (pitch - _minFreq) / (_maxFreq - _minFreq);
+                double yr = (pitch - _minFreqLog) / (_maxFreqLog - _minFreqLog);
                 target = _view.Height - yr * _view.Height + _view.Y;
 
                 _prevYDiff = _yDiff;
@@ -681,12 +695,15 @@ namespace PitchPitch.scene
 
             if (_pauseSurface == null)
             {
-                _pauseSurface = ResourceManager.LargePFont.Render("PAUSE", _backColor);
+                _pauseSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_Pause, _backColor);
             }
-            s.Blit(_pauseSurface, new Point(10, 10));
+            s.Blit(_pauseSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
-            ImageManager.DrawSelections(s, _pauseMenuSurfaces, _pauseMenuRects, 
-                _backCursor, new Point(40, 20 + _pauseSurface.Height), _pauseSelectedIdx, ImageAlign.MiddleLeft);
+            ImageUtil.DrawSelections(s, _pauseMenuSurfaces, _pauseMenuRects, 
+                _backCursor, new Point(
+                    Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
+                    Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin),
+                    _pauseSelectedIdx, ImageAlign.MiddleLeft);
         }
 
         /// <summary>クリア画面を描画する</summary>
@@ -702,12 +719,15 @@ namespace PitchPitch.scene
 
             if (_clearSurface == null)
             {
-                _clearSurface = ResourceManager.LargePFont.Render("CLEAR", _foreColor);
+                _clearSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_Clear, _foreColor);
             }
-            s.Blit(_clearSurface, new Point(10, 10));
+            s.Blit(_clearSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
-            ImageManager.DrawSelections(s, _clearMenuSurfaces, _clearMenuRects,
-                _foreCursor, new Point(40, 20 + _clearSurface.Height), _clearSelectedIdx, ImageAlign.MiddleLeft);
+            ImageUtil.DrawSelections(s, _clearMenuSurfaces, _clearMenuRects,
+                _foreCursor, new Point(
+                    Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
+                    Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin), 
+                    _clearSelectedIdx, ImageAlign.MiddleLeft);
         }
 
         protected virtual void renderPlayerInformation(Surface s)
@@ -730,7 +750,7 @@ namespace PitchPitch.scene
                 s.Blit(ts, new Point(x, y));
             }
             y += ResourceManager.SmallTTFont.Height + 2;
-            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0}{1} ({2:F0}Hz)", _toneResult.Tone, _toneResult.Octave, _toneResult.Pitch), _backColor))
+            using (Surface ts = ResourceManager.SmallTTFont.Render(_toneResult.ToString(), _backColor))
             {
                 s.Blit(ts, new Point(x, y));
             }
@@ -756,15 +776,13 @@ namespace PitchPitch.scene
             s.Blit(_keyboardSurface, _keyRect.Location);
 
             bool black = false;
+            Rectangle cr = Rectangle.Empty;
             foreach (KeyValuePair<Rectangle, string> kv in _blackKeys)
             {
                 if (kv.Key.Top <= _parent.Player.Y - _view.Y && 
                     _parent.Player.Y - _view.Y <= kv.Key.Bottom)
                 {
-                    Rectangle r = new Rectangle(kv.Key.Location, kv.Key.Size);
-                    r.Offset(_keyRect.Location);
-                    Circle cir = new Circle(new Point(r.Right - 14, (int)(r.Y + r.Height / 2.0)), 6);
-                    s.Draw(cir, _strongColor, true, true);
+                    cr = new Rectangle(kv.Key.Location, kv.Key.Size);
                     black = true;
                     break;
                 }
@@ -776,13 +794,17 @@ namespace PitchPitch.scene
                     if (kv.Key.Top <= _parent.Player.Y - _view.Y &&
                         _parent.Player.Y - _view.Y <= kv.Key.Bottom)
                     {
-                        Rectangle r = new Rectangle(kv.Key.Location, kv.Key.Size);
-                        r.Offset(_keyRect.Location);
-                        Circle cir = new Circle(new Point(r.Right - 14, (int)(r.Y + r.Height / 2.0)), 6);
-                        s.Draw(cir, _strongColor, true, true);
+                        cr = new Rectangle(kv.Key.Location, kv.Key.Size);
                         break;
                     }
                 }
+            }
+            if (!cr.IsEmpty)
+            {
+                cr.Offset(_keyRect.Location);
+                Circle cir = new Circle(new Point(cr.Right - 22, (int)(cr.Y + cr.Height / 2.0)), 10);
+                s.Draw(cir, _strongColor, true, true);
+                s.Draw(cir, _strongColor, true, false);
             }
         }
 

@@ -38,6 +38,7 @@ namespace PitchPitch.map
         /// <summary>1画面表示するのに必要な列数</summary>
         protected int _needColumnNum = 0;
 
+        #region 色
         protected Color _backColor = Color.LightSalmon;
         public virtual Color BackColor
         {
@@ -56,6 +57,10 @@ namespace PitchPitch.map
             get { return _foreColor; }
             set { _foreColor = value; }
         }
+        #endregion
+
+        protected Surface _startLineSurface = null;
+        protected Surface _goalLineSurface = null;
 
         #region 表示index
         /// <summary>表示しているチップのX方向のオフセット</summary>
@@ -72,9 +77,19 @@ namespace PitchPitch.map
         protected int _yLastIdx = 0;
         #endregion
 
+        private double _chipWidthInv;
+        private double _chipHeightInv;
+        private int _chipWidth;
+        private int _chipHeight;
+
         public virtual void Init(PitchPitch parent, Size viewSize)
         {
             _parent = parent;
+
+            _chipWidth = _chipData.ChipWidth;
+            _chipHeight = _chipData.ChipHeight;
+            _chipWidthInv = 1 / (double)_chipData.ChipWidth;
+            _chipHeightInv = 1 / (double)_chipData.ChipHeight;
         }
 
         public virtual bool HasEnd { get { return true; } }
@@ -91,45 +106,45 @@ namespace PitchPitch.map
         /// <summary>Chip index から 表示座標への変換</summary>
         protected double convertIdx2VX(int xIdx)
         {
-            return xIdx * _chipData.ChipWidth - view.X;
+            return xIdx * _chipWidth - view.X;
         }
         /// <summary>Chip index から 表示座標への変換</summary>
         protected double convertIdx2VY(int yIdx)
         {
-            return yIdx * _chipData.ChipHeight - view.Y;
+            return yIdx * _chipHeight - view.Y;
         }
 
         /// <summary>Chip index から 座標への変換</summary>
         protected double convertIdx2PX(int xIdx)
         {
-            return xIdx * _chipData.ChipWidth + _xOffset;
+            return xIdx * _chipWidth + _xOffset;
         }
         /// <summary>Chip index から 座標への変換</summary>
         protected double convertIdx2PY(int yIdx)
         {
-            return yIdx * _chipData.ChipHeight + _yOffset;
+            return yIdx * _chipHeight + _yOffset;
         }
 
         /// <summary>表示座標 から Chip index への変換</summary>
         protected int convertV2IdxX(double x)
         {
-            return (int)((x + view.X - _xOffset) / (double)_chipData.ChipWidth);
+            return (int)((x + view.X - _xOffset) * _chipWidthInv);
         }
         /// <summary>表示座標 から Chip index への変換</summary>
         protected int convertV2IdxY(double y)
         {
-            return (int)((y + view.Y - _yOffset) / (double)_chipData.ChipHeight);
+            return (int)((y + view.Y - _yOffset) * _chipHeightInv);
         }
 
         /// <summary>座標 から Chip index への変換</summary>
         protected int convertP2IdxX(double x)
         {
-            return (int)((x - _xOffset) / (double)_chipData.ChipWidth);
+            return (int)((x - _xOffset) * _chipWidthInv);
         }
         /// <summary>座標 から Chip index への変換</summary>
         protected int convertP2IdxY(double y)
         {
-            return (int)((y - _yOffset) / (double)_chipData.ChipHeight);
+            return (int)((y - _yOffset) * _chipHeightInv);
         }
         #endregion
 
@@ -204,8 +219,10 @@ namespace PitchPitch.map
                 {
                     if (j < 0) continue;
                     Chip cd = new Chip();
-                    cd.Idx = new Point(i, j);
-                    cd.ViewPoint = new PointD(vpxs[s], vpys[t]);
+                    cd.XIdx = i;
+                    cd.YIdx = j;
+                    cd.ViewX = vpxs[s];
+                    cd.ViewY = vpys[t];
                     cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[i][j];
                     cd.Hardness = _chipData.Hardness[cd.ChipData];
@@ -223,7 +240,7 @@ namespace PitchPitch.map
         {
             foreach (Chip cd in this.EnumViewChipData())
             {
-                _chipData.Draw(s, cd.ChipData, new Point((int)(r.X + cd.ViewPoint.X), (int)(r.Y + cd.ViewPoint.Y)));
+                _chipData.Draw(s, cd.ChipData, new Point((int)(r.X + cd.ViewX), (int)(r.Y + cd.ViewY)));
             }
         }
 
@@ -280,7 +297,72 @@ namespace PitchPitch.map
 
         public virtual void Render(Surface s, Rectangle r)
         {
+            if (_startLineSurface == null)
+            {
+#warning パフォーマンスチェック
+                using (Surface ts = ResourceManager.LargePFont.Render("START", _foreColor, true))
+                {
+                    _startLineSurface = new Surface(ts.Width + 20, view.Height, 32, ts.RedMask, ts.GreenMask, ts.BlueMask, ts.AlphaMask);
+
+                    Color[,] tmp = ts.GetColors(new Rectangle(0, 0, ts.Width, ts.Height));
+                    for (int i = 0; i < tmp.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < tmp.GetLength(1); j++)
+                        {
+                            Color c = tmp[i, j];
+                            tmp[i, j] = Color.FromArgb((int)(c.A / 2.0), c.R, c.G, c.B);
+                        }
+                    }
+                    _startLineSurface.Lock();
+                    _startLineSurface.SetPixels(new Point(20, (int)(_startLineSurface.Height / 2.0 - ts.Height / 2.0)), tmp);
+                    _startLineSurface.Unlock();
+                }
+                _startLineSurface.Fill(new Rectangle(0, 0, 3, _startLineSurface.Height), Color.FromArgb(128, _foreColor.R, _foreColor.G, _foreColor.B));
+                _startLineSurface.Update();
+                _startLineSurface.AlphaBlending = true;
+            }
+            if (_goalLineSurface == null)
+            {
+                using (Surface ts = ResourceManager.LargePFont.Render("GOAL", _foreColor, true))
+                {
+                    _goalLineSurface = new Surface(ts.Width + 20, view.Height, 32, ts.RedMask, ts.GreenMask, ts.BlueMask, ts.AlphaMask);
+                    Color[,] tmp = ts.GetColors(new Rectangle(0, 0, ts.Width, ts.Height));
+                    for (int i = 0; i < tmp.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < tmp.GetLength(1); j++)
+                        {
+                            Color c = tmp[i, j];
+                            tmp[i, j] = Color.FromArgb((int)(c.A / 2.0), c.R, c.G, c.B);
+                        }
+                    }
+                    _goalLineSurface.Lock();
+                    _goalLineSurface.SetPixels(new Point(0, (int)(_goalLineSurface.Height / 2.0 - ts.Height / 2.0)), tmp);
+                    _goalLineSurface.Unlock();
+                }
+                _goalLineSurface.Fill(new Rectangle(_goalLineSurface.Width - 3, 0, 3, _goalLineSurface.Height), Color.FromArgb(128, _foreColor.R, _foreColor.G, _foreColor.B));
+                _goalLineSurface.Update();
+                _goalLineSurface.AlphaBlending = true;
+            }
+
+
             renderBackground(s, r);
+
+            if (_startLineSurface.Width >= view.X && view.X + view.Width >= 0)
+            {
+                s.Blit(_startLineSurface, new Point(
+                    (int)(r.X - view.X),
+                    (int)(r.Y + view.Height / 2.0 - _startLineSurface.Height / 2.0)));
+            }
+            if (this.HasEnd)
+            {
+                if (this.Width >= view.X && view.X + view.Width >= this.Width - _goalLineSurface.Width)
+                {
+                    s.Blit(_goalLineSurface, new Point(
+                        (int)(r.X + this.Width - _goalLineSurface.Width - view.X),
+                        (int)(r.Y + view.Height / 2.0 - _goalLineSurface.Height / 2.0)));
+                }
+            }
+
             renderForeground(s, r);
         }
 
@@ -327,7 +409,7 @@ namespace PitchPitch.map
             }
         }
 
-        public void LoadMapImage(Bitmap mapBmp, Bitmap chipMapping = null)
+        public virtual void LoadMapImage(Bitmap mapBmp, Bitmap chipMapping = null)
         {
             _chips = new List<uint[]>();
             Dictionary<Color, uint> mapping = null;
@@ -398,6 +480,8 @@ namespace PitchPitch.map
 
         public virtual void Dispose()
         {
+            if (_startLineSurface != null) _startLineSurface.Dispose();
+            if (_goalLineSurface != null) _goalLineSurface.Dispose();
             if (_chipData != null) _chipData.Dispose();
         }
     }

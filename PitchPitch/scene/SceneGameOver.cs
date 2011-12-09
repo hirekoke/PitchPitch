@@ -25,6 +25,7 @@ namespace PitchPitch.scene
         private Color _backColor = Color.DarkRed;
 
         private Surface _overSurface = null;
+        private Surface _overImgSurface = null;
 
         public SceneGameOver()
         {
@@ -32,9 +33,9 @@ namespace PitchPitch.scene
 
             _menuItems = new MenuItem[]
             {
-                new MenuItem(Key.R, "Retry Stage"),
-                new MenuItem(Key.M, "Select Map"),
-                new MenuItem(Key.T, "Return to Title")
+                new MenuItem(Key.R, Properties.Resources.MenuItem_RetryStage),
+                new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
+                new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
             };
 
             _keys = new Key[]
@@ -49,11 +50,17 @@ namespace PitchPitch.scene
             if (_prevSurface != null) _prevSurface.Dispose();
             _prevSurface = null;
 
+            if (_overImgSurface == null)
+            {
+                _overImgSurface = ResourceManager.LoadSurface("gameover.png");
+                ImageUtil.SetColor(_overImgSurface, _foreColor);
+            }
+
             _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
 
             _menuSurfaces = new SurfaceCollection();
             _menuRects = new Rectangle[_menuItems.Length];
-            ImageManager.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, parent.Size.Width);
+            ImageUtil.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
 
             base.Init(parent);
         }
@@ -110,6 +117,7 @@ namespace PitchPitch.scene
 
         public override void Draw(Surface s)
         {
+            // ゲームオーバー時画面
             if (_prevSurface == null)
             {
                 _prevSurface = new Surface(s);
@@ -121,18 +129,26 @@ namespace PitchPitch.scene
             s.Fill(_backColor);
             s.Blit(_prevSurface, Point.Empty);
 
+            // 画像
+            s.Blit(_overImgSurface, new Point(s.Size.Width - _overImgSurface.Width - 60, s.Size.Height - _overImgSurface.Height - 60));
+            
+            // タイトル
             if (_overSurface == null)
             {
-                _overSurface = ResourceManager.LargePFont.Render("GAME OVER", _foreColor);
+                _overSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_GameOver, _foreColor);
             }
-            s.Blit(_overSurface, new Point(10, 10));
+            s.Blit(_overSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
-            ImageManager.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(50, _overSurface.Height + 20),
+            // メニュー
+            ImageUtil.DrawSelections(s, _menuSurfaces, _menuRects, _cursor,
+                new Point(Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
+                    Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin),
                 _selectedIdx, ImageAlign.TopLeft);
         }
 
         public override void Dispose()
         {
+            if (_overImgSurface != null) _overImgSurface.Dispose();
             if (_prevSurface != null) _prevSurface.Dispose();
             if (_overSurface != null) _overSurface.Dispose();
             base.Dispose();
