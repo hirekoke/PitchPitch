@@ -54,6 +54,7 @@ namespace PitchPitch.scene
         private Surface _devHeadSurface = null;
         private Surface _calHeadSurface = null;
         private Surface _optSurface = null;
+        private Surface _expSurface = null;
 
         private bool _needUpdate = false;
 
@@ -116,8 +117,8 @@ namespace PitchPitch.scene
             _calRect = new Rectangle(_calHeadRect.X + Constants.CursorMargin, _devRect.Y,
                 _devRect.Width, _devRect.Height);
 
-            _calMenuRect = new Rectangle(_calRect.X, _calRect.Y, 
-                _calRect.Width, _calRect.Height - Constants.WaveHeight - Constants.WaveInfoHeight);
+            _calMenuRect = new Rectangle(_calRect.X, _calRect.Y + (int)(ResourceManager.SmallPFont.Height * 1.4),
+                _calRect.Width, _calRect.Height - Constants.WaveHeight - Constants.WaveInfoHeight - (int)(ResourceManager.SmallPFont.Height * 1.4));
             _calWaveRect = new Rectangle(_calRect.X, _calRect.Bottom - Constants.WaveHeight,
                 _calRect.Width, Constants.WaveHeight);
 
@@ -459,11 +460,11 @@ namespace PitchPitch.scene
             // 今選択中のドメイン
             if (_state == SelectionState.Device)
             {
-                s.Fill(_devRect, Constants.DefaultSelectionColor);
+                s.Fill(new Rectangle(_devHeadRect.Left, _devRect.Top, _devHeadRect.Width, _devRect.Height), Constants.DefaultSelectionColor);
             }
             else if (_state == SelectionState.Calibration)
             {
-                s.Fill(_calMenuRect, Constants.DefaultSelectionColor);
+                s.Fill(new Rectangle(_calHeadRect.Left, _calMenuRect.Top, _calHeadRect.Width, _calMenuRect.Height), Constants.DefaultSelectionColor);
             }
 
             // Audio Device / Calibration Header
@@ -479,13 +480,19 @@ namespace PitchPitch.scene
             }
             s.Blit(_calHeadSurface, _calHeadRect.Location);
 
+            if(_expSurface == null)
+            {
+                _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_Calibration, Constants.DefaultStrongColor);
+            }
+            s.Blit(_expSurface, new Point(_calHeadRect.X, _calRect.Y));
+
             // 選択肢
             ImageUtil.DrawSelections(s, _endHeadSurfaces, _endHeadRects, _headCursor,
                 _endHeadRect.Location,
                 (_state == SelectionState.Back ? 0 : -1), ImageAlign.TopLeft);
 
             ImageUtil.DrawSelections(s, _calSurfaces, _calRects, _cursor,
-                _calRect.Location,
+                _calMenuRect.Location,
                 (_state == SelectionState.Calibration ? _calSelectedIdx : -1),
                 ImageAlign.TopLeft);
 
@@ -515,12 +522,12 @@ namespace PitchPitch.scene
             }
             using (Surface ts = ResourceManager.SmallPFont.Render(maxFreq.ToString("F1"), Constants.DefaultForeColor))
             {
-                s.Blit(ts, new Point(_calRects[0].X + hs.Width + _calRect.X + 10, _calRects[0].Y + _calRect.Y));
+                s.Blit(ts, new Point(_calRects[0].X + hs.Width + _calMenuRect.X + 10, _calRects[0].Y + _calMenuRect.Y));
             }
             using (Surface ts = ResourceManager.SmallPFont.Render(minFreq.ToString("F1"), Constants.DefaultForeColor))
             {
                 s.Blit(ts,
-                    new Point(_calRects[1].X + ls.Width + _calRect.X + 10, _calRects[1].Y + _calRect.Y));
+                    new Point(_calRects[1].X + ls.Width + _calMenuRect.X + 10, _calRects[1].Y + _calMenuRect.Y));
             }
 
             // 計測中かどうか
@@ -624,6 +631,7 @@ namespace PitchPitch.scene
             if (_devHeadSurface != null) _devHeadSurface.Dispose();
             if (_calHeadSurface != null) _calHeadSurface.Dispose();
             if (_optSurface != null) _optSurface.Dispose();
+            if (_expSurface != null) _expSurface.Dispose();
 
             base.Dispose();
         }

@@ -106,6 +106,15 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   Returnを押したまま発声して下さい に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Explanation_Calibration {
+            get {
+                return ResourceManager.GetString("Explanation_Calibration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ↑↓←→で選択，Returnで決定 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Explanation_MapSelect {

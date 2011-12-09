@@ -447,6 +447,7 @@ namespace PitchPitch
         public static void CreateStrMenu(string[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
         {
             int y = 0; int idx = 0;
+            if (height < 0) height = (int)(font.Height * 1.4);
             foreach (string mi in items)
             {
                 Surface s = font.Render(mi, c, true);
@@ -456,12 +457,13 @@ namespace PitchPitch
                 rects[idx++] = r;
             }
         }
-        public static void CreateStrMenu(string[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+
+        public static void CreateStrMenu(string[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = -1)
         {
             CreateStrMenu(items, c, ResourceManager.SmallPFont, ref surfaces, ref rects, width, height);
         }
 
-        public static void CreateStrMenu(MenuItem[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        public static void CreateStrMenu(MenuItem[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = -1)
         {
             CreateStrMenu(Array.ConvertAll<MenuItem, string>(items, (mi) =>
             {
@@ -469,7 +471,7 @@ namespace PitchPitch
             }), c, font, ref surfaces, ref rects, width, height);
         }
 
-        public static void CreateStrMenu(MenuItem[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
+        public static void CreateStrMenu(MenuItem[] items, Color c, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = -1)
         {
             CreateStrMenu(items, c, ResourceManager.SmallPFont, ref surfaces, ref rects, width, height);
         }

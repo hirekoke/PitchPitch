@@ -51,7 +51,8 @@ namespace PitchPitch.scene
             {
                 _menuSurfaces = new SurfaceCollection();
                 _menuRects = new Rectangle[_menuItems.Length];
-                ImageUtil.CreateStrMenu(_menuItems, Constants.DefaultForeColor, ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
+                ImageUtil.CreateStrMenu(_menuItems, Constants.DefaultForeColor, ResourceManager.MiddlePFont,
+                    ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
             }
 
             base.Init(parent);
