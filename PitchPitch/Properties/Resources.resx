@@ -137,6 +137,10 @@
     <value>map</value>
     <comment>ディレクトリ名-マップデータ</comment>
   </data>
+  <data name="Dirname_Sound" xml:space="preserve">
+    <value>se</value>
+    <comment>ディレクトリ名-効果音</comment>
+  </data>
   <data name="Explanation_Calibration" xml:space="preserve">
     <value>Returnを押したまま発声して下さい</value>
     <comment>説明文字列</comment>

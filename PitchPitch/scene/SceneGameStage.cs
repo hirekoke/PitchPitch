@@ -16,6 +16,7 @@ namespace PitchPitch.scene
 
     class SceneGameStage : Scene
     {
+        #region ゲーム処理関係
         protected map.View _view = new map.View();
         protected map.Map _map;
         public map.Map Map
@@ -24,7 +25,27 @@ namespace PitchPitch.scene
             set { _map = value; }
         }
 
-        private ToneResult _toneResult;
+        /// <summary>Viewの中でのプレイヤー位置(左端=0, 右端=1)</summary>
+        protected double _playerXRatio = 0.2;
+        /// <summary>マップの前後、衝突判定の無い部分</summary>
+        protected int _mapMargin = 500;
+        /// <summary>クリアしたかどうか</summary>
+        protected bool _isCleared = false;
+        /// <summary>ポーズ中かどうか</summary>
+        protected bool _isPaused = false;
+        public bool IsPaused
+        {
+            get { return _isPaused; }
+            set
+            {
+                _isPaused = value;
+                _parent.Player.IsPaused = value;
+                _prevProcTime = Environment.TickCount;
+            }
+        }
+        #endregion
+
+        #region 描画関係
 
         #region レイアウト
         protected int _margin = 10;
@@ -84,32 +105,20 @@ namespace PitchPitch.scene
         }
         #endregion
 
+        protected SdlDotNet.Graphics.Sprites.AnimatedSprite _foreCursor = null;
+        protected SdlDotNet.Graphics.Sprites.AnimatedSprite _backCursor = null;
+        #endregion
+
+        #region 音関係
+        private ToneResult _toneResult;
+
         protected double _minFreq = 220;
         protected double _maxFreq = 880;
         protected double _minFreqLog = Math.Log(220);
         protected double _maxFreqLog = Math.Log(880);
 
-        protected SdlDotNet.Graphics.Sprites.AnimatedSprite _foreCursor = null;
-        protected SdlDotNet.Graphics.Sprites.AnimatedSprite _backCursor = null;
-
-        /// <summary>Viewの中でのプレイヤー位置(左端=0, 右端=1)</summary>
-        protected double _playerXRatio = 0.2;
-        /// <summary>マップの前後、衝突判定の無い部分</summary>
-        protected int _mapMargin = 500;
-        /// <summary>クリアしたかどうか</summary>
-        protected bool _isCleared = false;
-        /// <summary>ポーズ中かどうか</summary>
-        protected bool _isPaused = false;
-        public bool IsPaused
-        {
-            get { return _isPaused; }
-            set
-            {
-                _isPaused = value;
-                _parent.Player.IsPaused = value;
-                _prevProcTime = Environment.TickCount;
-            }
-        }
+        protected SdlDotNet.Audio.Sound _hitSe = null;
+        #endregion
 
         public SceneGameStage(map.Map map)
         {
@@ -221,12 +230,22 @@ namespace PitchPitch.scene
             _minFreqLog = Math.Log(_minFreq);
             #endregion
 
+            #region 描画画像初期化
             createKeyRects();
             if (_mapSurface != null)
             {
                 _mapSurface.Dispose();
                 _mapSurface = null;
             }
+            #endregion
+
+            #region 効果音
+            if (_hitSe == null)
+            {
+                _hitSe = new SdlDotNet.Audio.Sound(Path.Combine(Properties.Resources.Dirname_Sound, "4-00.wav"));
+                SdlDotNet.Audio.SoundDictionary dic = new SdlDotNet.Audio.SoundDictionary();
+            }
+            #endregion
 
             #region PID制御係数決定
             _prevYDiff = 0;
@@ -455,6 +474,7 @@ namespace PitchPitch.scene
 
                 if (_parent.Player.Hit(chip, pp, mw, mh))
                 {
+                    _hitSe.Play();
                     _parent.Player.Y = _map.GetDefaultY(pp.X);
                     _parent.Player.Rad = _parent.Player.MinRadius;
                     break;
@@ -827,11 +847,18 @@ namespace PitchPitch.scene
 
         public override void Dispose()
         {
+            #region 画像破棄
             if (_keyboardSurface != null) _keyboardSurface.Dispose();
             if (_mapSurface != null) _mapSurface.Dispose();
             if (_pauseSurface != null) _pauseSurface.Dispose();
             if (_clearSurface != null) _clearSurface.Dispose();
             if (_map != null) _map.Dispose();
+            #endregion
+
+            #region 効果音破棄
+            if (_hitSe != null) _hitSe.Dispose();
+            #endregion
+
             base.Dispose();
         }
     }
