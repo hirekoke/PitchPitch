@@ -9,8 +9,6 @@ using SdlDotNet.Input;
 
 namespace PitchPitch.scene
 {
-    using MenuItem = KeyValuePair<Key, string>;
-
     class SceneGameOver : Scene
     {
         private Surface _prevSurface = null;
@@ -43,24 +41,21 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.Return, Key.Escape,
                 Key.M, Key.R, Key.T
             };
+
+            _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+
+            _overImgSurface = ResourceManager.LoadSurface("gameover.png");
+            ImageUtil.SetColor(_overImgSurface, _foreColor);
+
+            _menuSurfaces = new SurfaceCollection();
+            _menuRects = new Rectangle[_menuItems.Length];
+            ImageUtil.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
         }
 
         public override void Init(PitchPitch parent)
         {
             if (_prevSurface != null) _prevSurface.Dispose();
             _prevSurface = null;
-
-            if (_overImgSurface == null)
-            {
-                _overImgSurface = ResourceManager.LoadSurface("gameover.png");
-                ImageUtil.SetColor(_overImgSurface, _foreColor);
-            }
-
-            _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
-
-            _menuSurfaces = new SurfaceCollection();
-            _menuRects = new Rectangle[_menuItems.Length];
-            ImageUtil.CreateStrMenu(_menuItems, _foreColor, ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
 
             base.Init(parent);
         }
@@ -115,7 +110,7 @@ namespace PitchPitch.scene
             }
         }
 
-        public override void Draw(Surface s)
+        protected override void draw(Surface s)
         {
             // ゲームオーバー時画面
             if (_prevSurface == null)

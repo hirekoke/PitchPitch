@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="audio\AudioInput.cs" />
+    <Compile Include="audio\MMLMusic.cs" />
     <Compile Include="audio\Music.cs" />
     <Compile Include="audio\PitchAnalyzer.cs" />
     <Compile Include="audio\AudioOutput.cs" />

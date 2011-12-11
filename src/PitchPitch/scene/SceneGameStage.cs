@@ -12,8 +12,6 @@ using PitchPitch.audio;
 
 namespace PitchPitch.scene
 {
-    using MenuItem = KeyValuePair<Key, string>;
-
     class SceneGameStage : Scene
     {
         #region ゲーム処理関係
@@ -143,6 +141,46 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.Return,
                 Key.Escape, Key.R, Key.M, Key.T
             };
+
+
+            #region 配置
+            _viewRect = new Rectangle(
+                Constants.ScreenWidth - Constants.StageViewWidth - Constants.StageMargin,
+                Constants.StageMargin,
+                Constants.StageViewWidth,
+                Constants.StageViewHeight);
+            _keyRect = new Rectangle(
+                Constants.StageMargin,
+                Constants.StageMargin,
+                _viewRect.Left - 1 - Constants.StageMargin,
+                Constants.StageViewHeight);
+            _miniMapRect = new Rectangle(
+                Constants.ScreenWidth - Constants.MiniMapWidth - Constants.StageMargin,
+                _viewRect.Bottom + Constants.StageGap,
+                Constants.MiniMapWidth,
+                Constants.ScreenHeight - Constants.StageMargin - _viewRect.Bottom - Constants.StageGap);
+            _playerInfoRect = new Rectangle(
+                Constants.StageMargin,
+                _viewRect.Bottom + Constants.StageGap,
+                Constants.ScreenWidth - _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
+                _miniMapRect.Height);
+            #endregion
+
+            #region 効果音読み込み
+            if (_hitSe == null)
+            {
+                _hitSe = new SdlDotNet.Audio.Sound(Path.Combine(Properties.Resources.Dirname_Sound, "4-00.wav"));
+            }
+            #endregion
+
+            #region PID制御係数決定
+            _prevYDiff = 0;
+            _yDiff = 0;
+            _coefP = 0.5;
+            _coefI = _coefP * 0.4;
+            _coefD = _coefP * 0.01;
+            _diffT = 1 / (double)SdlDotNet.Core.Events.TargetFps;
+            #endregion
         }
 
         /// <summary>
@@ -159,29 +197,6 @@ namespace PitchPitch.scene
             _isCleared = false;
             _pauseSelectedIdx = 0;
             _clearSelectedIdx = 0;
-
-            #region 配置
-            _viewRect = new Rectangle(
-                Constants.ScreenWidth - Constants.StageViewWidth - Constants.StageMargin, 
-                Constants.StageMargin,
-                Constants.StageViewWidth,
-                Constants.StageViewHeight);
-            _keyRect = new Rectangle(
-                Constants.StageMargin,
-                Constants.StageMargin,
-                _viewRect.Left - 1 - Constants.StageMargin,
-                Constants.StageViewHeight);
-            _miniMapRect = new Rectangle(
-                Constants.ScreenWidth - Constants.MiniMapWidth - Constants.StageMargin,
-                _viewRect.Bottom + Constants.StageGap,
-                Constants.MiniMapWidth, 
-                Constants.ScreenHeight - Constants.StageMargin - _viewRect.Bottom - Constants.StageGap);
-            _playerInfoRect = new Rectangle(
-                Constants.StageMargin,
-                _viewRect.Bottom + Constants.StageGap,
-                Constants.ScreenWidth - _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
-                _miniMapRect.Height);
-            #endregion
 
             #region 色
             setForeColor(_map.MapInfo.ForegroundColor);
@@ -239,23 +254,7 @@ namespace PitchPitch.scene
             }
             #endregion
 
-            #region 効果音
-            if (_hitSe == null)
-            {
-                _hitSe = new SdlDotNet.Audio.Sound(Path.Combine(Properties.Resources.Dirname_Sound, "4-00.wav"));
-                SdlDotNet.Audio.SoundDictionary dic = new SdlDotNet.Audio.SoundDictionary();
-            }
-            #endregion
-
-            #region PID制御係数決定
-            _prevYDiff = 0;
-            _yDiff = 0;
-            _coefP = 0.5;
-            _coefI = _coefP * 0.4;
-            _coefD = _coefP * 0.01;
-            _diffT = 1 / (double)SdlDotNet.Core.Events.TargetFps;
             _prevProcTime = Environment.TickCount;
-            #endregion
         }
 
         #region 鍵盤作成
@@ -662,7 +661,7 @@ namespace PitchPitch.scene
         /// 画面の描画処理
         /// </summary>
         /// <param name="s">画面</param>
-        public override void Draw(Surface s)
+        protected override void draw(Surface s)
         {
             // 背景枠描画
             s.Fill(_foreColor);

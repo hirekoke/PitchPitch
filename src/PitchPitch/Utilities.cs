@@ -8,7 +8,21 @@ using SdlDotNet.Graphics.Sprites;
 
 namespace PitchPitch
 {
-    using MenuItem = KeyValuePair<SdlDotNet.Input.Key, string>;
+    struct MenuItem
+    {
+        private static string format = "{0}: {1}";
+
+        public SdlDotNet.Input.Key Key;
+        public string Name;
+        public MenuItem(SdlDotNet.Input.Key key, string name)
+        {
+            Key = key; Name = name;
+        }
+        public override string ToString()
+        {
+            return string.Format(format, Key, Name);
+        }
+    }
 
     enum ImageAlign
     {
@@ -447,7 +461,7 @@ namespace PitchPitch
         public static void CreateStrMenu(string[] items, Color c, SdlDotNet.Graphics.Font font, ref SurfaceCollection surfaces, ref Rectangle[] rects, int width = 300, int height = 30)
         {
             int y = 0; int idx = 0;
-            if (height < 0) height = (int)(font.Height * 1.4);
+            if (height < 0) height = (int)(font.Height * Constants.MenuLineHeight);
             foreach (string mi in items)
             {
                 Surface s = font.Render(mi, c, true);
@@ -467,7 +481,7 @@ namespace PitchPitch
         {
             CreateStrMenu(Array.ConvertAll<MenuItem, string>(items, (mi) =>
             {
-                return TextUtil.MenuToString(mi);
+                return mi.ToString();
             }), c, font, ref surfaces, ref rects, width, height);
         }
 
@@ -480,7 +494,7 @@ namespace PitchPitch
         public static void DrawMultilineString(Surface s, string[] lines, SdlDotNet.Graphics.Font font, Color c, Point p)
         {
             int y = p.Y;
-            int fh = font.Height;
+            int fh = (int)(font.Height * Constants.LineHeight);
             foreach (string line in lines)
             {
                 using (Surface ts = font.Render(line, c))
@@ -489,15 +503,6 @@ namespace PitchPitch
                 }
                 y += fh;
             }
-        }
-    }
-
-    class TextUtil
-    {
-        public static string MenuToString(MenuItem item)
-        {
-            string key = ResourceManager.ConvertToString(item.Key);
-            return string.Format("{0}: {1}", key, item.Value);
         }
     }
 }

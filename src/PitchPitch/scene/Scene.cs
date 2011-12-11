@@ -42,6 +42,8 @@ namespace PitchPitch.scene
             _parent = parent;
             _prevPressedKey = Key.Print;
             _prevPressTick = Environment.TickCount;
+
+            setAlert(false, null);
         }
 
         protected virtual int procKeyEvent(Key key) { return -1; }
@@ -53,16 +55,78 @@ namespace PitchPitch.scene
             Key.UpArrow, Key.DownArrow, Key.Return, Key.Escape
         };
 
+        private bool _onAlert = false;
+        private Surface _alertSurface = null;
+        protected void setAlert(bool on, string message)
+        {
+            _onAlert = on;
+            if (_onAlert && string.IsNullOrEmpty(message)) _onAlert = false;
+            if (_alertSurface != null) _alertSurface.Dispose();
+            if (!_onAlert) _alertSurface = null;
+
+            if (_onAlert)
+            {
+                message += "\n\n" + Properties.Resources.Str_AlertTail;
+                string[] lines = message.Split('\n');
+                Size[] sizes = Array.ConvertAll<string, Size>(lines, (l) => { return ResourceManager.SmallPFont.SizeText(l); });
+
+                int maxWidth = 0; int height = 0;
+                foreach (Size s in sizes)
+                {
+                    if (maxWidth < s.Width) maxWidth = s.Width;
+                    height += (int)(s.Height * Constants.LineHeight);
+                }
+
+                _alertSurface = new Surface(maxWidth + Constants.AlertPadding * 2, height + Constants.AlertPadding * 2);
+                SdlDotNet.Graphics.Primitives.Box box = new SdlDotNet.Graphics.Primitives.Box(
+                    Point.Empty, new Size(maxWidth + Constants.AlertPadding * 2 - 1, height + Constants.AlertPadding * 2 - 1));
+
+                _alertSurface.Lock();
+                _alertSurface.Draw(box, Constants.AlertBackColor, false, true);
+                _alertSurface.Draw(box, Constants.AlertForeColor, false, false);
+                _alertSurface.Unlock();
+
+                int y = Constants.AlertPadding; int idx = 0;
+                foreach (string l in lines)
+                {
+                    using (Surface ts = ResourceManager.SmallPFont.Render(l, Constants.AlertForeColor))
+                    {
+                        if (idx == lines.Length - 1)
+                        {
+                            _alertSurface.Blit(ts, new Point((int)(_alertSurface.Width / 2.0 - ts.Width / 2.0), y));
+                        }
+                        else
+                        {
+                            _alertSurface.Blit(ts, new Point(Constants.AlertPadding, y));
+                        }
+                        y += (int)(ts.Height * Constants.LineHeight);
+                    }
+                    idx++;
+                }
+                _alertSurface.Update();
+            }
+        }
+
         /// <summary>
         /// キー処理(イベント)
         /// </summary>
         /// <param name="e"></param>
-        public virtual void ProcKeyEvent(SdlDotNet.Input.KeyboardEventArgs e)
+        public void ProcKeyEvent(SdlDotNet.Input.KeyboardEventArgs e)
         {
             if (e != null)
             {
-                int idx = procKeyEvent(e.Key);
-                procMenu(idx);
+                if (_onAlert)
+                {
+                    if (e.Key == Key.Return)
+                    {
+                        setAlert(false, "");
+                    }
+                }
+                else
+                {
+                    int idx = procKeyEvent(e.Key);
+                    procMenu(idx);
+                }
             }
         }
 
@@ -108,44 +172,24 @@ namespace PitchPitch.scene
         /// 画面の描画処理
         /// </summary>
         /// <param name="s">画面</param>
-        public abstract void Draw(Surface s);
+        public void Draw(Surface s)
+        {
+            draw(s);
+
+            if (_onAlert && _alertSurface != null)
+            {
+                s.Blit(_alertSurface, new Point(
+                    (int)(Constants.ScreenWidth / 2.0 - _alertSurface.Width / 2.0),
+                    (int)(Constants.ScreenHeight / 2.0 - _alertSurface.Height / 2.0)));
+            }
+        }
+
+        protected abstract void draw(Surface s);
 
         public virtual void Dispose()
         {
+            if (_alertSurface != null) _alertSurface.Dispose();
         }
-
-        protected void drawPitch(Surface s, audio.ToneResult result,
-            SdlDotNet.Graphics.Font font, Rectangle rect)
-        {
-            // 結果値
-            using (Surface sc = new Surface(rect.Size))
-            {
-                sc.Lock();
-                sc.Alpha = 100;
-                sc.AlphaBlending = true;
-                sc.Fill(Color.DarkGreen);
-                sc.Unlock();
-                s.Blit(sc, rect.Location);
-            }
-
-            using (Surface sc = new Surface(rect.Size))
-            {
-                sc.Transparent = true;
-                sc.Draw(new SdlDotNet.Graphics.Primitives.Box(Point.Empty, new Size(rect.Width - 1, rect.Height - 1)),
-                    Color.White, true, false);
-                sc.Blit(font.Render("Clarity: " + result.Clarity.ToString("f2"), Color.White, true),
-                    new Point(5, 5));
-                sc.Blit(font.Render("Pitch  : " + result.Pitch.ToString("f2"), Color.White, true),
-                    new Point(5, 5 + ResourceManager.SmallTTFont.Height + 2));
-                sc.Blit(font.Render(
-                    "Tone   : " + result.Tone + result.Octave.ToString() + " " + (result.PitchDiff > 0 ? "+" : "") + result.PitchDiff.ToString("f2"),
-                    Color.White, true),
-                    new Point(5, 5 + ResourceManager.SmallTTFont.Height * 2 + 4));
-
-                s.Blit(sc, rect.Location);
-            }
-        }
-
 
     }
 }

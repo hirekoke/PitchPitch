@@ -233,8 +233,16 @@
     <value>Start</value>
     <comment>メニュー文字列</comment>
   </data>
+  <data name="Str_AlertTail" xml:space="preserve">
+    <value>Press Return</value>
+    <comment>文字列</comment>
+  </data>
   <data name="Str_Calibrating" xml:space="preserve">
     <value>計測中…</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_MapLoadError" xml:space="preserve">
+    <value>マップの読み込みに失敗しました</value>
     <comment>文字列</comment>
   </data>
   <data name="Str_MaxPitch" xml:space="preserve">

@@ -19,6 +19,9 @@ namespace PitchPitch
         public static Color DefaultBackColor = Color.White;
         public static Color DefaultStrongColor = Color.Firebrick;
         public static Color DefaultSelectionColor = Color.PeachPuff;
+
+        public static Color AlertBackColor = Color.DarkRed;
+        public static Color AlertForeColor = Color.White;
         #endregion
 
         #region 画面レイアウト
@@ -49,6 +52,14 @@ namespace PitchPitch
         public const int WaveHeight = 100;
         /// <summary>波形情報表示高さ<summary>
         public const int WaveInfoHeight = 80;
+
+        /// <summary>エラー窓内パディング<summary>
+        public const int AlertPadding = 10;
+
+        /// <summary>メニュー高さデフォルト<summary>
+        public const double MenuLineHeight = 1.4;
+        /// <summary>複数行文字列高さデフォルト<summary>
+        public const double LineHeight = 1.1;
         #endregion
 
         #region ゲーム画面レイアウト

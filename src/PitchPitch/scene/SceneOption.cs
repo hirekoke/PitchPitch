@@ -10,8 +10,6 @@ using PitchPitch.audio;
 
 namespace PitchPitch.scene
 {
-    using MenuItem = KeyValuePair<Key, string>;
-
     class SceneOption : Scene
     {
         private Color _powerColor = Color.FromArgb(100, 100, 100);
@@ -86,13 +84,8 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.RightArrow, Key.LeftArrow, 
                 Key.Return, Key.Escape//, Key.Space
             };
-        }
 
-        public override void Init(PitchPitch parent)
-        {
-            base.Init(parent);
-
-            Size escSize = ResourceManager.MiddlePFont.SizeText(TextUtil.MenuToString(_endHeadStrs[0]));
+            Size escSize = ResourceManager.MiddlePFont.SizeText(_endHeadStrs[0].ToString());
             _endHeadRect = new Rectangle(
                 Constants.ScreenWidth - Constants.RightBottomItemMargin - escSize.Width - Constants.CursorMargin,
                 Constants.ScreenHeight - Constants.RightBottomItemMargin - escSize.Height,
@@ -117,18 +110,13 @@ namespace PitchPitch.scene
             _calRect = new Rectangle(_calHeadRect.X + Constants.CursorMargin, _devRect.Y,
                 _devRect.Width, _devRect.Height);
 
-            _calMenuRect = new Rectangle(_calRect.X, _calRect.Y + (int)(ResourceManager.SmallPFont.Height * 1.4),
-                _calRect.Width, _calRect.Height - Constants.WaveHeight - Constants.WaveInfoHeight - (int)(ResourceManager.SmallPFont.Height * 1.4));
+            _calMenuRect = new Rectangle(_calRect.X, _calRect.Y + (int)(ResourceManager.SmallPFont.Height * Constants.MenuLineHeight),
+                _calRect.Width, _calRect.Height - Constants.WaveHeight - Constants.WaveInfoHeight - (int)(ResourceManager.SmallPFont.Height * Constants.MenuLineHeight));
             _calWaveRect = new Rectangle(_calRect.X, _calRect.Bottom - Constants.WaveHeight,
                 _calRect.Width, Constants.WaveHeight);
 
             _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
             _headCursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultStrongColor);
-
-            _audioInput = parent.AudioInput;
-            _audioInput.DeviceInfoUpdated += (s, e) => { _needUpdate = true; };
-
-            updateDevices();
 
             _calSurfaces = new SurfaceCollection();
             _calRects = new Rectangle[_calStrs.Length];
@@ -140,7 +128,15 @@ namespace PitchPitch.scene
             ImageUtil.CreateStrMenu(_endHeadStrs, Constants.DefaultStrongColor,
                 ResourceManager.MiddlePFont,
                 ref _endHeadSurfaces, ref _endHeadRects, _endHeadRect.Width);
+        }
 
+        public override void Init(PitchPitch parent)
+        {
+            base.Init(parent);
+
+            _audioInput = parent.AudioInput;
+            _audioInput.DeviceInfoUpdated += (s, e) => { _needUpdate = true; };
+            updateDevices();
 
             _isCalStarted = false;
             _calSelectedIdx = 0;
@@ -446,7 +442,7 @@ namespace PitchPitch.scene
         }
         #endregion
 
-        public override void Draw(SdlDotNet.Graphics.Surface s)
+        protected override void draw(SdlDotNet.Graphics.Surface s)
         {
             s.Fill(Constants.DefaultBackColor);
 

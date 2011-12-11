@@ -9,8 +9,6 @@ using SdlDotNet.Graphics.Sprites;
 
 namespace PitchPitch.scene
 {
-    using MenuItem = KeyValuePair<Key, string>;
-
     class SceneTitle : Scene
     {
         private SurfaceCollection _menuSurfaces = null;
@@ -22,9 +20,6 @@ namespace PitchPitch.scene
         private Surface _titleSurface = null;
         private Surface _coloredTitleSurface = null;
         private Surface _alertSurface = null;
-
-        //private Color _foreColor = Color.Black;
-        //private Color _backColor = Color.White;
 
         public SceneTitle()
         {
@@ -40,11 +35,7 @@ namespace PitchPitch.scene
             {
                 Key.UpArrow, Key.DownArrow, Key.Return, Key.M, Key.O, Key.Q
             };
-        }
 
-        public override void Init(PitchPitch parent)
-        {
-            Random rand = new Random();
             _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
 
             if (_menuSurfaces == null)
@@ -54,8 +45,12 @@ namespace PitchPitch.scene
                 ImageUtil.CreateStrMenu(_menuItems, Constants.DefaultForeColor, ResourceManager.MiddlePFont,
                     ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
             }
+        }
 
+        public override void Init(PitchPitch parent)
+        {
             base.Init(parent);
+            _selectedIdx = 0;
         }
 
         protected override int procKeyEvent(Key key)
@@ -106,7 +101,7 @@ namespace PitchPitch.scene
             }
         }
 
-        public override void Draw(Surface s)
+        protected override void draw(Surface s)
         {
             s.Fill(Constants.DefaultBackColor);
 

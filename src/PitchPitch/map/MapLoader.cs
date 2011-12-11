@@ -9,6 +9,12 @@ using PitchPitch.audio;
 
 namespace PitchPitch.map
 {
+    class MapLoadException : Exception
+    {
+        public MapLoadException(string message) : base(message) { }
+        public MapLoadException(string message, Exception innerEx) : base(message, innerEx) { }
+    }
+
     class MapLoader
     {
         public List<MapInfo> LoadMapInfos()
@@ -234,79 +240,86 @@ namespace PitchPitch.map
             Map map = null;
             MapChipData chipData = null;
 
-            switch (info.ChipDataInfo.ChipType)
+            try
             {
-                case MapChipType.Builtin:
-                    {
-                        switch (info.ChipDataInfo.BuiltinType)
+                switch (info.ChipDataInfo.ChipType)
+                {
+                    case MapChipType.Builtin:
                         {
-                            case MapChipBuiltinType.Binary:
-                                chipData = BinaryChipData.LoadChipData(info);
-                                map = new BinaryMap();
-                                map.ChipData = chipData;
-                                break;
-                            case MapChipBuiltinType.Colors:
-                                chipData = ColorChipData.LoadChipData(info);
-                                map = new BasicMap();
-                                map.ChipData = chipData;
-                                break;
-                        }
-                    }
-                    break;
-                case MapChipType.Image:
-                    {
-                        chipData = ImageMapChipData.LoadChipData(info);
-                        map = new BasicMap();
-                        map.ChipData = chipData;
-                    }
-                    break;
-            }
-
-
-            switch (info.MapSourceType)
-            {
-                case MapSourceType.Image:
-                    {
-                        string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
-                        string mappingPath = Path.Combine(info.DirectoryPath, info.MappingFileName);
-                        using (Bitmap srcBmp = (Bitmap)Bitmap.FromFile(srcPath))
-                        {
-                            if (!string.IsNullOrEmpty(info.MappingFileName) && File.Exists(mappingPath))
+                            switch (info.ChipDataInfo.BuiltinType)
                             {
-                                using (Bitmap mappingBmp = (Bitmap)Bitmap.FromFile(mappingPath))
+                                case MapChipBuiltinType.Binary:
+                                    chipData = BinaryChipData.LoadChipData(info);
+                                    map = new BinaryMap();
+                                    map.ChipData = chipData;
+                                    break;
+                                case MapChipBuiltinType.Colors:
+                                    chipData = ColorChipData.LoadChipData(info);
+                                    map = new BasicMap();
+                                    map.ChipData = chipData;
+                                    break;
+                            }
+                        }
+                        break;
+                    case MapChipType.Image:
+                        {
+                            chipData = ImageMapChipData.LoadChipData(info);
+                            map = new BasicMap();
+                            map.ChipData = chipData;
+                        }
+                        break;
+                }
+
+
+                switch (info.MapSourceType)
+                {
+                    case MapSourceType.Image:
+                        {
+                            string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
+                            string mappingPath = Path.Combine(info.DirectoryPath, info.MappingFileName);
+                            using (Bitmap srcBmp = (Bitmap)Bitmap.FromFile(srcPath))
+                            {
+                                if (!string.IsNullOrEmpty(info.MappingFileName) && File.Exists(mappingPath))
                                 {
-                                    map.LoadMapImage(srcBmp, mappingBmp);
+                                    using (Bitmap mappingBmp = (Bitmap)Bitmap.FromFile(mappingPath))
+                                    {
+                                        map.LoadMapImage(srcBmp, mappingBmp);
+                                    }
+                                }
+                                else
+                                {
+                                    map.LoadMapImage(srcBmp, null);
                                 }
                             }
-                            else
-                            {
-                                map.LoadMapImage(srcBmp, null);
-                            }
                         }
-                    }
-                    break;
-                case MapSourceType.Music:
-                    {
-                        string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
-
-                        Music music = Music.LoadMusic(srcPath);
-                        info.MaxPitch = music.MaxPitch;
-                        info.MinPitch = music.MinPitch;
-                        using (Bitmap srcBmp = music.GetMap(SdlDotNet.Core.Events.TargetFps, info.PlayerVx,
-                            info.ChipDataInfo.Size.Width, info.ChipDataInfo.Size.Height))
+                        break;
+                    case MapSourceType.Music:
                         {
-                            if (srcBmp != null)
+                            string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
+
+                            Music music = Music.LoadMusic(srcPath);
+                            info.MaxPitch = music.MaxPitch;
+                            info.MinPitch = music.MinPitch;
+                            using (Bitmap srcBmp = music.GetMap(SdlDotNet.Core.Events.TargetFps, info.PlayerVx,
+                                info.ChipDataInfo.Size.Width, info.ChipDataInfo.Size.Height))
                             {
-                                srcBmp.Save("test.png");
-                                map.LoadMapImage(srcBmp, null);
+                                if (srcBmp != null)
+                                {
+                                    srcBmp.Save("test.png");
+                                    map.LoadMapImage(srcBmp, null);
+                                }
                             }
                         }
-                    }
-                    break;
-            }
+                        break;
+                }
 
-            map.MapInfo = info;
-            return map;
+                map.MapInfo = info;
+                return map;
+            }
+            catch (Exception ex)
+            {
+                throw new MapLoadException(string.Format("{0}: {1}", Properties.Resources.Str_MapLoadError, info.Id), ex);
+            }
         }
     }
 }

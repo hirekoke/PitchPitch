@@ -27,13 +27,6 @@ namespace PitchPitch.scene
             }
         }
 
-        private SceneType _nextScene = SceneType.Option;
-        public SceneType NextScene
-        {
-            get { return _nextScene; }
-            set { _nextScene = value; }
-        }
-
         public SceneError()
         {
             _keys = new Key[] { Key.Return };
@@ -79,7 +72,7 @@ namespace PitchPitch.scene
             }
         }
 
-        public override void Draw(SdlDotNet.Graphics.Surface s)
+        protected override void draw(SdlDotNet.Graphics.Surface s)
         {
             if (_prevSurface == null)
             {

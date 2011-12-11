@@ -322,11 +322,29 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   Press Return に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_AlertTail {
+            get {
+                return ResourceManager.GetString("Str_AlertTail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   計測中… に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_Calibrating {
             get {
                 return ResourceManager.GetString("Str_Calibrating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   マップの読み込みに失敗しました に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_MapLoadError {
+            get {
+                return ResourceManager.GetString("Str_MapLoadError", resourceCulture);
             }
         }
         
