@@ -314,10 +314,11 @@ namespace PitchPitch.gameobj
             renderPlayer(s, p);
             renderExplosion(s, p);
 
-            foreach (Point cp in _collisionPoints)
-            {
-                s.Fill(new Rectangle(p.X + cp.X - 1, p.Y + cp.Y - 1, 3, 3), Color.Red);
-            }
+            // 当たり判定点
+            //foreach (Point cp in _collisionPoints)
+            //{
+            //    s.Fill(new Rectangle(p.X + cp.X - 1, p.Y + cp.Y - 1, 3, 3), Color.Red);
+            //}
 
             if (tick - _prevFrameTick > _frameTick && !_isPaused)
             {
