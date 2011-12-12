@@ -7,24 +7,36 @@ namespace PitchPitch.map
 {
     class RandomMap : BinaryMap
     {
+        internal class RandomMapInfo : MapInfo { }
+
+        public static RandomMapInfo GetMapInfo(int level)
+        {
+            RandomMapInfo mi = new RandomMapInfo();
+            mi.Level = level;
+            mi.MapName = Properties.Resources.MenuItem_RandomMap + "-" + level.ToString();
+            return mi;
+        }
+
         #region ランダム生成用
         private Random _rand;
         protected int _holeRadMin = 2;
         protected int _holeRadMax = 5;
         #endregion
         
-        public RandomMap() : base()
+        public RandomMap(int level) : base()
         {
             _rand = new Random();
-            
-            _mapInfo = new MapInfo();
-            _mapInfo.MapName = "Random";
+
+            _mapInfo = GetMapInfo(level);
 
             Color light, dark, strong;
             ImageUtil.GetRandomColors(out light, out dark, out strong);
             _mapInfo.BackgroundColor = light;
             _mapInfo.ForegroundColor = dark;
             _mapInfo.StrongColor = strong;
+
+            _holeRadMax = 9 - _mapInfo.Level;
+            _holeRadMin = 6 - _mapInfo.Level;
 
             _columnNum = 200;
         }

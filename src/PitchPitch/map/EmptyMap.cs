@@ -6,11 +6,20 @@ namespace PitchPitch.map
 {
     class EmptyMap : BinaryMap
     {
+        internal class EmptyMapInfo : MapInfo { }
+
+        public static EmptyMapInfo GetMapInfo()
+        {
+            EmptyMapInfo mi = new EmptyMapInfo();
+            mi.Level = 3;
+            mi.MapName = Properties.Resources.MenuItem_PracticeMap;
+            mi.PlayerVx = 0;
+            return mi;
+        }
+
         public EmptyMap()
         {
-            _mapInfo = new MapInfo();
-            _mapInfo.MapName = "練習用";
-            _mapInfo.PlayerVx = 0;
+            _mapInfo = GetMapInfo();
         }
 
         public override bool HasEnd

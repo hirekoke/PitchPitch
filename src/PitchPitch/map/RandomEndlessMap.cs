@@ -8,6 +8,16 @@ namespace PitchPitch.map
 {
     class RandomEndlessMap : BinaryMap
     {
+        internal class RandomEndlessMapInfo : MapInfo { }
+
+        public static RandomEndlessMapInfo GetMapInfo(int level)
+        {
+            RandomEndlessMapInfo mi = new RandomEndlessMapInfo();
+            mi.Level = level;
+            mi.MapName = Properties.Resources.MenuItem_EndlessMap;
+            return mi;
+        }
+
         protected int _lastColumnIndex = 0;
 
         #region ランダム生成用
@@ -18,12 +28,11 @@ namespace PitchPitch.map
         protected int _holeRadMax = 5;
         #endregion
 
-        public RandomEndlessMap()
+        public RandomEndlessMap(int level)
         {
             _rand = new Random();
 
-            _mapInfo = new MapInfo();
-            _mapInfo.MapName = "Random Endress";
+            _mapInfo = GetMapInfo(level);
 
             Color light, dark, strong;
             ImageUtil.GetRandomColors(out light, out dark, out strong);

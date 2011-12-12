@@ -34,6 +34,7 @@ namespace PitchPitch.scene
         private SurfaceCollection _randSurfaces;
         private Rectangle[] _randRects;
         private int _randSelectedIdx = 0;
+        private MapInfo[] _builtinMapInfos;
 
         // タイトルに戻るメニュー表示用
         private MenuItem[] _escItems = new MenuItem[] { new MenuItem(Key.Escape, Properties.Resources.MenuItem_ReturnTitle) };
@@ -61,18 +62,27 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.LeftArrow, Key.RightArrow, Key.Return, Key.Escape,
                 Key.One, Key.Two, Key.R
             };
-            _randItems = new string[] 
-            { 
-                Properties.Resources.MenuItem_PracticeMap,
-                Properties.Resources.MenuItem_RandomMap,
-                Properties.Resources.MenuItem_EndlessMap,
-                Properties.Resources.MenuItem_ReloadMap
+            _builtinMapInfos = new MapInfo[]
+            {
+                EmptyMap.GetMapInfo(),
+                RandomMap.GetMapInfo(1),
+                RandomMap.GetMapInfo(3),
+                RandomMap.GetMapInfo(5),
+                RandomEndlessMap.GetMapInfo(3)
             };
+
+            _randItems = new string[_builtinMapInfos.Length + 1];
+            for (int i = 0; i < _builtinMapInfos.Length; i++)
+            {
+                _randItems[i] = _builtinMapInfos[i].MapName;
+            }
+            _randItems[_randItems.Length - 1] = Properties.Resources.MenuItem_ReloadMap;
 
 
             _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
             _strongCursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultStrongColor);
 
+            #region レイアウト初期化
             Size escSize = ResourceManager.MiddlePFont.SizeText(_escItems[0].ToString());
             _escRect = new Rectangle(
                 Constants.ScreenWidth - Constants.RightBottomItemMargin - escSize.Width - Constants.CursorMargin,
@@ -95,6 +105,7 @@ namespace PitchPitch.scene
             _randRect = new Rectangle(
                 _mapRect.Right + Constants.MenuColumnGap + Constants.CursorMargin,
                 _mapRect.Top, _mapRect.Width, _mapRect.Height);
+            #endregion
 
             _randSurfaces = new SurfaceCollection();
             _randRects = new Rectangle[_randItems.Length];
@@ -287,8 +298,9 @@ namespace PitchPitch.scene
                     break;
                 case 1: // メニュー項目選択
                     map.Map map = null;
-                    if (_mapFocus) // 読み込みマップメニューの場合
+                    if (_mapFocus)
                     {
+                        #region 読み込みマップメニューの場合
                         MapInfo info = _mapInfos[_mapSelectedIdx];
                         try
                         {
@@ -306,27 +318,35 @@ namespace PitchPitch.scene
                         {
                             SetAlert(true, mex.Message);
                         }
+                        #endregion
                     }
-                    else // ビルトインマップメニューの場合
+                    else
                     {
-                        switch (_randSelectedIdx)
+                        #region ビルトインマップメニューの場合
+                        if (_randSelectedIdx == _randItems.Length - 1)
                         {
-                            case 0: // 練習用
+                            // マップ再読み込み
+                            updateMapInfos();
+                        }
+                        else if(_randSelectedIdx > 0 && _randSelectedIdx < _builtinMapInfos.Length)
+                        {
+                            MapInfo mi = _builtinMapInfos[_randSelectedIdx];
+                            if (mi is RandomMap.RandomMapInfo)
+                            {
+                                map = new RandomMap(mi.Level);
+                                _parent.EnterScene(scene.SceneType.GameStage, map);
+                            }
+                            else if (mi is EmptyMap.EmptyMapInfo)
+                            {
                                 map = new EmptyMap();
                                 _parent.EnterScene(scene.SceneType.GameStage, map);
-                                break;
-                            case 1: // ランダム
-                                map = new RandomMap();
-                                _parent.EnterScene(scene.SceneType.GameStage, map);
-                                break;
-                            case 2: // エンドレス
-                                map = new RandomEndlessMap();
+                            }
+                            else if (mi is RandomEndlessMap.RandomEndlessMapInfo)
+                            {
                                 _parent.EnterScene(scene.SceneType.EndlessGameStage);
-                                break;
-                            case 3: // マップ再読み込み
-                                updateMapInfos();
-                                break;
+                            }
                         }
+                        #endregion
                     }
                     break;
             }

@@ -39,6 +39,8 @@ namespace PitchPitch.map
         public string DirectoryPath = "";
         public string MapName = "";
 
+        public int Level = 3;
+
         public string MapSourceFileName = "";
         public MapSourceType MapSourceType = MapSourceType.None;
         public string Mapping = "";
