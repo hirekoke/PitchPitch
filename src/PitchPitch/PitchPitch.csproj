@@ -162,38 +162,6 @@
     <EmbeddedResource Include="..\image\player-2.png">
       <Link>image\player-2.png</Link>
     </EmbeddedResource>
-    <Content Include="..\doc\IPA_Font_License_Agreement_v1.0.txt">
-      <Link>doc\IPA_Font_License_Agreement_v1.0.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-gfx.txt">
-      <Link>doc\Readme-gfx.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-image.txt">
-      <Link>doc\Readme-image.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-mixer.txt">
-      <Link>doc\Readme-mixer.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-net.txt">
-      <Link>doc\Readme-net.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-SDL.txt">
-      <Link>doc\Readme-SDL.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-smpeg.txt">
-      <Link>doc\Readme-smpeg.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\doc\Readme-ttf.txt">
-      <Link>doc\Readme-ttf.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <ExtraContent Include="..\lib\jpeg.dll">
       <Link>lib\jpeg.dll</Link>
     </ExtraContent>
@@ -239,6 +207,38 @@
     <ExtraContent Include="..\lib\zlib1.dll">
       <Link>lib\zlib1.dll</Link>
     </ExtraContent>
+    <Content Include="..\licenses\IPA_Font_License_Agreement_v1.0.txt">
+      <Link>licenses\IPA_Font_License_Agreement_v1.0.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-gfx.txt">
+      <Link>licenses\Readme-gfx.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-image.txt">
+      <Link>licenses\Readme-image.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-mixer.txt">
+      <Link>licenses\Readme-mixer.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-net.txt">
+      <Link>licenses\Readme-net.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-SDL.txt">
+      <Link>licenses\Readme-SDL.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-smpeg.txt">
+      <Link>licenses\Readme-smpeg.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\licenses\Readme-ttf.txt">
+      <Link>licenses\Readme-ttf.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\se\4-00.wav">
       <Link>se\4-00.wav</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -316,12 +316,12 @@
       <Link>font\mplus-2m-bold.ttf</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\doc\mplus-LICENSE_J">
-      <Link>doc\mplus-LICENSE_J</Link>
+    <Content Include="..\licenses\mplus-LICENSE_J">
+      <Link>licenses\mplus-LICENSE_J</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\doc\SDL-COPYING">
-      <Link>doc\SDL-COPYING</Link>
+    <Content Include="..\licenses\SDL-COPYING">
+      <Link>licenses\SDL-COPYING</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="app.config">
