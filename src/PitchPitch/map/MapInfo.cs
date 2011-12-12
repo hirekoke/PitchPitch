@@ -9,6 +9,7 @@ namespace PitchPitch.map
     {
         None,
         Image,
+        Text,
         Music,
     }
 
@@ -40,7 +41,7 @@ namespace PitchPitch.map
 
         public string MapSourceFileName = "";
         public MapSourceType MapSourceType = MapSourceType.None;
-        public string MappingFileName = "";
+        public string Mapping = "";
 
         public ChipDataInfo ChipDataInfo = new ChipDataInfo();
 

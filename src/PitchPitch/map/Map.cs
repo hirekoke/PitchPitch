@@ -409,7 +409,31 @@ namespace PitchPitch.map
             }
         }
 
-        public virtual void LoadMapImage(Bitmap mapBmp, Bitmap chipMapping = null)
+        public void LoadMapText(string[] lines, string mapping)
+        {
+            _chips = new List<uint[]>();
+            int width = lines.Length > 0 ? lines[0].Length : 0;
+            int height = lines.Length;
+
+            for (int i = 0; i < width; i++) _chips.Add(new uint[height]);
+
+            for (int j = 0; j < height; j++)
+            {
+                string line = lines[j];
+                for (int i = 0; i < width || i < line.Length; i++)
+                {
+                    char c = line[i];
+                    int idx = mapping.IndexOf(c);
+                    if (idx < 0) idx = 1;
+                    _chips[i][j] = (uint)idx;
+                }
+            }
+
+            _columnNum = width;
+            _rowNum = height;
+        }
+
+        public void LoadMapImage(Bitmap mapBmp, Bitmap chipMapping = null)
         {
             _chips = new List<uint[]>();
             Dictionary<Color, uint> mapping = null;

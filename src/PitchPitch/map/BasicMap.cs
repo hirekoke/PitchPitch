@@ -21,11 +21,5 @@ namespace PitchPitch.map
             if (_chipData != null) _chipData.Dispose();
             base.Dispose();
         }
-
-        public override void LoadMapImage(Bitmap mapBmp, Bitmap chipMapping = null)
-        {
-            base.LoadMapImage(mapBmp, chipMapping);
-
-        }
     }
 }

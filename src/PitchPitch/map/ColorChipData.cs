@@ -45,9 +45,9 @@ namespace PitchPitch.map
                 List<Color> defaultColors = new List<Color>();
                 if (info.ChipDataInfo.ChipInfos.Exists((ci) => { return !ci.Color.HasValue; }))
                 {
-                    string mappingPath = System.IO.Path.Combine(info.DirectoryPath, info.MappingFileName);
+                    string mappingPath = System.IO.Path.Combine(info.DirectoryPath, info.Mapping);
                     #region マッピングデータを読み込む
-                    if (!string.IsNullOrEmpty(info.MappingFileName) && System.IO.File.Exists(mappingPath))
+                    if (!string.IsNullOrEmpty(info.Mapping) && System.IO.File.Exists(mappingPath))
                     {
                         using (Bitmap mappingBmp = (Bitmap)Bitmap.FromFile(mappingPath))
                         {

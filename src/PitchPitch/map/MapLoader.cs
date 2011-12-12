@@ -74,7 +74,7 @@ namespace PitchPitch.map
                 #endregion
 
                 mi.MapSourceFileName = srcElem["Name"] == null ? "" : srcElem["Name"].InnerText.Trim();
-                mi.MappingFileName = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
+                mi.Mapping = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
             }
             #endregion
 
@@ -273,13 +273,21 @@ namespace PitchPitch.map
 
                 switch (info.MapSourceType)
                 {
+                    case MapSourceType.Text:
+                        {
+                            string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
+                            string mapping = info.Mapping;
+                            string[] lines = File.ReadAllLines(srcPath, Encoding.UTF8);
+                            map.LoadMapText(lines, mapping);
+                        }
+                        break;
                     case MapSourceType.Image:
                         {
                             string srcPath = Path.Combine(info.DirectoryPath, info.MapSourceFileName);
-                            string mappingPath = Path.Combine(info.DirectoryPath, info.MappingFileName);
+                            string mappingPath = Path.Combine(info.DirectoryPath, info.Mapping);
                             using (Bitmap srcBmp = (Bitmap)Bitmap.FromFile(srcPath))
                             {
-                                if (!string.IsNullOrEmpty(info.MappingFileName) && File.Exists(mappingPath))
+                                if (!string.IsNullOrEmpty(info.Mapping) && File.Exists(mappingPath))
                                 {
                                     using (Bitmap mappingBmp = (Bitmap)Bitmap.FromFile(mappingPath))
                                     {
