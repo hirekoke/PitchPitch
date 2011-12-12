@@ -327,7 +327,7 @@ namespace PitchPitch.scene
                             // マップ再読み込み
                             updateMapInfos();
                         }
-                        else if(_randSelectedIdx > 0 && _randSelectedIdx < _builtinMapInfos.Length)
+                        else if(_randSelectedIdx >= 0 && _randSelectedIdx < _builtinMapInfos.Length)
                         {
                             MapInfo mi = _builtinMapInfos[_randSelectedIdx];
                             if (mi is RandomMap.RandomMapInfo)
