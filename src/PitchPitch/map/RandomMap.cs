@@ -18,15 +18,14 @@ namespace PitchPitch.map
         }
 
         #region ランダム生成用
-        private Random _rand;
-        protected int _holeRadMin = 2;
-        protected int _holeRadMax = 5;
+        protected double _holeRadMin = 2;
+        protected double _holeRadMax = 5;
+        protected double _holeRadGap = 3;
+        protected double _holeGap = 3;
         #endregion
         
         public RandomMap(int level) : base()
         {
-            _rand = new Random();
-
             _mapInfo = GetMapInfo(level);
 
             Color light, dark, strong;
@@ -35,8 +34,12 @@ namespace PitchPitch.map
             _mapInfo.ForegroundColor = dark;
             _mapInfo.StrongColor = strong;
 
-            _holeRadMax = 9 - _mapInfo.Level;
-            _holeRadMin = 6 - _mapInfo.Level;
+            _holeRadMax = 10 - _mapInfo.Level;
+            _holeRadMin = 7 - _mapInfo.Level;
+            _holeGap = 3 * _mapInfo.Level / 4.0;
+            if (_holeGap < 1) _holeGap = 1;
+            _holeRadGap = 3 * _mapInfo.Level / 4.0;
+            if (_holeRadGap < 1) _holeRadGap = 1;
 
             _columnNum = 200;
         }
@@ -47,17 +50,18 @@ namespace PitchPitch.map
 
             _rowNum = _needRowNum;
 
-            int holeY = (int)(_needRowNum / 2.0);
-            int holeRad = _holeRadMax;
+            double holeY = (int)(_needRowNum / 2.0);
+            double holeRad = _holeRadMax;
 
+            Random _rand = new Random();
             for (int i = 0; i < _columnNum; i++)
             {
                 // 穴の中心
-                holeY += (int)(3 * (_rand.NextDouble() - 0.5));
+                holeY += _holeGap * (_rand.NextDouble() - 0.5);
                 if (holeY - holeRad < 0) holeY = holeRad;
                 if (holeY + holeRad > _needRowNum) holeY = _needRowNum - holeRad;
                 // 穴の大きさ
-                holeRad += (int)(3 * (_rand.NextDouble() - 0.5));
+                holeRad += _holeRadGap * (_rand.NextDouble() - 0.5);
                 if (holeRad > _holeRadMax) holeRad = _holeRadMax;
                 if (holeRad < _holeRadMin) holeRad = _holeRadMin;
 

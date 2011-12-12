@@ -65,7 +65,6 @@ namespace PitchPitch.scene
             _builtinMapInfos = new MapInfo[]
             {
                 EmptyMap.GetMapInfo(),
-                RandomMap.GetMapInfo(1),
                 RandomMap.GetMapInfo(3),
                 RandomMap.GetMapInfo(5),
                 RandomEndlessMap.GetMapInfo(3)

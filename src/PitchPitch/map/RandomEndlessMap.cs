@@ -6,11 +6,11 @@ using SdlDotNet.Graphics;
 
 namespace PitchPitch.map
 {
-    class RandomEndlessMap : BinaryMap
+    class RandomEndlessMap : RandomMap
     {
         internal class RandomEndlessMapInfo : MapInfo { }
 
-        public static RandomEndlessMapInfo GetMapInfo(int level)
+        public static new RandomEndlessMapInfo GetMapInfo(int level)
         {
             RandomEndlessMapInfo mi = new RandomEndlessMapInfo();
             mi.Level = level;
@@ -22,13 +22,11 @@ namespace PitchPitch.map
 
         #region ランダム生成用
         private Random _rand;
-        protected int _holeY = 0;
-        protected int _holeRad = 0;
-        protected int _holeRadMin = 2;
-        protected int _holeRadMax = 5;
+        protected double _holeY = 0;
+        protected double _holeRad = 0;
         #endregion
 
-        public RandomEndlessMap(int level)
+        public RandomEndlessMap(int level) : base(level)
         {
             _rand = new Random();
 
@@ -48,7 +46,7 @@ namespace PitchPitch.map
             base.Init(parent, viewSize);
 
             _rowNum = _needRowNum;
-            _holeY = (int)(_rowNum / 2.0);
+            _holeY = _rowNum / 2.0;
             _holeRad = _holeRadMax;
             _chips = new List<uint[]>();
             _lastColumnIndex = 0;
@@ -64,11 +62,11 @@ namespace PitchPitch.map
                 for (int i = _lastColumnIndex; i < _xLastIdx; i++)
                 {
                     // 穴の中心
-                    _holeY += (int)(3 * (_rand.NextDouble() - 0.5));
+                    _holeY += _holeGap * (_rand.NextDouble() - 0.5);
                     if (_holeY - _holeRad < 0) _holeY = _holeRad;
                     if (_holeY + _holeRad > _needRowNum) _holeY = _needRowNum - _holeRad;
                     // 穴の大きさ
-                    _holeRad += (int)(3 * (_rand.NextDouble() - 0.5));
+                    _holeRad += _holeRadGap * (_rand.NextDouble() - 0.5);
                     if (_holeRad > _holeRadMax) _holeRad = _holeRadMax;
                     if (_holeRad < _holeRadMin) _holeRad = _holeRadMin;
 
