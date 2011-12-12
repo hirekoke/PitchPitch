@@ -340,6 +340,24 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   距離 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_Distance {
+            get {
+                return ResourceManager.GetString("Str_Distance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   HP に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_Life {
+            get {
+                return ResourceManager.GetString("Str_Life", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   マップの読み込みに失敗しました に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_MapLoadError {
@@ -363,6 +381,24 @@ namespace PitchPitch.Properties {
         internal static string Str_MinPitch {
             get {
                 return ResourceManager.GetString("Str_MinPitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   高さ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_Pitch {
+            get {
+                return ResourceManager.GetString("Str_Pitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   :  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_Separator {
+            get {
+                return ResourceManager.GetString("Str_Separator", resourceCulture);
             }
         }
         

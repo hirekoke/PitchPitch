@@ -75,6 +75,9 @@ namespace PitchPitch
 
         /// <summary>ミニマップ画面幅</summary>
         public const int MiniMapWidth = 400;
+
+        /// <summary>プレイヤー情報表示枠のパディング</summary>
+        public const int PlayerInfoPadding = 2;
         #endregion
     }
 }

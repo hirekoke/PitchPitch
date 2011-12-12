@@ -61,7 +61,6 @@ namespace PitchPitch.scene
         }
         protected override void procMenu(int idx)
         {
-            base.procMenu(idx);
             if (idx < 0)
             {
 
@@ -71,6 +70,7 @@ namespace PitchPitch.scene
                 _parent.EnterScene(scene.SceneType.Option);
             }
         }
+        protected override void proc(KeyboardEventArgs e) { }
 
         protected override void draw(SdlDotNet.Graphics.Surface s)
         {

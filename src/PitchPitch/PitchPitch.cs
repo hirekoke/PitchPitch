@@ -197,9 +197,16 @@ namespace PitchPitch
             }
             else
             {
-                _currentScene.Process(null);
-                _currentScene.Draw(Video.Screen);
-                Video.Screen.Update();
+                try
+                {
+                    _currentScene.Process(null);
+                    _currentScene.Draw(Video.Screen);
+                    Video.Screen.Update();
+                }
+                catch (Exception ex)
+                {
+                    _currentScene.SetAlert(true, ex.Message);
+                }
             }
             _deviceRemoved = false;
         }

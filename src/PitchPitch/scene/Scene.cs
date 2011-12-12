@@ -43,11 +43,13 @@ namespace PitchPitch.scene
             _prevPressedKey = Key.Print;
             _prevPressTick = Environment.TickCount;
 
-            setAlert(false, null);
+            SetAlert(false, null);
         }
 
-        protected virtual int procKeyEvent(Key key) { return -1; }
-        protected virtual void procMenu(int idx) { }
+        protected abstract int procKeyEvent(Key key);
+        protected abstract void procMenu(int idx);
+        protected abstract void proc(SdlDotNet.Input.KeyboardEventArgs e);
+
         protected Key _prevPressedKey;
         protected long _prevPressTick = -1;
         protected Key[] _keys = new Key[]
@@ -57,7 +59,7 @@ namespace PitchPitch.scene
 
         private bool _onAlert = false;
         private Surface _alertSurface = null;
-        protected void setAlert(bool on, string message)
+        public void SetAlert(bool on, string message)
         {
             _onAlert = on;
             if (_onAlert && string.IsNullOrEmpty(message)) _onAlert = false;
@@ -119,7 +121,7 @@ namespace PitchPitch.scene
                 {
                     if (e.Key == Key.Return)
                     {
-                        setAlert(false, "");
+                        SetAlert(false, "");
                     }
                 }
                 else
@@ -134,38 +136,49 @@ namespace PitchPitch.scene
         /// 更新処理
         /// </summary>
         /// <param name="e"></param>
-        public virtual void Process(SdlDotNet.Input.KeyboardEventArgs e)
+        public void Process(SdlDotNet.Input.KeyboardEventArgs e)
         {
-            ProcKeyEvent(e);
-
-            int idx = -1; bool pressed = false;
-            foreach (Key k in _keys)
+            try
             {
-                if (Keyboard.IsKeyPressed(k))
+
+                ProcKeyEvent(e);
+
+                proc(e);
+
+                int idx = -1; bool pressed = false;
+                foreach (Key k in _keys)
                 {
-                    pressed = true;
-                    if (k == _prevPressedKey)
+                    if (Keyboard.IsKeyPressed(k))
                     {
-                        if (Environment.TickCount - _prevPressTick > 500)
+                        pressed = true;
+                        if (k == _prevPressedKey)
                         {
-                            idx = procKeyEvent(k);
-                            if (idx >= 0) break;
+                            if (Environment.TickCount - _prevPressTick > 500)
+                            {
+                                idx = procKeyEvent(k);
+                                if (idx >= 0) break;
+                            }
+                        }
+                        else
+                        {
+                            _prevPressedKey = k;
+                            _prevPressTick = Environment.TickCount;
                         }
                     }
-                    else
-                    {
-                        _prevPressedKey = k;
-                        _prevPressTick = Environment.TickCount;
-                    }
                 }
-            }
-            if (!pressed)
-            {
-                _prevPressedKey = Key.Print;
-                _prevPressTick = Environment.TickCount;
-            }
+                if (!pressed)
+                {
+                    _prevPressedKey = Key.Print;
+                    _prevPressTick = Environment.TickCount;
+                }
 
-            procMenu(idx);
+                procMenu(idx);
+
+            }
+            catch (Exception ex)
+            {
+                SetAlert(true, ex.Message);
+            }
         }
 
         /// <summary>
@@ -174,7 +187,14 @@ namespace PitchPitch.scene
         /// <param name="s">画面</param>
         public void Draw(Surface s)
         {
-            draw(s);
+            try
+            {
+                draw(s);
+            }
+            catch (Exception ex)
+            {
+                SetAlert(true, ex.Message);
+            }
 
             if (_onAlert && _alertSurface != null)
             {

@@ -25,7 +25,7 @@ namespace PitchPitch
             {
                 if(_smallTTFont == null)
                     _smallTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font, 
-                        Properties.Resources.Font_DefaultTT), 16);
+                        Properties.Resources.Font_DefaultTT), 20);
                 return _smallTTFont;
             }
         }
@@ -37,7 +37,7 @@ namespace PitchPitch
             {
                 if (_middleTTFont == null)
                     _middleTTFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
-                        Properties.Resources.Font_DefaultTT), 24);
+                        Properties.Resources.Font_DefaultTT), 28);
                 return _middleTTFont;
             }
         }
@@ -61,7 +61,7 @@ namespace PitchPitch
             {
                 if (_smallPFont == null)
                     _smallPFont = new SdlGraphics.Font(Path.Combine(Properties.Resources.Dirname_Font,
-                        Properties.Resources.Font_DefaultP), 16);
+                        Properties.Resources.Font_DefaultP), 18);
                 return _smallPFont;
             }
         }

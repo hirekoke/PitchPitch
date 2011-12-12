@@ -41,6 +41,9 @@ namespace PitchPitch.scene
                 _prevProcTime = Environment.TickCount;
             }
         }
+
+        /// <summary>フラグが立ったら次のフレームでゲームオーバー処理</summary>
+        protected bool _isOver = false;
         #endregion
 
         #region 描画関係
@@ -56,9 +59,13 @@ namespace PitchPitch.scene
         protected List<KeyValuePair<Rectangle, string>> _blackKeys = null;
         protected Surface _keyboardSurface = null;
         protected Surface _mapSurface = null;
+        protected Surface _playerInfoSurface = null;
 
         protected Surface _pauseSurface = null;
         protected Surface _clearSurface = null;
+
+        protected SurfaceCollection _lifeSurfaces = null;
+        protected SurfaceCollection _coloredLifeSurfaces = null;
 
         #region メニュー
         protected SurfaceCollection _pauseMenuSurfaces = null;
@@ -76,30 +83,38 @@ namespace PitchPitch.scene
         protected Color _foreColor = Color.Black;
         protected Color _strongColor = Color.Red;
         protected Color _backColor = Color.White;
-        protected void setForeColor(Color value)
+        protected void initColor(Color fore, Color back, Color strong)
         {
-            _foreColor = value;
-            _map.ForeColor = _foreColor;
-            _parent.Player.ForeColor = _foreColor;
-            _foreCursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+            _foreColor = fore;
+            _backColor = back;
+            _strongColor = strong;
 
-            if (_keyboardSurface != null) createKeyRects();
+            _map.ForeColor = _foreColor;
+            _map.BackColor = _backColor;
+            _map.StrongColor = _strongColor;
+
+            _parent.Player.ForeColor = _foreColor;
+            _parent.Player.ExplosionColor = _backColor;
+
+            _foreCursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
+            _backCursor = ResourceManager.GetColoredCursorGraphic(_backColor);
+
+            if (_keyboardSurface != null) { _keyboardSurface.Dispose(); _keyboardSurface = null; }
+            if (_mapSurface != null) { _mapSurface.Dispose(); _mapSurface = null; }
             if (_pauseSurface != null) { _pauseSurface.Dispose(); _pauseSurface = null; }
             if (_clearSurface != null) { _clearSurface.Dispose(); _clearSurface = null; }
-        }
-        protected void setStrongColor(Color value)
-        {
-            _strongColor = value;
-            _map.StrongColor = _strongColor;
-        }
-        protected void setBackColor(Color value)
-        {
-            _backColor = value;
-            _map.BackColor = _backColor;
-            _parent.Player.ExplosionColor = _backColor;
-            _backCursor = ResourceManager.GetColoredCursorGraphic(_backColor);
-            if (_keyboardSurface != null) createKeyRects();
+            if (_playerInfoSurface != null) { _playerInfoSurface.Dispose(); _playerInfoSurface = null; }
 
+            if (_coloredLifeSurfaces != null)
+            {
+                foreach (Surface s in _coloredLifeSurfaces) s.Dispose();
+                _coloredLifeSurfaces = null;
+            }
+            _coloredLifeSurfaces = new SurfaceCollection();
+            foreach (Surface s in _lifeSurfaces)
+            {
+                _coloredLifeSurfaces.Add(ImageUtil.CreateColored(s, _backColor, _strongColor));
+            }
         }
         #endregion
 
@@ -142,6 +157,9 @@ namespace PitchPitch.scene
                 Key.Escape, Key.R, Key.M, Key.T
             };
 
+            #region 画像読み込み
+            _lifeSurfaces = ResourceManager.LoadSurfaces("life.png", new Size(30, 32));
+            #endregion
 
             #region 配置
             _viewRect = new Rectangle(
@@ -193,15 +211,15 @@ namespace PitchPitch.scene
             
             parent.Player.Init(parent);
 
+            // 各種フラグのリセット
             IsPaused = false;
             _isCleared = false;
+            _isOver = false;
             _pauseSelectedIdx = 0;
             _clearSelectedIdx = 0;
 
             #region 色
-            setForeColor(_map.MapInfo.ForegroundColor);
-            setStrongColor(_map.MapInfo.StrongColor);
-            setBackColor(_map.MapInfo.BackgroundColor);
+            initColor(_map.MapInfo.ForegroundColor, _map.MapInfo.BackgroundColor, _map.MapInfo.StrongColor);
             #endregion
 
             #region View/Map/Player
@@ -245,14 +263,7 @@ namespace PitchPitch.scene
             _minFreqLog = Math.Log(_minFreq);
             #endregion
 
-            #region 描画画像初期化
             createKeyRects();
-            if (_mapSurface != null)
-            {
-                _mapSurface.Dispose();
-                _mapSurface = null;
-            }
-            #endregion
 
             _prevProcTime = Environment.TickCount;
         }
@@ -301,8 +312,6 @@ namespace PitchPitch.scene
         {
             _whiteKeys = new List<KeyValuePair<Rectangle, string>>();
             _blackKeys = new List<KeyValuePair<Rectangle, string>>();
-            if (_keyboardSurface != null) _keyboardSurface.Dispose();
-            _keyboardSurface = null;
 
             ToneAnalyzer analyzer = _parent.AudioInput.ToneAnalyzer;
             ToneResult maxTone = analyzer.Analyze(_maxFreq, 1.0);
@@ -603,14 +612,13 @@ namespace PitchPitch.scene
         }
         #endregion
 
-        /// <summary>
-        /// 更新処理
-        /// </summary>
-        public override void Process(KeyboardEventArgs e)
+        protected override void proc(KeyboardEventArgs e)
         {
-            base.Process(e);
-
-            if (_isPaused)
+            if (_isOver)
+            {
+                _parent.EnterScene(SceneType.GameOver);
+            }
+            else if (_isPaused)
             {
 
             }
@@ -636,7 +644,7 @@ namespace PitchPitch.scene
                     // Clear
                     _isCleared = true;
                 }
-                else if(_parent.Player.X < 0)
+                else if (_parent.Player.X < 0)
                 {
                     // not started
                 }
@@ -649,7 +657,7 @@ namespace PitchPitch.scene
                 // ゲームオーバー判定
                 if (_parent.Player.Hp <= 0)
                 {
-                    _parent.EnterScene(SceneType.GameOver);
+                    _isOver = true;
                 }
             }
         }
@@ -693,12 +701,8 @@ namespace PitchPitch.scene
             // ミニマップ描画
             renderMiniMap(s);
 
-            using (Surface infoSurface = new Surface(_playerInfoRect.Size))
-            {
-                // プレイヤー情報描画
-                renderPlayerInformation(infoSurface);
-                s.Blit(infoSurface, _playerInfoRect.Location);
-            }
+            // プレイヤー情報描画
+            renderPlayerInformation(s);
         }
 
         /// <summary>ポーズ中画面を描画する</summary>
@@ -749,30 +753,76 @@ namespace PitchPitch.scene
                     _clearSelectedIdx, ImageAlign.MiddleLeft);
         }
 
+        private int _playerInfoHeaderMaxWidth = 0;
         protected virtual void renderPlayerInformation(Surface s)
         {
-            s.Fill(_foreColor);
+            #region ヘッダ部分初期化
+            if (_playerInfoSurface == null)
+            {
+                _playerInfoHeaderMaxWidth = 0;
+                _playerInfoSurface = new Surface(_playerInfoRect.Width, _playerInfoRect.Height);
+                _playerInfoSurface.Fill(_foreColor);
 
-            int nline = 3;
-            int th = ResourceManager.SmallTTFont.Height * nline + 2 * (nline - 1);
-            int m = (int)((s.Height - th) / 2.0);
+                int dh = (int)((_playerInfoRect.Height - Constants.PlayerInfoPadding * 2) / 3.0);
 
-            int x = _margin;
-            int y = m;
-            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("Life: {0} / {1}", _parent.Player.Hp, _parent.Player.MaxHp), _backColor))
-            {
-                s.Blit(ts, new Point(x, y));
+                int x = Constants.PlayerInfoPadding;
+                int y = Constants.PlayerInfoPadding + (int)(dh / 2.0 - ResourceManager.SmallPFont.Height / 2.0);
+
+                using (Surface ts = ResourceManager.SmallPFont.Render(Properties.Resources.Str_Life + Properties.Resources.Str_Separator, _backColor))
+                {
+                    _playerInfoSurface.Blit(ts, new Point(x, y));
+                    if (_playerInfoHeaderMaxWidth < ts.Width) _playerInfoHeaderMaxWidth = ts.Width;
+                }
+                y += dh;
+                using (Surface ts = ResourceManager.SmallPFont.Render(Properties.Resources.Str_Pitch + Properties.Resources.Str_Separator, _backColor))
+                {
+                    _playerInfoSurface.Blit(ts, new Point(x, y));
+                    if (_playerInfoHeaderMaxWidth < ts.Width) _playerInfoHeaderMaxWidth = ts.Width;
+                }
+                y += dh;
+                using (Surface ts = ResourceManager.SmallPFont.Render(Properties.Resources.Str_Distance + Properties.Resources.Str_Separator, _backColor))
+                {
+                    _playerInfoSurface.Blit(ts, new Point(x, y));
+                    if (_playerInfoHeaderMaxWidth < ts.Width) _playerInfoHeaderMaxWidth = ts.Width;
+                }
             }
-            y += ResourceManager.SmallTTFont.Height + 2;
-            using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("距離: {0:F0} / {1}", _parent.Player.X, _map.Width), _backColor))
+            #endregion
+
+            s.Blit(_playerInfoSurface, _playerInfoRect.Location);
+
+            #region 現在の情報を描画
             {
-                s.Blit(ts, new Point(x, y));
+                int dh = (int)((_playerInfoRect.Height - Constants.PlayerInfoPadding * 2) / 3.0);
+
+                int x = _playerInfoRect.X + Constants.PlayerInfoPadding + _playerInfoHeaderMaxWidth;
+                int y = _playerInfoRect.Y + Constants.PlayerInfoPadding + (int)(dh / 2.0 - ResourceManager.SmallTTFont.Height / 2.0);
+
+                int px = x;
+                int py = _playerInfoRect.Y + Constants.PlayerInfoPadding + (int)(dh / 2.0);
+                for (int i = 0; i < _parent.Player.Hp; i++)
+                {
+                    s.Blit(_coloredLifeSurfaces[0], new Point(px, (int)(py - _coloredLifeSurfaces[0].Height / 2.0)));
+                    px += _coloredLifeSurfaces[0].Width;
+                }
+                for (int i = _parent.Player.Hp; i < _parent.Player.MaxHp; i++)
+                {
+                    s.Blit(_coloredLifeSurfaces[1], new Point(px, (int)(py - _coloredLifeSurfaces[1].Height / 2.0)));
+                    px += _coloredLifeSurfaces[1].Width;
+                }
+
+                y += dh;
+                using (Surface ts = ResourceManager.SmallTTFont.Render(_toneResult.ToString(), _backColor))
+                {
+                    s.Blit(ts, new Point(x, y));
+                }
+
+                y += dh;
+                using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0:F0} ／ {1}", _parent.Player.X, _map.Width), _backColor))
+                {
+                    s.Blit(ts, new Point(x, y));
+                }
             }
-            y += ResourceManager.SmallTTFont.Height + 2;
-            using (Surface ts = ResourceManager.SmallTTFont.Render(_toneResult.ToString(), _backColor))
-            {
-                s.Blit(ts, new Point(x, y));
-            }
+            #endregion
         }
 
         protected virtual void renderKeyboard(Surface s)
@@ -852,6 +902,9 @@ namespace PitchPitch.scene
             if (_pauseSurface != null) _pauseSurface.Dispose();
             if (_clearSurface != null) _clearSurface.Dispose();
             if (_map != null) _map.Dispose();
+            if (_lifeSurfaces != null) foreach (Surface s in _lifeSurfaces) s.Dispose();
+            if (_coloredLifeSurfaces != null) foreach (Surface s in _coloredLifeSurfaces) s.Dispose();
+            if (_playerInfoSurface != null) _playerInfoSurface.Dispose();
             #endregion
 
             #region 効果音破棄

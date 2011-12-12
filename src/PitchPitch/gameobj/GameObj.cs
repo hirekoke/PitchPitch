@@ -36,14 +36,14 @@ namespace PitchPitch.gameobj
         public Point[] CollisionPoints { get { return _collisionPoints; } }
         #endregion
 
-        protected long _hp = 100;
-        public long Hp
+        protected int _hp = 100;
+        public int Hp
         {
             get { return _hp; }
             set { _hp = value; }
         }
-        protected long _maxHp = 10;
-        public long MaxHp
+        protected int _maxHp = 10;
+        public int MaxHp
         {
             get { return _maxHp; }
             set { _maxHp = value; }

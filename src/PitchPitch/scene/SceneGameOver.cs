@@ -110,6 +110,8 @@ namespace PitchPitch.scene
             }
         }
 
+        protected override void proc(KeyboardEventArgs e) { }
+
         protected override void draw(Surface s)
         {
             // ゲームオーバー時画面

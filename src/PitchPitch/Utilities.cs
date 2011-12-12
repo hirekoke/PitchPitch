@@ -10,7 +10,7 @@ namespace PitchPitch
 {
     struct MenuItem
     {
-        private static string format = "{0}: {1}";
+        private static string format = "{0}{1}{2}";
 
         public SdlDotNet.Input.Key Key;
         public string Name;
@@ -20,7 +20,7 @@ namespace PitchPitch
         }
         public override string ToString()
         {
-            return string.Format(format, Key, Name);
+            return string.Format(format, Key, Properties.Resources.Str_Separator, Name);
         }
     }
 

@@ -207,6 +207,9 @@
     <ExtraContent Include="..\lib\zlib1.dll">
       <Link>lib\zlib1.dll</Link>
     </ExtraContent>
+    <EmbeddedResource Include="..\image\life.png">
+      <Link>image\life.png</Link>
+    </EmbeddedResource>
     <Content Include="..\licenses\IPA_Font_License_Agreement_v1.0.txt">
       <Link>licenses\IPA_Font_License_Agreement_v1.0.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

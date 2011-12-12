@@ -241,6 +241,14 @@
     <value>計測中…</value>
     <comment>文字列</comment>
   </data>
+  <data name="Str_Distance" xml:space="preserve">
+    <value>距離</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_Life" xml:space="preserve">
+    <value>HP</value>
+    <comment>文字列</comment>
+  </data>
   <data name="Str_MapLoadError" xml:space="preserve">
     <value>マップの読み込みに失敗しました</value>
     <comment>文字列</comment>
@@ -251,6 +259,14 @@
   </data>
   <data name="Str_MinPitch" xml:space="preserve">
     <value>低音</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_Pitch" xml:space="preserve">
+    <value>高さ</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_Separator" xml:space="preserve">
+    <value>: </value>
     <comment>文字列</comment>
   </data>
   <data name="WindowTitle" xml:space="preserve">

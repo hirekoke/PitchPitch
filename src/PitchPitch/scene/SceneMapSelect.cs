@@ -299,12 +299,12 @@ namespace PitchPitch.scene
                             }
                             else
                             {
-                                setAlert(true, Properties.Resources.Str_MapLoadError);
+                                SetAlert(true, Properties.Resources.Str_MapLoadError);
                             }
                         }
                         catch (MapLoadException mex)
                         {
-                            setAlert(true, mex.Message);
+                            SetAlert(true, mex.Message);
                         }
                     }
                     else // ビルトインマップメニューの場合
@@ -331,6 +331,8 @@ namespace PitchPitch.scene
                     break;
             }
         }
+
+        protected override void proc(KeyboardEventArgs e) { }
 
         protected override void draw(SdlDotNet.Graphics.Surface s)
         {

@@ -393,10 +393,8 @@ namespace PitchPitch.scene
             }
         }
 
-        public override void Process(KeyboardEventArgs e)
+        protected override void proc(KeyboardEventArgs e)
         {
-            base.Process(e);
-
             if (_needUpdate) updateDevices();
 
             double pitch = -1;
