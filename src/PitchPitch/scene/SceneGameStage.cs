@@ -23,6 +23,8 @@ namespace PitchPitch.scene
             set { _map = value; }
         }
 
+        protected bool _isFixedPitchMap = false;
+
         /// <summary>Viewの中でのプレイヤー位置(左端=0, 右端=1)</summary>
         protected double _playerXRatio = 0.2;
         /// <summary>マップの前後、衝突判定の無い部分</summary>
@@ -251,11 +253,13 @@ namespace PitchPitch.scene
             #region ピッチ設定
             if (_map.MapInfo.PitchType == map.PitchType.Fixed)
             {
+                _isFixedPitchMap = true;
                 _maxFreq = _map.MapInfo.MaxPitch;
                 _minFreq = _map.MapInfo.MinPitch;
             }
             else
             {
+                _isFixedPitchMap = false;
                 _minFreq = Config.Instance.MinFreq;
                 _maxFreq = Config.Instance.MaxFreq;
             }

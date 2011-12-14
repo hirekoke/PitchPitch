@@ -225,9 +225,36 @@ namespace PitchPitch.Properties {
         /// <summary>
         ///   エンドレス に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string MenuItem_EndlessMap {
+        internal static string MapName_EndlessMap {
             get {
-                return ResourceManager.GetString("MenuItem_EndlessMap", resourceCulture);
+                return ResourceManager.GetString("MapName_EndlessMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   練習用（固定ピッチ） に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MapName_PracticeFixedMap {
+            get {
+                return ResourceManager.GetString("MapName_PracticeFixedMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   練習用 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MapName_PracticeMap {
+            get {
+                return ResourceManager.GetString("MapName_PracticeMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ランダム に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MapName_RandomMap {
+            get {
+                return ResourceManager.GetString("MapName_RandomMap", resourceCulture);
             }
         }
         
@@ -250,29 +277,11 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
-        ///   練習用 に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string MenuItem_PracticeMap {
-            get {
-                return ResourceManager.GetString("MenuItem_PracticeMap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Quit に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string MenuItem_Quit {
             get {
                 return ResourceManager.GetString("MenuItem_Quit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   ランダム に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string MenuItem_RandomMap {
-            get {
-                return ResourceManager.GetString("MenuItem_RandomMap", resourceCulture);
             }
         }
         

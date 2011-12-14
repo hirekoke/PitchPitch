@@ -65,6 +65,7 @@ namespace PitchPitch.scene
             _builtinMapInfos = new MapInfo[]
             {
                 EmptyMap.GetMapInfo(),
+                EmptyFixedMap.GetMapInfo(),
                 RandomMap.GetMapInfo(3),
                 RandomMap.GetMapInfo(5),
                 RandomEndlessMap.GetMapInfo(3)
@@ -338,6 +339,11 @@ namespace PitchPitch.scene
                             else if (mi is EmptyMap.EmptyMapInfo)
                             {
                                 map = new EmptyMap();
+                                _parent.EnterScene(scene.SceneType.GameStage, map);
+                            }
+                            else if (mi is EmptyFixedMap.EmptyFixedMapInfo)
+                            {
+                                map = new EmptyFixedMap();
                                 _parent.EnterScene(scene.SceneType.GameStage, map);
                             }
                             else if (mi is RandomEndlessMap.RandomEndlessMapInfo)

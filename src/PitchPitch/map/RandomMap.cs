@@ -13,7 +13,7 @@ namespace PitchPitch.map
         {
             RandomMapInfo mi = new RandomMapInfo();
             mi.Level = level;
-            mi.MapName = Properties.Resources.MenuItem_RandomMap + "-" + level.ToString();
+            mi.MapName = Properties.Resources.MapName_RandomMap + "-" + level.ToString();
             return mi;
         }
 

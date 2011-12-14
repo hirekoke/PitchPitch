@@ -14,7 +14,7 @@ namespace PitchPitch.map
         {
             RandomEndlessMapInfo mi = new RandomEndlessMapInfo();
             mi.Level = level;
-            mi.MapName = Properties.Resources.MenuItem_EndlessMap;
+            mi.MapName = Properties.Resources.MapName_EndlessMap;
             return mi;
         }
 

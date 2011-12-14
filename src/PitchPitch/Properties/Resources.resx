@@ -189,9 +189,21 @@
     <value>PAUSE</value>
     <comment>ヘッダタイトル</comment>
   </data>
-  <data name="MenuItem_EndlessMap" xml:space="preserve">
+  <data name="MapName_EndlessMap" xml:space="preserve">
     <value>エンドレス</value>
-    <comment>メニュー文字列</comment>
+    <comment>マップ名</comment>
+  </data>
+  <data name="MapName_PracticeFixedMap" xml:space="preserve">
+    <value>練習用（固定ピッチ）</value>
+    <comment>マップ名</comment>
+  </data>
+  <data name="MapName_PracticeMap" xml:space="preserve">
+    <value>練習用</value>
+    <comment>マップ名</comment>
+  </data>
+  <data name="MapName_RandomMap" xml:space="preserve">
+    <value>ランダム</value>
+    <comment>マップ名</comment>
   </data>
   <data name="MenuItem_MapSelect" xml:space="preserve">
     <value>Select Map</value>
@@ -201,16 +213,8 @@
     <value>Option</value>
     <comment>メニュー文字列</comment>
   </data>
-  <data name="MenuItem_PracticeMap" xml:space="preserve">
-    <value>練習用</value>
-    <comment>メニュー文字列</comment>
-  </data>
   <data name="MenuItem_Quit" xml:space="preserve">
     <value>Quit</value>
-    <comment>メニュー文字列</comment>
-  </data>
-  <data name="MenuItem_RandomMap" xml:space="preserve">
-    <value>ランダム</value>
     <comment>メニュー文字列</comment>
   </data>
   <data name="MenuItem_ReloadMap" xml:space="preserve">

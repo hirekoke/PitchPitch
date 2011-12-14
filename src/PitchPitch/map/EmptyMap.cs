@@ -12,7 +12,7 @@ namespace PitchPitch.map
         {
             EmptyMapInfo mi = new EmptyMapInfo();
             mi.Level = 3;
-            mi.MapName = Properties.Resources.MenuItem_PracticeMap;
+            mi.MapName = Properties.Resources.MapName_PracticeMap;
             mi.PlayerVx = 0;
             return mi;
         }
@@ -41,6 +41,28 @@ namespace PitchPitch.map
                 }
                 _chips.Add(row);
             }
+        }
+    }
+
+    class EmptyFixedMap : EmptyMap
+    {
+        internal class EmptyFixedMapInfo : MapInfo { }
+
+        public static new EmptyFixedMapInfo GetMapInfo()
+        {
+            EmptyFixedMapInfo mi = new EmptyFixedMapInfo();
+            mi.Level = 3;
+            mi.MapName = Properties.Resources.MapName_PracticeFixedMap;
+            mi.PlayerVx = 0;
+            mi.PitchType = PitchType.Fixed;
+            mi.MaxPitch = 700;
+            mi.MinPitch = 180;
+            return mi;
+        }
+
+        public EmptyFixedMap()
+        {
+            _mapInfo = GetMapInfo();
         }
     }
 }
