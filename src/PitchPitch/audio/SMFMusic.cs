@@ -33,7 +33,7 @@ namespace PitchPitch.audio.SMF
             BinaryReader reader = new BinaryReader(new FileStream(filePath, FileMode.Open), Encoding.UTF8);
 
             _header = readHeader(reader);
-            if (!_header.DeltaTimeInPPQN) throw new SMFException("対応していないMIDIファイル:Time Division");
+            if (!_header.DeltaTimeInPPQN) throw new SMFException("対応していないMIDIファイル:TimeInSec Division");
             if (_header.FormatType == 2) throw new SMFException("対応していないMIDIファイル:Format");
 
             for (int i = 0; i < _header.TrackNum; i++)
@@ -99,7 +99,7 @@ namespace PitchPitch.audio.SMF
                                 note = noteNums[noteNum];
 
                                 MusicNote n = new MusicNote();
-                                n.Time = time;
+                                n.TimeInSec = time;
                                 n.Pitch = note.Pitch;
                                 n.Start = false;
                                 _points.Add(n);
@@ -112,7 +112,7 @@ namespace PitchPitch.audio.SMF
                                 noteNums.Add(noteNum, note);
 
                             MusicNote nn = new MusicNote();
-                            nn.Time = time;
+                            nn.TimeInSec = time;
                             nn.Pitch = note.Pitch;
                             nn.Start = true;
                             _points.Add(nn);
@@ -143,7 +143,7 @@ namespace PitchPitch.audio.SMF
                                 note = noteNums[noteNum];
 
                                 MusicNote n = new MusicNote();
-                                n.Time = time;
+                                n.TimeInSec = time;
                                 n.Pitch = note.Pitch;
                                 n.Start = false;
                                 _points.Add(n);

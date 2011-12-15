@@ -81,11 +81,11 @@ namespace PitchPitch.audio
                                 // 横線引く
                                 if (offX.ContainsKey(d))
                                 {
-                                    if (note.Time > offX[d])
+                                    if (note.TimeInSec > offX[d])
                                     {
                                         double x0 = getX(offX[d], width, fps, vx, chipWidth);
                                         double y0 = getY(d, height, chipHeight);
-                                        double x1 = getX(note.Time, width, fps, vx, chipWidth);
+                                        double x1 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                                         double y1 = y0;
                                         g.DrawLine(offPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
                                     }
@@ -93,7 +93,7 @@ namespace PitchPitch.audio
                                 // 縦線引く
                                 if (d != note.Pitch)
                                 {
-                                    double x0 = getX(note.Time, width, fps, vx, chipWidth);
+                                    double x0 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                                     double y0 = getY(d, height, chipHeight);
                                     double x1 = x0;
                                     double y1 = getY(note.Pitch, height, chipHeight);
@@ -101,18 +101,18 @@ namespace PitchPitch.audio
                                 }
                             }
                         }
-                        else if (note.Time > 0)
+                        else if (note.TimeInSec > 0)
                         {
                             // 開始までの線
                             double x0 = 0;
                             double y0 = getY(note.Pitch, height, chipHeight);
-                            double x1 = getX(note.Time, width, fps, vx, chipWidth);
+                            double x1 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                             double y1 = y0;
                             g.DrawLine(offPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
                         }
 
-                        if (offX.ContainsKey(note.Pitch)) offX[note.Pitch] = note.Time;
-                        else offX.Add(note.Pitch, note.Time);
+                        if (offX.ContainsKey(note.Pitch)) offX[note.Pitch] = note.TimeInSec;
+                        else offX.Add(note.Pitch, note.TimeInSec);
                     }
                     else
                     {
@@ -133,13 +133,13 @@ namespace PitchPitch.audio
                         {
                             double x0 = getX(offX[note.Pitch], width, fps, vx, chipWidth);
                             double y0 = getY(note.Pitch, height, chipHeight);
-                            double x1 = getX(note.Time, width, fps, vx, chipWidth);
+                            double x1 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                             double y1 = y0;
                             g.DrawLine(onPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
                         }
 
-                        if (offX.ContainsKey(note.Pitch)) offX[note.Pitch] = note.Time;
-                        else offX.Add(note.Pitch, note.Time);
+                        if (offX.ContainsKey(note.Pitch)) offX[note.Pitch] = note.TimeInSec;
+                        else offX.Add(note.Pitch, note.TimeInSec);
                     }
                 }
 
@@ -175,7 +175,12 @@ namespace PitchPitch.audio
                         music.Load(filePath);
                         return music;
                     }
-
+                case ".mml":
+                    {
+                        MML.MMLMusic music = new MML.MMLMusic();
+                        music.Load(filePath);
+                        return music;
+                    }
                 default:
                     return null;
             }
@@ -184,8 +189,17 @@ namespace PitchPitch.audio
 
     class MusicNote
     {
-        public double Time;
+        public double TimeInSec;
         public double Pitch;
         public bool Start;
+        
+        public MusicNote Copy()
+        {
+            MusicNote ret = new MusicNote();
+            ret.TimeInSec = TimeInSec;
+            ret.Pitch = Pitch;
+            ret.Start = Start;
+            return ret;
+        }
     }
 }

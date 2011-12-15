@@ -138,6 +138,7 @@ namespace PitchPitch.scene
             sceneType = SceneType.GameStage;
             _map = map;
 
+            #region メニューアイテム
             _pauseMenuItems = new MenuItem[]
             {
                 new MenuItem(Key.Escape, Properties.Resources.MenuItem_ResumeGame),
@@ -150,6 +151,7 @@ namespace PitchPitch.scene
                 new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
                 new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
             };
+            #endregion
 
             _keys = new Key[]
             {
@@ -180,7 +182,7 @@ namespace PitchPitch.scene
             _playerInfoRect = new Rectangle(
                 Constants.StageMargin,
                 _viewRect.Bottom + Constants.StageGap,
-                Constants.ScreenWidth - _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
+                _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
                 _miniMapRect.Height);
             #endregion
 
@@ -481,7 +483,11 @@ namespace PitchPitch.scene
 
                 if (_parent.Player.Hit(chip, pp, mw, mh))
                 {
-                    ResourceManager.SoundExplosion[_toneResult.ToneIdx.ToString("D2")].Play();
+                    double plog = _minFreqLog + (_maxFreqLog - _minFreqLog) * (Constants.StageViewHeight - _parent.Player.Y) / (double)Constants.StageViewHeight;
+                    double pitch = Math.Pow(Math.E, plog);
+                    ToneResult tone = _parent.AudioInput.ToneAnalyzer.Analyze(pitch, 1.0);
+                    ResourceManager.SoundExplosion[tone.ToneIdx.ToString("D2")].Play();
+
                     _parent.Player.Y = _map.GetDefaultY(pp.X);
                     _parent.Player.Rad = _parent.Player.MinRadius;
                     break;

@@ -149,8 +149,15 @@ namespace PitchPitch.map
         #endregion
 
         #region MiniMap表示用
+        enum RectLoc
+        {
+            LeftMiddle,
+            CenterTop,
+            CenterBottom,
+            RightMiddle,
+        }
         private Size _surfaceSize = Size.Empty;
-        private List<Rectangle> _miniMapMarginRects = new List<Rectangle>();
+        private Dictionary<RectLoc, Rectangle> _miniMapMarginRects = new Dictionary<RectLoc, Rectangle>();
         private Rectangle _miniMapRect = Rectangle.Empty;
         protected virtual void updateMiniMapRect(Size size)
         {
@@ -160,20 +167,24 @@ namespace PitchPitch.map
             double cdh = size.Height / (double)_rowNum;
             Rectangle rect = new Rectangle(Point.Empty, size);
 
-            _miniMapMarginRects = new List<Rectangle>();
-            if (cdw > cdh)
+            _miniMapMarginRects = new Dictionary<RectLoc, Rectangle>();
+            if (cdw > cdh) // 横に余りが出る
             {
                 rect.Width = (int)(rect.Height * _columnNum / (double)_rowNum);
                 rect.X = (int)(size.Width / 2.0 - rect.Width / 2.0);
-                _miniMapMarginRects.Add(new Rectangle(0, rect.Y, rect.X, rect.Height));
-                _miniMapMarginRects.Add(new Rectangle(rect.Right, rect.Y, size.Width - rect.Right, rect.Height));
+                _miniMapMarginRects.Add(RectLoc.LeftMiddle, 
+                    new Rectangle(0, rect.Y, rect.X, rect.Height));
+                _miniMapMarginRects.Add(RectLoc.RightMiddle,
+                    new Rectangle(rect.Right, rect.Y, size.Width - rect.Right, rect.Height));
             }
             else if (cdh > cdw)
             {
                 rect.Height = (int)(rect.Width * _rowNum / (double)_columnNum);
                 rect.Y = (int)(size.Height / 2.0 - rect.Height / 2.0);
-                _miniMapMarginRects.Add(new Rectangle(rect.X, 0, rect.Width, rect.Y));
-                _miniMapMarginRects.Add(new Rectangle(rect.X, rect.Bottom, rect.Width, size.Height - rect.Bottom));
+                _miniMapMarginRects.Add(RectLoc.CenterTop,
+                    new Rectangle(rect.X, 0, rect.Width, rect.Y));
+                _miniMapMarginRects.Add(RectLoc.CenterBottom,
+                    new Rectangle(rect.X, rect.Bottom, rect.Width, size.Height - rect.Bottom));
             }
             _surfaceSize = size;
             _miniMapRect = rect;
@@ -200,6 +211,8 @@ namespace PitchPitch.map
             double[] ppxs = new double[_xLastIdx - _xFirstIdx];
             double[] ppys = new double[_yLastIdx - _yFirstIdx];
 
+            double[] mvpys = new double[0];
+
             int rlen = _chips.Count > 0 ? _chips[0].Length : 0;
             for (int i = _xFirstIdx, s = 0; i < _xLastIdx && i < _chips.Count; i++, s++)
             {
@@ -211,10 +224,35 @@ namespace PitchPitch.map
                 if (j < 0) continue;
                 vpys[t] = convertIdx2VY(j); ppys[t] = convertIdx2PY(j);
             }
+            if (vpys.Length == 0 || vpys[0] > 0)
+            {
+                List<double> tmp = new List<double>();
+                double y = vpys[0] - _chipData.ChipHeight;
+                do
+                {
+                    tmp.Add(y);
+                    y -= _chipData.ChipHeight;
+                } while (y >= 0);
+                tmp.Reverse();
+                mvpys = tmp.ToArray();
+            }
 
             for (int i = _xFirstIdx, s= 0; i < _xLastIdx && i < _chips.Count; i++, s++)
             {
                 if (i < 0) continue;
+
+                foreach (double d in mvpys)
+                {
+                    Chip cd = new Chip();
+                    cd.XIdx = i;
+                    cd.YIdx = 0;
+                    cd.ViewX = vpxs[s];
+                    cd.ViewY = d;
+                    cd.ChipData = _chipData.WallChip;
+                    cd.Hardness = _chipData.Hardness[cd.ChipData];
+                    yield return cd;
+                }
+
                 for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < _chips[i].Length; j++, t++)
                 {
                     if (j < 0) continue;
@@ -223,7 +261,6 @@ namespace PitchPitch.map
                     cd.YIdx = j;
                     cd.ViewX = vpxs[s];
                     cd.ViewY = vpys[t];
-                    cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[i][j];
                     cd.Hardness = _chipData.Hardness[cd.ChipData];
                     yield return cd;
@@ -254,9 +291,21 @@ namespace PitchPitch.map
             double cdw = _miniMapRect.Width / (double)_columnNum;
             double cdh = _miniMapRect.Height / (double)_rowNum;
 
-            foreach (Rectangle rr in _miniMapMarginRects)
+            foreach (KeyValuePair<RectLoc, Rectangle> kv in _miniMapMarginRects)
             {
-                _chipData.Draw(s, _chipData.WallChip, rr);
+                uint chip = _chipData.WallChip;
+                switch (kv.Key)
+                {
+                    case RectLoc.CenterBottom:
+                    case RectLoc.CenterTop:
+                        chip = _chipData.WallChip;
+                        break;
+                    case RectLoc.LeftMiddle:
+                    case RectLoc.RightMiddle:
+                        chip = _chipData.BackChip;
+                        break;
+                }
+                _chipData.Draw(s, chip, kv.Value);
             }
 
             int x0, x1;

@@ -9,8 +9,6 @@ namespace PitchPitch.map
 {
     struct Chip
     {
-        public double X;
-        public double Y;
         public int XIdx;
         public int YIdx;
         public double ViewX;

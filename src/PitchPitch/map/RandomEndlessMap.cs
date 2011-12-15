@@ -116,7 +116,6 @@ namespace PitchPitch.map
                     cd.XIdx = lidx; cd.YIdx = j;
                     cd.ViewX = vpxs[s];
                     cd.ViewY = vpys[t];
-                    cd.X = ppxs[s]; cd.Y = ppys[t];
                     cd.ChipData = _chips[lidx][j];
                     cd.Hardness = _chipData.Hardness[cd.ChipData];
                     yield return cd;
