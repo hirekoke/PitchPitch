@@ -12,16 +12,27 @@ namespace PitchPitch
         public const string Namespace = "PitchPitch";
         /// <summary>ディレクトリ名-画像</summary>
         public const string Dirname_Image = "image";
+        /// <summary>ディレクトリ名-効果音</summary>
+        public const string Dirname_Sound = "se";
         #endregion
 
         #region 色
-        public static Color DefaultForeColor = Color.Black;
-        public static Color DefaultBackColor = Color.White;
-        public static Color DefaultStrongColor = Color.Firebrick;
-        public static Color DefaultSelectionColor = Color.PeachPuff;
+        public static Color Color_Transition = Color.Black;
+        public static Color Color_Foreground = Color.Black;
+        public static Color Color_Background = Color.White;
+        public static Color Color_Strong = Color.Firebrick;
+        public static Color Color_Selection = Color.LightBlue;
 
         public static Color AlertBackColor = Color.DarkRed;
         public static Color AlertForeColor = Color.White;
+        #endregion
+
+        #region ゲーム処理
+        public const int TransitionTime = 160;
+        public const int ContinuousKeyTime = 500;
+
+        public const int MinPitch = 50;
+        public const int MaxPitch = 16000;
         #endregion
 
         #region 画面レイアウト

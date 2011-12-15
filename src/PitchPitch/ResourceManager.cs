@@ -6,6 +6,7 @@ using System.Drawing;
 using SdlDotNet.Graphics;
 using SdlDotNet.Graphics.Sprites;
 using SdlDotNet.Input;
+using SdlDotNet.Audio;
 
 using SysGraphics = System.Drawing;
 using SdlGraphics = SdlDotNet.Graphics;
@@ -101,6 +102,78 @@ namespace PitchPitch
                         Properties.Resources.Font_DefaultP), size);
         }
 
+        #endregion
+
+        #region 効果音
+        private static string getSoundResourceFullName(string resourceName)
+        {
+            return string.Format("{0}.{1}.{2}", Constants.Namespace, Constants.Dirname_Sound, resourceName);
+        }
+        private static Sound getSoundResource(string resourceName)
+        {
+            try
+            {
+                System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+                byte[] buf = null;
+                using (Stream stm = asm.GetManifestResourceStream(getSoundResourceFullName(resourceName)))
+                {
+                    buf = new byte[stm.Length];
+                    stm.Read(buf, 0, buf.Length);
+                }
+                if (buf != null && buf.Length > 0)
+                {
+                    return new Sound(buf);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static Sound _soundOK = null;
+        public static Sound SoundOK
+        {
+            get
+            {
+                if (_soundOK == null)
+                    _soundOK = getSoundResource("ok.wav");
+                return _soundOK;
+            }
+        }
+
+        private static Sound _soundCancel = null;
+        public static Sound SoundCancel
+        {
+            get
+            {
+                if (_soundCancel == null)
+                    _soundCancel = getSoundResource("cancel.wav");
+                return _soundCancel;
+            }
+        }
+
+        private static SoundDictionary _soundExplosion = null;
+        public static SoundDictionary SoundExplosion
+        {
+            get
+            {
+                if (_soundExplosion == null)
+                {
+                    _soundExplosion = new SoundDictionary();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Sound s = getSoundResource(string.Format("exp{0:D2}.wav", i));
+                        _soundExplosion.Add(i.ToString("D2"), s);
+                    }
+                }
+                return _soundExplosion;
+            }
+        }
         #endregion
 
         #region 画像
@@ -319,6 +392,10 @@ namespace PitchPitch
             if (_smallPFont != null) _smallPFont.Dispose();
             if (_middlePFont != null) _middlePFont.Dispose();
             if (_largePFont != null) _largePFont.Dispose();
+
+            if (_soundOK != null) _soundOK.Dispose();
+            if (_soundCancel != null) _soundCancel.Dispose();
+            if (_soundExplosion != null) foreach (Sound s in _soundExplosion.Values) s.Dispose();
 
             foreach (KeyValuePair<Color, AnimatedSprite> kv in _coloredCursors)
                 kv.Value.Dispose();

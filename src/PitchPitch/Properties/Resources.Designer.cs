@@ -106,15 +106,6 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
-        ///   se に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Dirname_Sound {
-            get {
-                return ResourceManager.GetString("Dirname_Sound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Returnを押したまま発声して下さい に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Explanation_Calibration {
@@ -345,6 +336,15 @@ namespace PitchPitch.Properties {
         internal static string Str_Calibrating {
             get {
                 return ResourceManager.GetString("Str_Calibrating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   計測に失敗しました に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_CannotAnalyze {
+            get {
+                return ResourceManager.GetString("Str_CannotAnalyze", resourceCulture);
             }
         }
         

@@ -7,6 +7,7 @@ using System.Drawing;
 using SdlDotNet.Input;
 using SdlDotNet.Graphics;
 using SdlDotNet.Graphics.Sprites;
+using SdlDotNet.Audio;
 
 namespace PitchPitch.scene
 {
@@ -33,6 +34,13 @@ namespace PitchPitch.scene
             get { return sceneType; }
         }
 
+        private int _transitionTime = 0;
+        private bool _transitionStart = false;
+        private long _prevTransitionTick = 0;
+        private Surface _transitionBeforeSurface = null;
+        protected delegate void SceneTransitionEndEventHandler();
+        protected SceneTransitionEndEventHandler _transitionEndDel;
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -42,6 +50,14 @@ namespace PitchPitch.scene
             _parent = parent;
             _prevPressedKey = Key.Print;
             _prevPressTick = Environment.TickCount;
+
+            _prevTransitionTick = Environment.TickCount;
+            _transitionStart = false;
+            if (_transitionBeforeSurface != null)
+            {
+                _transitionBeforeSurface.Dispose();
+                _transitionBeforeSurface = null;
+            }
 
             SetAlert(false, null);
         }
@@ -109,6 +125,23 @@ namespace PitchPitch.scene
             }
         }
 
+        public void PlaySeOK()
+        {
+            ResourceManager.SoundOK.Play();
+        }
+        public void PlaySeCancel()
+        {
+            ResourceManager.SoundCancel.Play();
+        }
+
+        protected void startTransition(SceneTransitionEndEventHandler del)
+        {
+            _transitionEndDel = del;
+            _transitionTime = Constants.TransitionTime;
+            _prevTransitionTick = Environment.TickCount;
+            _transitionStart = true;
+        }
+
         /// <summary>
         /// キー処理(イベント)
         /// </summary>
@@ -140,6 +173,21 @@ namespace PitchPitch.scene
         {
             try
             {
+                if (_transitionStart)
+                {
+                    _transitionTime -= (int)(Environment.TickCount - _prevTransitionTick);
+                    _prevTransitionTick = Environment.TickCount;
+
+                    if (_transitionTime <= 0)
+                    {
+                        SceneTransitionEndEventHandler del = _transitionEndDel;
+                        if (del != null)
+                        {
+                            _transitionStart = false;
+                            del();
+                        }
+                    }
+                }
 
                 ProcKeyEvent(e);
 
@@ -153,7 +201,7 @@ namespace PitchPitch.scene
                         pressed = true;
                         if (k == _prevPressedKey)
                         {
-                            if (Environment.TickCount - _prevPressTick > 500)
+                            if (Environment.TickCount - _prevPressTick > Constants.ContinuousKeyTime)
                             {
                                 idx = procKeyEvent(k);
                                 if (idx >= 0) break;
@@ -189,7 +237,23 @@ namespace PitchPitch.scene
         {
             try
             {
-                draw(s);
+                if (_transitionStart)
+                {
+                    if (_transitionBeforeSurface == null)
+                    {
+                        _transitionBeforeSurface = new Surface(s);
+                        _transitionBeforeSurface.Transparent = true;
+                        _transitionBeforeSurface.AlphaBlending = true;
+                        _transitionBeforeSurface.Alpha = 0;
+                    }
+                    _transitionBeforeSurface.Alpha = (byte)(255 * _transitionTime / (double)Constants.TransitionTime);
+                    s.Fill(Constants.Color_Transition);
+                    s.Blit(_transitionBeforeSurface);
+                }
+                else
+                {
+                    draw(s);
+                }
             }
             catch (Exception ex)
             {
@@ -209,6 +273,7 @@ namespace PitchPitch.scene
         public virtual void Dispose()
         {
             if (_alertSurface != null) _alertSurface.Dispose();
+            if (_transitionBeforeSurface != null) _transitionBeforeSurface.Dispose();
         }
 
     }

@@ -115,17 +115,17 @@ namespace PitchPitch.scene
             _calWaveRect = new Rectangle(_calRect.X, _calRect.Bottom - Constants.WaveHeight,
                 _calRect.Width, Constants.WaveHeight);
 
-            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
-            _headCursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultStrongColor);
+            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.Color_Foreground);
+            _headCursor = ResourceManager.GetColoredCursorGraphic(Constants.Color_Strong);
 
             _calSurfaces = new SurfaceCollection();
             _calRects = new Rectangle[_calStrs.Length];
-            ImageUtil.CreateStrMenu(_calStrs, Constants.DefaultForeColor, ResourceManager.SmallPFont,
+            ImageUtil.CreateStrMenu(_calStrs, Constants.Color_Foreground, ResourceManager.SmallPFont,
                 ref _calSurfaces, ref _calRects, _calRect.Width);
 
             _endHeadSurfaces = new SurfaceCollection();
             _endHeadRects = new Rectangle[1];
-            ImageUtil.CreateStrMenu(_endHeadStrs, Constants.DefaultStrongColor,
+            ImageUtil.CreateStrMenu(_endHeadStrs, Constants.Color_Strong,
                 ResourceManager.MiddlePFont,
                 ref _endHeadSurfaces, ref _endHeadRects, _endHeadRect.Width);
         }
@@ -155,7 +155,7 @@ namespace PitchPitch.scene
 
             _devSurfaces = new SurfaceCollection();
             _devRects = new Rectangle[infoStrs.Length];
-            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+            ImageUtil.CreateStrMenu(infoStrs, Constants.Color_Foreground,
                 ref _devSurfaces, ref _devRects, _devRect.Width);
 
             int ih = 30;
@@ -206,7 +206,7 @@ namespace PitchPitch.scene
 
             _devDrawSurfaces = new SurfaceCollection();
             _devDrawRects = new Rectangle[infoStrs.Length];
-            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+            ImageUtil.CreateStrMenu(infoStrs, Constants.Color_Foreground,
                 ref _devDrawSurfaces, ref _devDrawRects, _devRect.Width);
         }
 
@@ -320,7 +320,7 @@ namespace PitchPitch.scene
                     break;
                 case Key.Escape:
                     stopCalibration();
-                    idx = 0;
+                    idx = 3;
                     break;
             }
             return idx;
@@ -332,7 +332,8 @@ namespace PitchPitch.scene
             switch (idx)
             {
                 case 0:
-                    _parent.EnterScene(scene.SceneType.Title);
+                    PlaySeOK();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                     break;
                 case 1:
                     // Calibration
@@ -340,6 +341,10 @@ namespace PitchPitch.scene
                 case 2:
                     // Select Device
                     selectDevice();
+                    break;
+                case 3:
+                    PlaySeCancel();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                     break;
             }
         }
@@ -400,7 +405,8 @@ namespace PitchPitch.scene
             double pitch = -1;
             if (_audioInput.Capturing)
             {
-                if (_parent.ToneResult.Clarity > ToneAnalyzer.ClarityThreshold)
+                if (_parent.ToneResult.Clarity > ToneAnalyzer.ClarityThreshold &&
+                    Constants.MinPitch <= _parent.ToneResult.Pitch && _parent.ToneResult.Pitch <= Constants.MaxPitch)
                 {
                     _curToneResult = _parent.ToneResult.Copy();
                     pitch = _curToneResult.Pitch;
@@ -442,41 +448,41 @@ namespace PitchPitch.scene
 
         protected override void draw(SdlDotNet.Graphics.Surface s)
         {
-            s.Fill(Constants.DefaultBackColor);
+            s.Fill(Constants.Color_Background);
 
             // タイトル
             if (_optSurface == null)
             {
-                _optSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_Option, Constants.DefaultStrongColor);
+                _optSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_Option, Constants.Color_Strong);
             }
             s.Blit(_optSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
             // 今選択中のドメイン
             if (_state == SelectionState.Device)
             {
-                s.Fill(new Rectangle(_devHeadRect.Left, _devRect.Top, _devHeadRect.Width, _devRect.Height), Constants.DefaultSelectionColor);
+                s.Fill(new Rectangle(_devHeadRect.Left, _devRect.Top, _devHeadRect.Width, _devRect.Height), Constants.Color_Selection);
             }
             else if (_state == SelectionState.Calibration)
             {
-                s.Fill(new Rectangle(_calHeadRect.Left, _calMenuRect.Top, _calHeadRect.Width, _calMenuRect.Height), Constants.DefaultSelectionColor);
+                s.Fill(new Rectangle(_calHeadRect.Left, _calMenuRect.Top, _calHeadRect.Width, _calMenuRect.Height), Constants.Color_Selection);
             }
 
             // Audio Device / Calibration Header
             if (_devHeadSurface == null)
             {
-                _devHeadSurface = ResourceManager.MiddlePFont.Render(Properties.Resources.HeaderTitle_AudioDevices, Constants.DefaultForeColor);
+                _devHeadSurface = ResourceManager.MiddlePFont.Render(Properties.Resources.HeaderTitle_AudioDevices, Constants.Color_Foreground);
             }
             s.Blit(_devHeadSurface, _devHeadRect.Location);
 
             if (_calHeadSurface == null)
             {
-                _calHeadSurface = ResourceManager.MiddlePFont.Render(Properties.Resources.HeaderTitle_Calibration, Constants.DefaultForeColor);
+                _calHeadSurface = ResourceManager.MiddlePFont.Render(Properties.Resources.HeaderTitle_Calibration, Constants.Color_Foreground);
             }
             s.Blit(_calHeadSurface, _calHeadRect.Location);
 
             if(_expSurface == null)
             {
-                _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_Calibration, Constants.DefaultStrongColor);
+                _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_Calibration, Constants.Color_Strong);
             }
             s.Blit(_expSurface, new Point(_calHeadRect.X, _calRect.Y));
 
@@ -514,11 +520,11 @@ namespace PitchPitch.scene
                         break;
                 }
             }
-            using (Surface ts = ResourceManager.SmallPFont.Render(maxFreq.ToString("F1"), Constants.DefaultForeColor))
+            using (Surface ts = ResourceManager.SmallPFont.Render(maxFreq.ToString("F1"), Constants.Color_Foreground))
             {
                 s.Blit(ts, new Point(_calRects[0].X + hs.Width + _calMenuRect.X + 10, _calRects[0].Y + _calMenuRect.Y));
             }
-            using (Surface ts = ResourceManager.SmallPFont.Render(minFreq.ToString("F1"), Constants.DefaultForeColor))
+            using (Surface ts = ResourceManager.SmallPFont.Render(minFreq.ToString("F1"), Constants.Color_Foreground))
             {
                 s.Blit(ts,
                     new Point(_calRects[1].X + ls.Width + _calMenuRect.X + 10, _calRects[1].Y + _calMenuRect.Y));
@@ -527,7 +533,7 @@ namespace PitchPitch.scene
             // 計測中かどうか
             if (_isCalStarted)
             {
-                using (Surface ts = ResourceManager.SmallPFont.Render(Properties.Resources.Str_Calibrating, Constants.DefaultStrongColor))
+                using (Surface ts = ResourceManager.SmallPFont.Render(Properties.Resources.Str_Calibrating, Constants.Color_Strong))
                 {
                     s.Blit(ts, new Point(_calMenuRect.X, _calMenuRect.Bottom));
                 }
@@ -537,7 +543,7 @@ namespace PitchPitch.scene
             if (_audioInput.Capturing)
             {
                 using (Surface ts = ResourceManager.SmallTTFont.Render(
-                    _curToneResult.ToString(), Constants.DefaultStrongColor))
+                    _curToneResult.ToString(), Constants.Color_Strong))
                 {
                     s.Blit(ts, new Point(_calMenuRect.X, _calMenuRect.Bottom + ResourceManager.SmallPFont.Height + 5));
                 }
@@ -600,10 +606,10 @@ namespace PitchPitch.scene
 
             // 枠
             Box box = new Box(rect.Location, rect.Size);
-            s.Draw(box, Constants.DefaultForeColor, true, false);
+            s.Draw(box, Constants.Color_Foreground, true, false);
             s.Draw(new Line(
                 new Point(rect.X, rect.Top + (int)(rect.Height / 2.0)),
-                new Point(rect.Right, rect.Top + (int)(rect.Height / 2.0))), Constants.DefaultForeColor);
+                new Point(rect.Right, rect.Top + (int)(rect.Height / 2.0))), Constants.Color_Foreground);
         }
 
 

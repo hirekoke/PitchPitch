@@ -76,7 +76,7 @@ namespace PitchPitch.scene
                 case Key.Return:
                     idx = _selectedIdx; break;
                 case Key.Escape:
-                    idx = 1; break;
+                    idx = 3; break;
                 default:
                     idx = 0;
                     foreach (MenuItem mi in _menuItems)
@@ -97,15 +97,22 @@ namespace PitchPitch.scene
             {
                 case 0:
                     // RetryMap Map
+                    PlaySeOK();
                     _parent.RetryMap();
                     break;
                 case 1:
                     // Select Map
-                    _parent.EnterScene(SceneType.MapSelect);
+                    PlaySeOK();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                     break;
                 case 2:
                     // Return to Title
-                    _parent.EnterScene(SceneType.Title);
+                    PlaySeOK();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
+                    break;
+                case 3:
+                    PlaySeCancel();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                     break;
             }
         }
@@ -124,7 +131,7 @@ namespace PitchPitch.scene
             }
 
             s.Fill(_backColor);
-            s.Blit(_prevSurface, Point.Empty);
+            s.Blit(_prevSurface);
 
             // 画像
             s.Blit(_overImgSurface, new Point(s.Size.Width - _overImgSurface.Width - 60, s.Size.Height - _overImgSurface.Height - 60));

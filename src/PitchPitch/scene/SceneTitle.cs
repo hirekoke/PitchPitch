@@ -36,13 +36,13 @@ namespace PitchPitch.scene
                 Key.UpArrow, Key.DownArrow, Key.Return, Key.M, Key.O, Key.Q
             };
 
-            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
+            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.Color_Foreground);
 
             if (_menuSurfaces == null)
             {
                 _menuSurfaces = new SurfaceCollection();
                 _menuRects = new Rectangle[_menuItems.Length];
-                ImageUtil.CreateStrMenu(_menuItems, Constants.DefaultForeColor, ResourceManager.MiddlePFont,
+                ImageUtil.CreateStrMenu(_menuItems, Constants.Color_Foreground, ResourceManager.MiddlePFont,
                     ref _menuSurfaces, ref _menuRects, Constants.ScreenWidth);
             }
         }
@@ -87,12 +87,14 @@ namespace PitchPitch.scene
             switch (idx)
             {
                 case 0:
+                    PlaySeOK();
                     // Select Map
-                    _parent.EnterScene(SceneType.MapSelect);
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                     break;
                 case 1:
+                    PlaySeOK();
                     // Config
-                    _parent.EnterScene(SceneType.Option);
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Option); });
                     break;
                 case 2:
                     // Quit
@@ -105,7 +107,7 @@ namespace PitchPitch.scene
 
         protected override void draw(Surface s)
         {
-            s.Fill(Constants.DefaultBackColor);
+            s.Fill(Constants.Color_Background);
 
             if(_titleSurface == null)
                 _titleSurface = ResourceManager.LoadSurface("logo.png");
@@ -119,7 +121,7 @@ namespace PitchPitch.scene
             if (_alertSurface == null)
             {
                 _alertSurface = ResourceManager.SmallPFont.Render(
-                    Properties.Resources.Explanation_TitleAlert, Constants.DefaultStrongColor);
+                    Properties.Resources.Explanation_TitleAlert, Constants.Color_Strong);
             }
             s.Blit(_alertSurface,
                 new Point((int)(s.Width / 2.0 - _alertSurface.Width / 2.0),

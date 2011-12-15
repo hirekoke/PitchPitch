@@ -131,8 +131,6 @@ namespace PitchPitch.scene
         protected double _maxFreq = 880;
         protected double _minFreqLog = Math.Log(220);
         protected double _maxFreqLog = Math.Log(880);
-
-        protected SdlDotNet.Audio.Sound _hitSe = null;
         #endregion
 
         public SceneGameStage(map.Map map)
@@ -184,13 +182,6 @@ namespace PitchPitch.scene
                 _viewRect.Bottom + Constants.StageGap,
                 Constants.ScreenWidth - _miniMapRect.Left - Constants.StageMargin - Constants.StageGap,
                 _miniMapRect.Height);
-            #endregion
-
-            #region 効果音読み込み
-            if (_hitSe == null)
-            {
-                _hitSe = new SdlDotNet.Audio.Sound(Path.Combine(Properties.Resources.Dirname_Sound, "4-00.wav"));
-            }
             #endregion
 
             #region PID制御係数決定
@@ -400,7 +391,7 @@ namespace PitchPitch.scene
         {
             gameobj.Player player = _parent.Player;
 
-            ToneResult tmp = _parent.ToneResult;
+            ToneResult tmp = _parent.ToneResult.Copy();
             double pitch = Math.Log(tmp.Pitch);
             double clarity = tmp.Clarity;
 
@@ -408,13 +399,17 @@ namespace PitchPitch.scene
             bool soundOn = false;
             if (_parent.AudioInput.Capturing)
             {
-                if (clarity >= 0.90 && clarity <= 1.00)
+                if (clarity >= ToneAnalyzer.ClarityThreshold &&
+                    Constants.MinPitch <= tmp.Pitch && tmp.Pitch <= Constants.MaxPitch)
+                {
                     soundOn = true;
+                }
             }
 
             if (soundOn)
             {
                 _toneResult = tmp;
+                Console.WriteLine(_toneResult.ToneIdx + " " + _toneResult.Tone);
 
                 double yr = (pitch - _minFreqLog) / (_maxFreqLog - _minFreqLog);
                 target = _view.Height - yr * _view.Height + _view.Y;
@@ -486,7 +481,7 @@ namespace PitchPitch.scene
 
                 if (_parent.Player.Hit(chip, pp, mw, mh))
                 {
-                    _hitSe.Play();
+                    ResourceManager.SoundExplosion[_toneResult.ToneIdx.ToString("D2")].Play();
                     _parent.Player.Y = _map.GetDefaultY(pp.X);
                     _parent.Player.Rad = _parent.Player.MinRadius;
                     break;
@@ -501,11 +496,17 @@ namespace PitchPitch.scene
             switch (idx)
             {
                 case 0:
-                    _parent.EnterScene(SceneType.MapSelect);
-                    break;
+                    {
+                        PlaySeOK();
+                        startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
+                        break;
+                    }
                 case 1:
-                    _parent.EnterScene(scene.SceneType.Title);
-                    break;
+                    {
+                        PlaySeOK();
+                        startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
+                        break;
+                    }
             }
         }
         protected virtual int procKeyCleared(Key key)
@@ -541,14 +542,28 @@ namespace PitchPitch.scene
         {
             switch (idx)
             {
-                case 0: IsPaused = false; break;
-                case 1: _parent.RetryMap(); break;
+                case 0:
+                    {
+                        PlaySeCancel();
+                        IsPaused = false; break;
+                    }
+                case 1:
+                    {
+                        PlaySeOK();
+                        _parent.RetryMap(); break;
+                    }
                 case 2:
-                    _parent.EnterScene(scene.SceneType.MapSelect);
-                    break;
+                    {
+                        PlaySeOK();
+                        startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
+                        break;
+                    }
                 case 3:
-                    _parent.EnterScene(scene.SceneType.Title);
-                    break;
+                    {
+                        PlaySeOK();
+                        startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
+                        break;
+                    }
             }
         }
         protected virtual int procKeyPaused(Key key)
@@ -909,10 +924,6 @@ namespace PitchPitch.scene
             if (_lifeSurfaces != null) foreach (Surface s in _lifeSurfaces) s.Dispose();
             if (_coloredLifeSurfaces != null) foreach (Surface s in _coloredLifeSurfaces) s.Dispose();
             if (_playerInfoSurface != null) _playerInfoSurface.Dispose();
-            #endregion
-
-            #region 効果音破棄
-            if (_hitSe != null) _hitSe.Dispose();
             #endregion
 
             base.Dispose();

@@ -142,6 +142,48 @@
     <Compile Include="scene\SceneMapSelect.cs" />
     <Compile Include="scene\SceneOption.cs" />
     <Compile Include="scene\SceneTitle.cs" />
+    <EmbeddedResource Include="..\se\exp00.wav">
+      <Link>se\exp00.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp01.wav">
+      <Link>se\exp01.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp02.wav">
+      <Link>se\exp02.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp03.wav">
+      <Link>se\exp03.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp04.wav">
+      <Link>se\exp04.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp05.wav">
+      <Link>se\exp05.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp06.wav">
+      <Link>se\exp06.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp07.wav">
+      <Link>se\exp07.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp08.wav">
+      <Link>se\exp08.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp09.wav">
+      <Link>se\exp09.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp10.wav">
+      <Link>se\exp10.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\exp11.wav">
+      <Link>se\exp11.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\cancel.wav">
+      <Link>se\cancel.wav</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\se\ok.wav">
+      <Link>se\ok.wav</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\image\cursor.png">
       <Link>image\cursor.png</Link>
     </EmbeddedResource>
@@ -241,54 +283,6 @@
     </Content>
     <Content Include="..\licenses\Readme-ttf.txt">
       <Link>licenses\Readme-ttf.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-00.wav">
-      <Link>se\4-00.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-01.wav">
-      <Link>se\4-01.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-02.wav">
-      <Link>se\4-02.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-03.wav">
-      <Link>se\4-03.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-04.wav">
-      <Link>se\4-04.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-05.wav">
-      <Link>se\4-05.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-06.wav">
-      <Link>se\4-06.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-07.wav">
-      <Link>se\4-07.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-08.wav">
-      <Link>se\4-08.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-09.wav">
-      <Link>se\4-09.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-10.wav">
-      <Link>se\4-10.wav</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\se\4-11.wav">
-      <Link>se\4-11.wav</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Form1.resx">

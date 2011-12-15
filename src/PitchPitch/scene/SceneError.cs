@@ -67,6 +67,7 @@ namespace PitchPitch.scene
             }
             else
             {
+                PlaySeOK();
                 _parent.EnterScene(scene.SceneType.Option);
             }
         }

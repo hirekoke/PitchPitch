@@ -79,8 +79,8 @@ namespace PitchPitch.scene
             _randItems[_randItems.Length - 1] = Properties.Resources.MenuItem_ReloadMap;
 
 
-            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultForeColor);
-            _strongCursor = ResourceManager.GetColoredCursorGraphic(Constants.DefaultStrongColor);
+            _cursor = ResourceManager.GetColoredCursorGraphic(Constants.Color_Foreground);
+            _strongCursor = ResourceManager.GetColoredCursorGraphic(Constants.Color_Strong);
 
             #region レイアウト初期化
             Size escSize = ResourceManager.MiddlePFont.SizeText(_escItems[0].ToString());
@@ -109,13 +109,13 @@ namespace PitchPitch.scene
 
             _randSurfaces = new SurfaceCollection();
             _randRects = new Rectangle[_randItems.Length];
-            ImageUtil.CreateStrMenu(_randItems, Constants.DefaultForeColor,
+            ImageUtil.CreateStrMenu(_randItems, Constants.Color_Foreground,
                 ref _randSurfaces, ref _randRects, _randRect.Width);
             _randRects[_randRects.Length - 1].Offset(0, ResourceManager.SmallPFont.Height);
 
             _escSurfaces = new SurfaceCollection();
             _escRects = new Rectangle[_escItems.Length];
-            ImageUtil.CreateStrMenu(_escItems, Constants.DefaultStrongColor, ResourceManager.MiddlePFont,
+            ImageUtil.CreateStrMenu(_escItems, Constants.Color_Strong, ResourceManager.MiddlePFont,
                 ref _escSurfaces, ref _escRects, _escRect.Width, ResourceManager.MiddlePFont.Height);
         }
 
@@ -149,7 +149,7 @@ namespace PitchPitch.scene
 
             _mapSurfaces = new SurfaceCollection();
             _mapRects = new Rectangle[infoStrs.Length];
-            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+            ImageUtil.CreateStrMenu(infoStrs, Constants.Color_Foreground,
                 ref _mapSurfaces, ref _mapRects, _mapRect.Width);
 
             int ih = 30;
@@ -200,7 +200,7 @@ namespace PitchPitch.scene
 
             _mapDrawSurfaces = new SurfaceCollection();
             _mapDrawRects = new Rectangle[infoStrs.Length];
-            ImageUtil.CreateStrMenu(infoStrs, Constants.DefaultForeColor,
+            ImageUtil.CreateStrMenu(infoStrs, Constants.Color_Foreground,
                 ref _mapDrawSurfaces, ref _mapDrawRects, _mapRect.Width);
         }
 
@@ -279,10 +279,10 @@ namespace PitchPitch.scene
                     break;
                 case Key.Return:
                     if (_escFocus) idx = 0;
-                    else idx = 1;
+                    else idx = 2;
                     break;
                 case Key.Escape:
-                    idx = 0;
+                    idx = 1;
                     break;
             }
             return idx;
@@ -294,9 +294,15 @@ namespace PitchPitch.scene
             switch (idx)
             {
                 case 0: // タイトルに戻る
-                    _parent.EnterScene(SceneType.Title);
+                    PlaySeOK();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                     break;
-                case 1: // メニュー項目選択
+                case 1:
+                    PlaySeCancel();
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
+                    break;
+                case 2: // メニュー項目選択
+                    PlaySeOK();
                     map.Map map = null;
                     if (_mapFocus)
                     {
@@ -361,13 +367,13 @@ namespace PitchPitch.scene
 
         protected override void draw(SdlDotNet.Graphics.Surface s)
         {
-            s.Fill(Constants.DefaultBackColor);
+            s.Fill(Constants.Color_Background);
 
             // ヘッダ
             if (_headerSurface == null)
             {
                 _headerSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_MapSelect, 
-                    Constants.DefaultStrongColor);
+                    Constants.Color_Strong);
             }
             s.Blit(_headerSurface, new Point(Constants.HeaderX, Constants.HeaderY));
 
@@ -375,7 +381,7 @@ namespace PitchPitch.scene
             if (_expSurface == null)
             {
                 _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_MapSelect,
-                    Constants.DefaultStrongColor);
+                    Constants.Color_Strong);
             }
             s.Blit(_expSurface, _expRect.Location);
 

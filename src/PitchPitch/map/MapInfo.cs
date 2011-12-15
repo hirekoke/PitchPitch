@@ -38,6 +38,7 @@ namespace PitchPitch.map
         public string Id = "";
         public string DirectoryPath = "";
         public string MapName = "";
+        public string AuthorName = "Unknown";
 
         public int Level = 3;
 
@@ -46,8 +47,6 @@ namespace PitchPitch.map
         public string Mapping = "";
 
         public ChipDataInfo ChipDataInfo = new ChipDataInfo();
-
-        //public Size Size = new Size(200, 30);
 
         public int PlayerVx = 1;
 

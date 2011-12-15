@@ -52,6 +52,7 @@ namespace PitchPitch.map
             mi.Id = Path.GetFileName(dirPath);
 
             mi.MapName = rootElem["Name"] == null ? "" : rootElem["Name"].InnerText.Trim();
+            mi.AuthorName = rootElem["Author"] == null ? "Unknown" : rootElem["Author"].InnerText.Trim();
 
             #region Source
             XmlElement srcElem = rootElem["Source"];
