@@ -143,7 +143,7 @@ namespace PitchPitch.audio
             return f4;
         }
 
-        public ToneResult Analyze(double freq, double clarity)
+        public static ToneResult Analyze(double freq, double clarity)
         {
             if (double.IsNaN(freq) || double.IsInfinity(freq)) return ToneResult.Default;
 

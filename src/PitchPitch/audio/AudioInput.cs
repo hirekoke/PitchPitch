@@ -25,8 +25,6 @@ namespace PitchPitch.audio
 
         // 解析器
         private PitchAnalyzer _pitchAnalyzer = new PitchAnalyzer();
-        private ToneAnalyzer _toneAnalyzer = new ToneAnalyzer();
-        public ToneAnalyzer ToneAnalyzer { get { return _toneAnalyzer; } }
 
         // スレッド制御用
         private object _lockObj = new object();
@@ -298,7 +296,7 @@ namespace PitchPitch.audio
                 buf[i] /= _capFormat.nChannels;
             }
             PitchResult result = _pitchAnalyzer.Analyze(buf);
-            ToneResult tone = _toneAnalyzer.Analyze(result.Pitch, result.Clarity);
+            ToneResult tone = ToneAnalyzer.Analyze(result.Pitch, result.Clarity);
 
             // イベント発火
             DataUpdatedEventHandler del = DataUpdated;

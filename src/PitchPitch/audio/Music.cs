@@ -42,8 +42,8 @@ namespace PitchPitch.audio
             Dictionary<double, List<double>> refs = new Dictionary<double, List<double>>();
             Dictionary<double, double> offX = new Dictionary<double, double>();
 
-            Pen offPen = new Pen(Color.White, 5);
-            Pen onPen = new Pen(Color.White, 3);
+            Pen offPen = new Pen(Color.White, 6);
+            Pen onPen = new Pen(Color.White, 5);
             Pen dipPen = new Pen(Color.White, 4);
 
             offPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Flat);

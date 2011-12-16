@@ -161,8 +161,17 @@ namespace PitchPitch.audio.SMF
             }
 
             _length = time;
-            MinPitch = minPitch - 30;
-            MaxPitch = maxPitch + 30;
+            
+            ToneResult minTone = ToneAnalyzer.Analyze(minPitch, 1.0);
+            ToneResult maxTone = ToneAnalyzer.Analyze(maxPitch, 1.0);
+
+            maxTone.ToneIdx++;
+            if (maxTone.ToneIdx >= 12) { maxTone.ToneIdx -= 12; maxTone.Octave++; }
+            minTone.ToneIdx--;
+            if (minTone.ToneIdx <= 0) { minTone.ToneIdx += 12; minTone.Octave--; }
+
+            MinPitch = ToneAnalyzer.PitchFromTone(minTone.ToneIdx, minTone.Octave);
+            MaxPitch = ToneAnalyzer.PitchFromTone(maxTone.ToneIdx, maxTone.Octave);
         }
 
         public override IEnumerable<MusicNote> GetNotes()

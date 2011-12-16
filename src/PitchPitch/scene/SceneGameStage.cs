@@ -310,9 +310,8 @@ namespace PitchPitch.scene
             _whiteKeys = new List<KeyValuePair<Rectangle, string>>();
             _blackKeys = new List<KeyValuePair<Rectangle, string>>();
 
-            ToneAnalyzer analyzer = _parent.AudioInput.ToneAnalyzer;
-            ToneResult maxTone = analyzer.Analyze(_maxFreq, 1.0);
-            ToneResult minTone = analyzer.Analyze(_minFreq, 1.0);
+            ToneResult maxTone = ToneAnalyzer.Analyze(_maxFreq, 1.0);
+            ToneResult minTone = ToneAnalyzer.Analyze(_minFreq, 1.0);
 
             double nearMaxFreq = Math.Log(maxTone.Pitch - maxTone.PitchDiff);
             double nearMinFreq = Math.Log(minTone.Pitch - minTone.PitchDiff);
@@ -485,7 +484,7 @@ namespace PitchPitch.scene
                 {
                     double plog = _minFreqLog + (_maxFreqLog - _minFreqLog) * (Constants.StageViewHeight - _parent.Player.Y) / (double)Constants.StageViewHeight;
                     double pitch = Math.Pow(Math.E, plog);
-                    ToneResult tone = _parent.AudioInput.ToneAnalyzer.Analyze(pitch, 1.0);
+                    ToneResult tone = ToneAnalyzer.Analyze(pitch, 1.0);
                     ResourceManager.SoundExplosion[tone.ToneIdx.ToString("D2")].Play();
 
                     _parent.Player.Y = _map.GetDefaultY(pp.X);
