@@ -40,6 +40,8 @@ namespace PitchPitch.map
         public string MapName = "";
         public string AuthorName = "Unknown";
 
+        public string Bgm = "";
+
         public int Level = 3;
 
         public string MapSourceFileName = "";

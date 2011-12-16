@@ -38,6 +38,17 @@ namespace PitchPitch.map
         /// <summary>1画面表示するのに必要な列数</summary>
         protected int _needColumnNum = 0;
 
+        protected SdlDotNet.Audio.Music _bgm = null;
+        public SdlDotNet.Audio.Music Bgm
+        {
+            get { return _bgm; }
+            set
+            {
+                if (_bgm != null) _bgm.Dispose();
+                _bgm = value;
+            }
+        }
+
         #region 色
         protected Color _backColor = Color.LightSalmon;
         public virtual Color BackColor
@@ -556,6 +567,7 @@ namespace PitchPitch.map
             if (_startLineSurface != null) _startLineSurface.Dispose();
             if (_goalLineSurface != null) _goalLineSurface.Dispose();
             if (_chipData != null) _chipData.Dispose();
+            if (_bgm != null) _bgm.Dispose();
         }
     }
 }

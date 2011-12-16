@@ -25,6 +25,8 @@ namespace PitchPitch.scene
 
         protected bool _isFixedPitchMap = false;
 
+        protected double _prevX = double.MinValue;
+
         /// <summary>Viewの中でのプレイヤー位置(左端=0, 右端=1)</summary>
         protected double _playerXRatio = 0.2;
         /// <summary>マップの前後、衝突判定の無い部分</summary>
@@ -41,6 +43,18 @@ namespace PitchPitch.scene
                 _isPaused = value;
                 _parent.Player.IsPaused = value;
                 _prevProcTime = Environment.TickCount;
+
+                if (_map.Bgm != null)
+                {
+                    if (_isPaused && SdlDotNet.Audio.MusicPlayer.IsPlaying)
+                    {
+                        SdlDotNet.Audio.MusicPlayer.Pause();
+                    }
+                    else
+                    {
+                        SdlDotNet.Audio.MusicPlayer.Resume();
+                    }
+                }
             }
         }
 
@@ -231,8 +245,14 @@ namespace PitchPitch.scene
             _parent.Player.X = _playerXRatio * _view.Width - _mapMargin;
             _parent.Player.Y = _map.Height / 2.0;
             _parent.Player.Vx = _map.MapInfo.PlayerVx;
+            _prevX = _parent.Player.X;
 
             _view.X = -_mapMargin;
+
+            if (_map.Bgm != null)
+            {
+                SdlDotNet.Audio.MusicPlayer.Load(_map.Bgm);
+            }
             #endregion
 
             #region メニュー作成
@@ -678,11 +698,22 @@ namespace PitchPitch.scene
                     hitTest();
                 }
 
+                if (_prevX < 0 && _parent.Player.X >= 0)
+                {
+                    // start
+                    if (_map.Bgm != null)
+                    {
+                        SdlDotNet.Audio.MusicPlayer.Play();
+                    }
+                }
+
                 // ゲームオーバー判定
                 if (_parent.Player.Hp <= 0)
                 {
                     _isOver = true;
                 }
+
+                _prevX = _parent.Player.X;
             }
         }
         #endregion

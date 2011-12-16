@@ -96,6 +96,7 @@ namespace PitchPitch.map
                 }
                 #endregion
 
+                mi.Bgm = srcElem["Bgm"] == null ? null : srcElem["Bgm"].InnerText.Trim();
                 mi.MapSourceFileName = srcElem["Name"] == null ? "" : srcElem["Name"].InnerText.Trim();
                 mi.Mapping = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
             }
@@ -382,6 +383,12 @@ namespace PitchPitch.map
                             }
                         }
                         break;
+                }
+
+                if (!string.IsNullOrEmpty(info.Bgm))
+                {
+                    string bgmPath = Path.Combine(info.DirectoryPath, info.Bgm);
+                    map.Bgm = new SdlDotNet.Audio.Music(bgmPath);
                 }
 
                 map.MapInfo = info;
