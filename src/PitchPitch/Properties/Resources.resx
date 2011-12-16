@@ -257,6 +257,10 @@
     <value>マップの読み込みに失敗しました</value>
     <comment>文字列</comment>
   </data>
+  <data name="Str_MapLoading" xml:space="preserve">
+    <value>マップを読み込み中です…</value>
+    <comment>文字列</comment>
+  </data>
   <data name="Str_MaxPitch" xml:space="preserve">
     <value>高音</value>
     <comment>文字列</comment>

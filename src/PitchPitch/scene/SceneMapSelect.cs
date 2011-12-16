@@ -18,6 +18,7 @@ namespace PitchPitch.scene
 
         private Surface _headerSurface = null;
         private Surface _expSurface = null;
+        private Surface _loadingSurface = null;
 
         // 読み込みマップ表示用
         private List<MapInfo> _mapInfos;
@@ -50,11 +51,29 @@ namespace PitchPitch.scene
         private Rectangle _escRect;  // タイトルに戻るメニュー表示領域
         private Rectangle _expRect;  // 説明文表示領域
 
+        private Map _loadedMap = null;
+        private Exception _loadedException = null;
+        private bool _loading = false;
+        private bool _loadEnd = false;
+
         public SceneMapSelect()
         {
             sceneType = scene.SceneType.MapSelect;
 
             _loader = new MapLoader();
+            _loader.OnMapLoaded += (s, e) =>
+            {
+                _loadedMap = e.Map;
+                _loadEnd = true;
+                _loading = false;
+            };
+            _loader.OnMapLoadCanceled += (s, e) =>
+            {
+                _loadedException = e.Exception;
+                _loadEnd = true;
+                _loading = false;
+            };
+
             _mapInfos = new List<MapInfo>();
 
             _keys = new Key[]
@@ -310,15 +329,9 @@ namespace PitchPitch.scene
                         MapInfo info = _mapInfos[_mapSelectedIdx];
                         try
                         {
-                            map = _loader.LoadMap(info);
-                            if (map != null)
-                            {
-                                _parent.EnterScene(scene.SceneType.GameStage, map);
-                            }
-                            else
-                            {
-                                SetAlert(true, Properties.Resources.Str_MapLoadError);
-                            }
+                            _loadEnd = false;
+                            _loading = true;
+                            _loader.LoadMap(info);
                         }
                         catch (MapLoadException mex)
                         {
@@ -363,39 +376,66 @@ namespace PitchPitch.scene
             }
         }
 
-        protected override void proc(KeyboardEventArgs e) { }
+        protected override void proc(KeyboardEventArgs e)
+        {
+            if (_loadEnd)
+            {
+                if (_loadedMap != null)
+                {
+                    startTransition(() => { _parent.EnterScene(scene.SceneType.GameStage, _loadedMap); });
+                }
+                else
+                {
+                    SetAlert(true, Properties.Resources.Str_MapLoadError);
+                }
+                _loadEnd = false;
+            }
+        }
 
         protected override void draw(SdlDotNet.Graphics.Surface s)
         {
             s.Fill(Constants.Color_Background);
 
-            // ヘッダ
-            if (_headerSurface == null)
+            if (_loading)
             {
-                _headerSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_MapSelect, 
-                    Constants.Color_Strong);
+                if (_loadingSurface == null)
+                {
+                    _loadingSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Str_MapLoading, Constants.Color_Foreground);
+                }
+                s.Blit(_loadingSurface, new Point(
+                    (int)(Constants.ScreenWidth / 2.0 - _loadingSurface.Width / 2.0),
+                    (int)(Constants.ScreenHeight / 2.0 - _loadingSurface.Height / 2.0)));
             }
-            s.Blit(_headerSurface, new Point(Constants.HeaderX, Constants.HeaderY));
-
-            // 説明文
-            if (_expSurface == null)
+            else
             {
-                _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_MapSelect,
-                    Constants.Color_Strong);
+                // ヘッダ
+                if (_headerSurface == null)
+                {
+                    _headerSurface = ResourceManager.LargePFont.Render(Properties.Resources.HeaderTitle_MapSelect,
+                        Constants.Color_Strong);
+                }
+                s.Blit(_headerSurface, new Point(Constants.HeaderX, Constants.HeaderY));
+
+                // 説明文
+                if (_expSurface == null)
+                {
+                    _expSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Explanation_MapSelect,
+                        Constants.Color_Strong);
+                }
+                s.Blit(_expSurface, _expRect.Location);
+
+                // ビルトインマップメニュー
+                ImageUtil.DrawSelections(s, _randSurfaces, _randRects, _cursor,
+                    _randRect.Location, ((_mapFocus || _escFocus) ? -1 : _randSelectedIdx), ImageAlign.MiddleLeft);
+
+                // 読み込んだマップメニュー
+                ImageUtil.DrawSelections(s, _mapDrawSurfaces, _mapDrawRects, _cursor,
+                    _mapRect.Location, (_mapFocus ? _mapSelectedIdx - _mapDrawFirstIdx : -1), ImageAlign.MiddleLeft);
+
+                // タイトルに戻るメニュー
+                ImageUtil.DrawSelections(s, _escSurfaces, _escRects, _strongCursor,
+                    _escRect.Location, (_escFocus ? 0 : -1), ImageAlign.MiddleLeft);
             }
-            s.Blit(_expSurface, _expRect.Location);
-
-            // ビルトインマップメニュー
-            ImageUtil.DrawSelections(s, _randSurfaces, _randRects, _cursor,
-                _randRect.Location, ((_mapFocus || _escFocus) ? -1 : _randSelectedIdx), ImageAlign.MiddleLeft);
-
-            // 読み込んだマップメニュー
-            ImageUtil.DrawSelections(s, _mapDrawSurfaces, _mapDrawRects, _cursor,
-                _mapRect.Location, (_mapFocus ? _mapSelectedIdx - _mapDrawFirstIdx : -1), ImageAlign.MiddleLeft);
-
-            // タイトルに戻るメニュー
-            ImageUtil.DrawSelections(s, _escSurfaces, _escRects, _strongCursor,
-                _escRect.Location, (_escFocus ? 0 : -1), ImageAlign.MiddleLeft);
         }
 
         public override void Dispose()
@@ -406,6 +446,7 @@ namespace PitchPitch.scene
             if (_mapSurfaces != null) foreach (Surface s in _mapSurfaces) s.Dispose();
             if (_escSurfaces != null) foreach (Surface s in _escSurfaces) s.Dispose();
             if (_expSurface != null) _expSurface.Dispose();
+            if (_loadingSurface != null) _loadingSurface.Dispose();
             base.Dispose();
         }
     }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Xml;
+
 using PitchPitch.audio;
 
 namespace PitchPitch.map
@@ -15,8 +16,29 @@ namespace PitchPitch.map
         public MapLoadException(string message, Exception innerEx) : base(message, innerEx) { }
     }
 
+    class MapLoadedEventArgs : EventArgs
+    {
+        public readonly Map Map;
+        public MapLoadedEventArgs(Map map)
+        {
+            Map = map;
+        }
+    }
+    delegate void MapLoadedEventHandler(object s, MapLoadedEventArgs e);
+    class MapLoadCanceledEventArgs : EventArgs {
+        public readonly Exception Exception;
+        public MapLoadCanceledEventArgs(Exception ex)
+        {
+            Exception = ex;
+        }
+    }
+    delegate void MapLoadCanceledEventHandler(object s, MapLoadCanceledEventArgs e);
+
     class MapLoader
     {
+        public event MapLoadedEventHandler OnMapLoaded;
+        public event MapLoadCanceledEventHandler OnMapLoadCanceled;
+
         public List<MapInfo> LoadMapInfos()
         {
             List<MapInfo> ret = new List<MapInfo>();
@@ -236,7 +258,47 @@ namespace PitchPitch.map
             return true;
         }
 
-        public Map LoadMap(MapInfo info)
+        private void loadMapTh(MapInfo info)
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerSupportsCancellation = true;
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += (s, e) =>
+            {
+                try
+                {
+                    e.Result = loadMap(e.Argument as MapInfo);
+                }
+                catch (MapLoadException mex)
+                {
+                    e.Cancel = true;
+                }
+            };
+            worker.RunWorkerCompleted += (s, e) =>
+            {
+                if (e.Cancelled)
+                {
+                    MapLoadCanceledEventHandler del = OnMapLoadCanceled;
+                    if (del != null)
+                    {
+                        MapLoadCanceledEventArgs arg = new MapLoadCanceledEventArgs(null);
+                        del(s, arg);
+                    }
+                }
+                else
+                {
+                    MapLoadedEventHandler del = OnMapLoaded;
+                    if (del != null)
+                    {
+                        MapLoadedEventArgs arg = new MapLoadedEventArgs(e.Result as Map);
+                        del(s, arg);
+                    }
+                }
+            };
+            worker.RunWorkerAsync(info);
+        }
+
+        private Map loadMap(MapInfo info)
         {
             Map map = null;
             MapChipData chipData = null;
@@ -329,6 +391,11 @@ namespace PitchPitch.map
             {
                 throw new MapLoadException(string.Format("{0}: {1}", Properties.Resources.Str_MapLoadError, info.Id), ex);
             }
+        }
+
+        public void LoadMap(MapInfo info)
+        {
+            loadMapTh(info);
         }
     }
 }

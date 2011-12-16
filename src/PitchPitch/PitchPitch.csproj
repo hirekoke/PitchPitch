@@ -138,7 +138,6 @@
     <Compile Include="scene\SceneError.cs" />
     <Compile Include="scene\SceneGameOver.cs" />
     <Compile Include="scene\SceneGameStage.cs" />
-    <Compile Include="scene\SceneLoading.cs" />
     <Compile Include="scene\SceneMapSelect.cs" />
     <Compile Include="scene\SceneOption.cs" />
     <Compile Include="scene\SceneTitle.cs" />

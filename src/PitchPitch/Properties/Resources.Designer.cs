@@ -376,6 +376,15 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   マップを読み込み中です… に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_MapLoading {
+            get {
+                return ResourceManager.GetString("Str_MapLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   高音 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_MaxPitch {
