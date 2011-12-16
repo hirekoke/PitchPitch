@@ -253,10 +253,6 @@
     <EmbeddedResource Include="..\image\life.png">
       <Link>image\life.png</Link>
     </EmbeddedResource>
-    <Content Include="..\licenses\IPA_Font_License_Agreement_v1.0.txt">
-      <Link>licenses\IPA_Font_License_Agreement_v1.0.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\licenses\Readme-gfx.txt">
       <Link>licenses\Readme-gfx.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -298,14 +294,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Content Include="..\font\ipaexg.ttf">
-      <Link>font\ipaexg.ttf</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\font\ipag.ttf">
-      <Link>font\ipag.ttf</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\font\mplus-2c-black.ttf">
       <Link>font\mplus-2c-black.ttf</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
