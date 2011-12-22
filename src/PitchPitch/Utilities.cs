@@ -24,7 +24,7 @@ namespace PitchPitch
         }
     }
 
-    enum ImageAlign
+    enum MenuItemAlign
     {
         TopLeft,
         TopCenter,
@@ -35,6 +35,12 @@ namespace PitchPitch
         MiddleLeft,
         MiddleCenter,
         MiddleRight,
+    }
+    enum TextAlign
+    {
+        Left,
+        Center,
+        Right,
     }
 
     class ImageUtil
@@ -323,7 +329,7 @@ namespace PitchPitch
         /// <param name="rects">描画する位置<remarks>長さはsurfacesと同じでなければならない</remarks></param>
         /// <param name="offset">オフセット</param>
         /// <param name="align">位置揃えの方法</param>
-        public static void DrawSurfaces(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, Point offset, ImageAlign align=ImageAlign.MiddleCenter)
+        public static void DrawSurfaces(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, Point offset, MenuItemAlign align=MenuItemAlign.MiddleCenter)
         {
             Debug.Assert(surfaces.Count == rects.Length, "画像数とレイアウト数が合っていない");
 
@@ -334,45 +340,57 @@ namespace PitchPitch
                 Point p = Point.Empty;
                 switch (align)
                 {
-                    case ImageAlign.TopLeft:
+                    case MenuItemAlign.TopLeft:
                         p.X = rect.Left;
                         p.Y = rect.Top;
                         break;
-                    case ImageAlign.TopCenter:
+                    case MenuItemAlign.TopCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = rect.Top;
                         break;
-                    case ImageAlign.TopRight:
+                    case MenuItemAlign.TopRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = rect.Top;
                         break;
-                    case ImageAlign.MiddleLeft:
+                    case MenuItemAlign.MiddleLeft:
                         p.X = rect.Left;
                         p.Y = (int)(rect.Top + rect.Height / 2.0 - s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.MiddleCenter:
+                    case MenuItemAlign.MiddleCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = (int)(rect.Top + rect.Height / 2.0 - s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.MiddleRight:
+                    case MenuItemAlign.MiddleRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = (int)(rect.Top + rect.Height / 2.0 - s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.BottomLeft:
+                    case MenuItemAlign.BottomLeft:
                         p.X = rect.Left;
                         p.Y = rect.Bottom - s.Size.Height;
                         break;
-                    case ImageAlign.BottomCenter:
+                    case MenuItemAlign.BottomCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = rect.Bottom - s.Size.Height;
                         break;
-                    case ImageAlign.BottomRight:
+                    case MenuItemAlign.BottomRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = rect.Bottom - s.Size.Height;
                         break;
                 }
                 p.Offset(offset);
-                canvas.Blit(s, p);
+
+                Rectangle nrect = new Rectangle(p.X, p.Y,
+                    rect.X + offset.X + rect.Width - p.X,
+                    rect.Y + offset.Y + rect.Height - p.Y);
+
+                if (nrect.Width < s.Width)
+                {
+                    canvas.Blit(s, p, new Rectangle(Point.Empty, nrect.Size));
+                }
+                else
+                {
+                    canvas.Blit(s, nrect);
+                }
                 idx++;
             }
         }
@@ -384,12 +402,12 @@ namespace PitchPitch
         /// <param name="surfaces">描画するSurfaceのCollection</param>
         /// <param name="rects">描画する位置<remarks>長さはsurfacesと同じでなければならない</remarks></param>
         /// <param name="align">位置揃えの方法</param>
-        public static void DrawSurfaces(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, ImageAlign align = ImageAlign.MiddleCenter)
+        public static void DrawSurfaces(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, MenuItemAlign align = MenuItemAlign.MiddleCenter)
         {
             DrawSurfaces(canvas, surfaces, rects, Point.Empty, align);
         }
 
-        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, AnimatedSprite cursor, Point offset, int selectedIndex = -1, ImageAlign align = ImageAlign.MiddleCenter)
+        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, AnimatedSprite cursor, Point offset, int selectedIndex = -1, MenuItemAlign align = MenuItemAlign.MiddleCenter)
         {
             DrawSurfaces(canvas, surfaces, rects, offset, align);
             if (selectedIndex >= 0 && selectedIndex < rects.Length)
@@ -400,39 +418,39 @@ namespace PitchPitch
                 Point p = Point.Empty;
                 switch (align)
                 {
-                    case ImageAlign.TopLeft:
+                    case MenuItemAlign.TopLeft:
                         p.X = rect.Left;
                         p.Y = (int)(rect.Top + s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.TopCenter:
+                    case MenuItemAlign.TopCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = (int)(rect.Top + s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.TopRight:
+                    case MenuItemAlign.TopRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = (int)(rect.Top + s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.MiddleLeft:
+                    case MenuItemAlign.MiddleLeft:
                         p.X = rect.Left;
                         p.Y = (int)(rect.Top + rect.Height / 2.0);
                         break;
-                    case ImageAlign.MiddleCenter:
+                    case MenuItemAlign.MiddleCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = (int)(rect.Top + rect.Height / 2.0);
                         break;
-                    case ImageAlign.MiddleRight:
+                    case MenuItemAlign.MiddleRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = (int)(rect.Top + rect.Height / 2.0);
                         break;
-                    case ImageAlign.BottomLeft:
+                    case MenuItemAlign.BottomLeft:
                         p.X = rect.Left;
                         p.Y = (int)(rect.Bottom - s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.BottomCenter:
+                    case MenuItemAlign.BottomCenter:
                         p.X = (int)(rect.Left + rect.Width / 2.0 - s.Size.Width / 2.0);
                         p.Y = (int)(rect.Bottom - s.Size.Height / 2.0);
                         break;
-                    case ImageAlign.BottomRight:
+                    case MenuItemAlign.BottomRight:
                         p.X = rect.Right - s.Size.Width;
                         p.Y = (int)(rect.Bottom - s.Size.Height / 2.0);
                         break;
@@ -444,12 +462,12 @@ namespace PitchPitch
             }
         }
 
-        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, AnimatedSprite cursor, int selectedIndex = -1, ImageAlign align = ImageAlign.MiddleCenter)
+        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, AnimatedSprite cursor, int selectedIndex = -1, MenuItemAlign align = MenuItemAlign.MiddleCenter)
         {
             DrawSelections(canvas, surfaces, rects, cursor, Point.Empty, selectedIndex, align);
         }
 
-        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, int selectedIndex = -1, ImageAlign align = ImageAlign.MiddleCenter)
+        public static void DrawSelections(Surface canvas, SurfaceCollection surfaces, Rectangle[] rects, int selectedIndex = -1, MenuItemAlign align = MenuItemAlign.MiddleCenter)
         {
             AnimatedSprite cursor = ResourceManager.CursorGraphic;
             DrawSelections(canvas, surfaces, rects, cursor, Point.Empty, selectedIndex, align);
@@ -497,12 +515,61 @@ namespace PitchPitch
             int fh = (int)(font.Height * Constants.LineHeight);
             foreach (string line in lines)
             {
-                using (Surface ts = font.Render(line, c))
+                if (!string.IsNullOrEmpty(line))
                 {
-                    s.Blit(ts, new Point(p.X, y));
+                    using (Surface ts = font.Render(line, c))
+                    {
+                        s.Blit(ts, new Point(p.X, y));
+                    }
                 }
                 y += fh;
             }
+        }
+        public static Surface CreateMultilineStringSurface(string[] lines, SdlDotNet.Graphics.Font font, Color c, TextAlign align)
+        {
+            Surface[] ts = new Surface[lines.Length];
+            int idx = 0;
+            int w = 0;
+            int y = 0;
+            int fh = (int)(font.Height * Constants.LineHeight);
+            foreach (string line in lines)
+            {
+                if (!string.IsNullOrEmpty(line))
+                {
+                    ts[idx] = font.Render(line, c, true);
+                    ts[idx].AlphaBlending = true;
+                    if (w < ts[idx].Width) w = ts[idx].Width;
+                }
+                idx++;
+                y += fh;
+            }
+            if (w <= 0 || y <= 0) return null;
+
+            Surface ret = new Surface(w, y);
+            y = 0;
+            foreach (Surface s in ts)
+            {
+                if (s != null)
+                {
+                    int x = 0;
+                    switch (align)
+                    {
+                        case TextAlign.Left:
+                            x = 0;
+                            break;
+                        case TextAlign.Center:
+                            x = (int)(w / 2.0 - s.Width / 2.0);
+                            break;
+                        case TextAlign.Right:
+                            x = w - s.Width;
+                            break;
+                    }
+                    ret.Blit(s, new Point(x, y));
+                }
+                y += fh;
+            }
+            foreach (Surface s in ts) if (s != null) s.Dispose();
+            return ret;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace PitchPitch.map
 {
     class EmptyMap : BinaryMap
     {
-        internal class EmptyMapInfo : MapInfo { }
+        internal class EmptyMapInfo : BuiltinMapInfo { }
 
         public static EmptyMapInfo GetMapInfo()
         {
@@ -46,7 +46,7 @@ namespace PitchPitch.map
 
     class EmptyFixedMap : EmptyMap
     {
-        internal class EmptyFixedMapInfo : MapInfo { }
+        internal class EmptyFixedMapInfo : BuiltinMapInfo { }
 
         public static new EmptyFixedMapInfo GetMapInfo()
         {

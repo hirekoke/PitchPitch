@@ -270,7 +270,7 @@ namespace PitchPitch.map
                 {
                     e.Result = loadMap(e.Argument as MapInfo);
                 }
-                catch (MapLoadException mex)
+                catch (MapLoadException)
                 {
                     e.Cancel = true;
                 }
@@ -299,7 +299,30 @@ namespace PitchPitch.map
             worker.RunWorkerAsync(info);
         }
 
-        private Map loadMap(MapInfo info)
+        private Map loadBuiltinMap(MapInfo info)
+        {
+            Map map = null;
+            if (info is RandomMap.RandomMapInfo)
+            {
+                map = new RandomMap(info.Level);
+            }
+            else if (info is EmptyMap.EmptyMapInfo)
+            {
+                map = new EmptyMap();
+            }
+            else if (info is EmptyFixedMap.EmptyFixedMapInfo)
+            {
+                map = new EmptyFixedMap();
+            }
+            else if (info is RandomEndlessMap.RandomEndlessMapInfo)
+            {
+                map = null;
+            }
+            map.MapInfo = info;
+            return map;
+        }
+
+        private Map loadUserMap(MapInfo info)
         {
             Map map = null;
             MapChipData chipData = null;
@@ -398,6 +421,12 @@ namespace PitchPitch.map
             {
                 throw new MapLoadException(string.Format("{0}: {1}", Properties.Resources.Str_MapLoadError, info.Id), ex);
             }
+        }
+
+        private Map loadMap(MapInfo info)
+        {
+            if (info is BuiltinMapInfo) return loadBuiltinMap(info);
+            else return loadUserMap(info);
         }
 
         public void LoadMap(MapInfo info)

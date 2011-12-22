@@ -94,7 +94,7 @@ namespace PitchPitch.scene
             }
             if (_errorMessageSurface != null)
             {
-                ImageUtil.DrawSurfaces(s, _errorMessageSurface, _errorMessageRects, new Point(0, 100), ImageAlign.TopCenter);
+                ImageUtil.DrawSurfaces(s, _errorMessageSurface, _errorMessageRects, new Point(0, 100), MenuItemAlign.TopCenter);
             }
         }
     }

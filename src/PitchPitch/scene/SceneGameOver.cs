@@ -147,7 +147,7 @@ namespace PitchPitch.scene
             ImageUtil.DrawSelections(s, _menuSurfaces, _menuRects, _cursor,
                 new Point(Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
                     Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin),
-                _selectedIdx, ImageAlign.TopLeft);
+                _selectedIdx, MenuItemAlign.TopLeft);
         }
 
         public override void Dispose()

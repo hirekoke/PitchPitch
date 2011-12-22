@@ -403,6 +403,24 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   オクターブ単位でキーの高さを変更できます に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_OctaveSelecting {
+            get {
+                return ResourceManager.GetString("Str_OctaveSelecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ↑↓で選択, Returnで決定, Escでキャンセル に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_OctaveSelecting_Operation {
+            get {
+                return ResourceManager.GetString("Str_OctaveSelecting_Operation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   高さ に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_Pitch {

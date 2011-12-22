@@ -489,17 +489,17 @@ namespace PitchPitch.scene
             // 選択肢
             ImageUtil.DrawSelections(s, _endHeadSurfaces, _endHeadRects, _headCursor,
                 _endHeadRect.Location,
-                (_state == SelectionState.Back ? 0 : -1), ImageAlign.TopLeft);
+                (_state == SelectionState.Back ? 0 : -1), MenuItemAlign.TopLeft);
 
             ImageUtil.DrawSelections(s, _calSurfaces, _calRects, _cursor,
                 _calMenuRect.Location,
                 (_state == SelectionState.Calibration ? _calSelectedIdx : -1),
-                ImageAlign.TopLeft);
+                MenuItemAlign.TopLeft);
 
             ImageUtil.DrawSelections(s, _devDrawSurfaces, _devDrawRects, _cursor,
                 _devRect.Location, 
                 _devSelectedIdx - _devDrawFirstIdx, 
-                ImageAlign.TopLeft);
+                MenuItemAlign.TopLeft);
 
             // 高音・低音の値
             Surface hs = _calSurfaces[0];

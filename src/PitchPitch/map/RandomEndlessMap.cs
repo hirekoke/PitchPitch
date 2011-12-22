@@ -8,13 +8,14 @@ namespace PitchPitch.map
 {
     class RandomEndlessMap : RandomMap
     {
-        internal class RandomEndlessMapInfo : MapInfo { }
+        internal class RandomEndlessMapInfo : BuiltinMapInfo { }
 
         public static new RandomEndlessMapInfo GetMapInfo(int level)
         {
             RandomEndlessMapInfo mi = new RandomEndlessMapInfo();
             mi.Level = level;
             mi.MapName = Properties.Resources.MapName_EndlessMap;
+            mi.HasEnd = false;
             return mi;
         }
 

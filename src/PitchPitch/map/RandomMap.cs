@@ -7,7 +7,7 @@ namespace PitchPitch.map
 {
     class RandomMap : BinaryMap
     {
-        internal class RandomMapInfo : MapInfo { }
+        internal class RandomMapInfo : BuiltinMapInfo { }
 
         public static RandomMapInfo GetMapInfo(int level)
         {

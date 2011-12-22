@@ -34,6 +34,7 @@ namespace PitchPitch.scene
             get { return sceneType; }
         }
 
+        private int _transitionTimeLong = Constants.Time_Transition;
         private int _transitionTime = 0;
         private bool _transitionStart = false;
         private long _prevTransitionTick = 0;
@@ -52,6 +53,7 @@ namespace PitchPitch.scene
             _prevPressTick = Environment.TickCount;
 
             _prevTransitionTick = Environment.TickCount;
+            _prevContTick = Environment.TickCount;
             _transitionStart = false;
             if (_transitionBeforeSurface != null)
             {
@@ -66,8 +68,9 @@ namespace PitchPitch.scene
         protected abstract void procMenu(int idx);
         protected abstract void proc(SdlDotNet.Input.KeyboardEventArgs e);
 
-        protected Key _prevPressedKey;
-        protected long _prevPressTick = -1;
+        private Key _prevPressedKey;
+        private long _prevPressTick = -1;
+        private long _prevContTick = -1;
         protected Key[] _keys = new Key[]
         {
             Key.UpArrow, Key.DownArrow, Key.Return, Key.Escape
@@ -75,7 +78,7 @@ namespace PitchPitch.scene
 
         private bool _onAlert = false;
         private Surface _alertSurface = null;
-        public void SetAlert(bool on, string message)
+        public virtual void SetAlert(bool on, string message)
         {
             _onAlert = on;
             if (_onAlert && string.IsNullOrEmpty(message)) _onAlert = false;
@@ -95,19 +98,19 @@ namespace PitchPitch.scene
                     height += (int)(s.Height * Constants.LineHeight);
                 }
 
-                _alertSurface = new Surface(maxWidth + Constants.AlertPadding * 2, height + Constants.AlertPadding * 2);
+                _alertSurface = new Surface(maxWidth + Constants.WindowPadding * 2, height + Constants.WindowPadding * 2);
                 SdlDotNet.Graphics.Primitives.Box box = new SdlDotNet.Graphics.Primitives.Box(
-                    Point.Empty, new Size(maxWidth + Constants.AlertPadding * 2 - 1, height + Constants.AlertPadding * 2 - 1));
+                    Point.Empty, new Size(maxWidth + Constants.WindowPadding * 2 - 1, height + Constants.WindowPadding * 2 - 1));
 
                 _alertSurface.Lock();
-                _alertSurface.Draw(box, Constants.AlertBackColor, false, true);
-                _alertSurface.Draw(box, Constants.AlertForeColor, false, false);
+                _alertSurface.Draw(box, Constants.Color_AlertBackground, false, true);
+                _alertSurface.Draw(box, Constants.Color_AlertForeground, false, false);
                 _alertSurface.Unlock();
 
-                int y = Constants.AlertPadding; int idx = 0;
+                int y = Constants.WindowPadding; int idx = 0;
                 foreach (string l in lines)
                 {
-                    using (Surface ts = ResourceManager.SmallPFont.Render(l, Constants.AlertForeColor))
+                    using (Surface ts = ResourceManager.SmallPFont.Render(l, Constants.Color_AlertForeground))
                     {
                         if (idx == lines.Length - 1)
                         {
@@ -115,7 +118,7 @@ namespace PitchPitch.scene
                         }
                         else
                         {
-                            _alertSurface.Blit(ts, new Point(Constants.AlertPadding, y));
+                            _alertSurface.Blit(ts, new Point(Constants.WindowPadding, y));
                         }
                         y += (int)(ts.Height * Constants.LineHeight);
                     }
@@ -134,12 +137,17 @@ namespace PitchPitch.scene
             ResourceManager.SoundCancel.Play();
         }
 
-        protected void startTransition(SceneTransitionEndEventHandler del)
+        protected void startTransition(SceneTransitionEndEventHandler del, int transitionTime)
         {
             _transitionEndDel = del;
-            _transitionTime = Constants.TransitionTime;
+            _transitionTimeLong = transitionTime;
+            _transitionTime = transitionTime;
             _prevTransitionTick = Environment.TickCount;
             _transitionStart = true;
+        }
+        protected void startTransition(SceneTransitionEndEventHandler del)
+        {
+            startTransition(del, Constants.Time_Transition);
         }
 
         /// <summary>
@@ -188,40 +196,49 @@ namespace PitchPitch.scene
                         }
                     }
                 }
-
-                ProcKeyEvent(e);
-
-                proc(e);
-
-                int idx = -1; bool pressed = false;
-                foreach (Key k in _keys)
+                else
                 {
-                    if (Keyboard.IsKeyPressed(k))
+
+                    ProcKeyEvent(e);
+
+                    proc(e);
+
+                    int idx = -1; bool pressed = false;
+                    foreach (Key k in _keys)
                     {
-                        pressed = true;
-                        if (k == _prevPressedKey)
+                        if (Keyboard.IsKeyPressed(k))
                         {
-                            if (Environment.TickCount - _prevPressTick > Constants.ContinuousKeyTime)
+                            pressed = true;
+                            if (k == _prevPressedKey)
                             {
-                                idx = procKeyEvent(k);
-                                if (idx >= 0) break;
+                                if (Environment.TickCount - _prevPressTick > Constants.Time_ContinuousKeyStart)
+                                {
+                                    if (Environment.TickCount - _prevContTick >= Constants.Time_ContinuousKeyDiff)
+                                    {
+                                        _prevContTick = Environment.TickCount;
+
+                                        idx = procKeyEvent(k);
+                                        if (idx >= 0) break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _prevPressedKey = k;
+                                _prevPressTick = Environment.TickCount;
+                                _prevContTick = Environment.TickCount;
                             }
                         }
-                        else
-                        {
-                            _prevPressedKey = k;
-                            _prevPressTick = Environment.TickCount;
-                        }
                     }
-                }
-                if (!pressed)
-                {
-                    _prevPressedKey = Key.Print;
-                    _prevPressTick = Environment.TickCount;
-                }
+                    if (!pressed)
+                    {
+                        _prevPressedKey = Key.Print;
+                        _prevPressTick = Environment.TickCount;
+                        _prevContTick = Environment.TickCount;
+                    }
 
-                procMenu(idx);
-
+                    procMenu(idx);
+                }
             }
             catch (Exception ex)
             {
@@ -246,7 +263,7 @@ namespace PitchPitch.scene
                         _transitionBeforeSurface.AlphaBlending = true;
                         _transitionBeforeSurface.Alpha = 0;
                     }
-                    _transitionBeforeSurface.Alpha = (byte)(255 * _transitionTime / (double)Constants.TransitionTime);
+                    _transitionBeforeSurface.Alpha = (byte)(255 * _transitionTime / (double)_transitionTimeLong);
                     s.Fill(Constants.Color_Transition);
                     s.Blit(_transitionBeforeSurface);
                 }

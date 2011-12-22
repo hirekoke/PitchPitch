@@ -147,17 +147,13 @@ namespace PitchPitch
             {
                 _audioInput.Disposed += (s, e) =>
                 {
-                    Console.WriteLine("3");
                     _disposed = true;
                 };
                 _audioInput.CaptureStopped += (s, e) =>
                 {
-                    Console.WriteLine("2");
                     _audioInput.Dispose();
                 };
-                Console.WriteLine("0");
                 _audioInput.StopCapture();
-                Console.WriteLine("1");
             }
         }
         public void Dispose()

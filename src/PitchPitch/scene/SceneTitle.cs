@@ -116,7 +116,7 @@ namespace PitchPitch.scene
                 new Point((int)(s.Width / 2.0 - _titleSurface.Width / 2.0), 50));
 
             ImageUtil.DrawSelections(s, _menuSurfaces, _menuRects, _cursor, new Point(0, 70 + _titleSurface.Height), 
-                _selectedIdx, ImageAlign.MiddleCenter);
+                _selectedIdx, MenuItemAlign.MiddleCenter);
 
             if (_alertSurface == null)
             {

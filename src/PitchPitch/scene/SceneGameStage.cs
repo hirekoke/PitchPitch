@@ -269,6 +269,11 @@ namespace PitchPitch.scene
                 _isFixedPitchMap = true;
                 _maxFreq = _map.MapInfo.MaxPitch;
                 _minFreq = _map.MapInfo.MinPitch;
+                if (_map.MapInfo.OctaveLevel != 0)
+                {
+                    _maxFreq *= Math.Pow(2, _map.MapInfo.OctaveLevel);
+                    _minFreq *= Math.Pow(2, _map.MapInfo.OctaveLevel);
+                }
             }
             else
             {
@@ -430,7 +435,6 @@ namespace PitchPitch.scene
             if (soundOn)
             {
                 _toneResult = tmp;
-                Console.WriteLine(_toneResult.ToneIdx + " " + _toneResult.Tone);
 
                 double yr = (pitch - _minFreqLog) / (_maxFreqLog - _minFreqLog);
                 target = _view.Height - yr * _view.Height + _view.Y;
@@ -781,7 +785,7 @@ namespace PitchPitch.scene
                 _backCursor, new Point(
                     Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
                     Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin),
-                    _pauseSelectedIdx, ImageAlign.MiddleLeft);
+                    _pauseSelectedIdx, MenuItemAlign.MiddleLeft);
         }
 
         /// <summary>クリア画面を描画する</summary>
@@ -805,7 +809,7 @@ namespace PitchPitch.scene
                 _foreCursor, new Point(
                     Constants.HeaderX + Constants.UnderHeaderMargin + Constants.CursorMargin,
                     Constants.HeaderY + ResourceManager.LargePFont.Height + Constants.HeaderBottomMargin), 
-                    _clearSelectedIdx, ImageAlign.MiddleLeft);
+                    _clearSelectedIdx, MenuItemAlign.MiddleLeft);
         }
 
         private int _playerInfoHeaderMaxWidth = 0;

@@ -43,6 +43,8 @@ namespace PitchPitch.map
         public string Bgm = "";
 
         public int Level = 3;
+        public int OctaveLevel = 0;
+        public bool HasEnd = true;
 
         public string MapSourceFileName = "";
         public MapSourceType MapSourceType = MapSourceType.None;
@@ -75,4 +77,6 @@ namespace PitchPitch.map
 
         public List<ChipInfo> ChipInfos = new List<ChipInfo>();
     }
+
+    class BuiltinMapInfo : MapInfo { }
 }

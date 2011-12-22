@@ -17,22 +17,25 @@ namespace PitchPitch
         #endregion
 
         #region 色
-        public static Color Color_Transition = Color.Black;
-        public static Color Color_Foreground = Color.Black;
-        public static Color Color_Background = Color.White;
-        public static Color Color_Strong = Color.Firebrick;
-        public static Color Color_Selection = Color.LightBlue;
+        public static readonly Color Color_Transition = Color.Black;
+        public static readonly Color Color_Foreground = Color.Black;
+        public static readonly Color Color_Background = Color.White;
+        public static readonly Color Color_Strong = Color.Firebrick;
+        public static readonly Color Color_Selection = Color.LightBlue;
 
-        public static Color AlertBackColor = Color.DarkRed;
-        public static Color AlertForeColor = Color.White;
+        public static readonly Color Color_AlertBackground = Color.DarkRed;
+        public static readonly Color Color_AlertForeground = Color.White;
         #endregion
 
         #region ゲーム処理
-        public const int TransitionTime = 160;
-        public const int ContinuousKeyTime = 500;
+        public const int Time_Transition = 160;
+        public const int Time_ContinuousKeyStart = 500;
+        public const int Time_ContinuousKeyDiff = 60;
 
         public const int MinPitch = 50;
         public const int MaxPitch = 16000;
+        public const int MaxOctave = 3;
+        public const int MinOctave = -3;
         #endregion
 
         #region 画面レイアウト
@@ -64,8 +67,8 @@ namespace PitchPitch
         /// <summary>波形情報表示高さ<summary>
         public const int WaveInfoHeight = 80;
 
-        /// <summary>エラー窓内パディング<summary>
-        public const int AlertPadding = 10;
+        /// <summary>窓内パディング<summary>
+        public const int WindowPadding = 10;
 
         /// <summary>メニュー高さデフォルト<summary>
         public const double MenuLineHeight = 1.4;
