@@ -582,8 +582,8 @@ namespace PitchPitch.scene
                     _octaveSelectingSurface.Update();
                 }
 
-                _octaveUpSurface = ResourceManager.SmallPFont.Render("↑", Constants.Color_Background);
-                _octaveDownSurface = ResourceManager.SmallPFont.Render("↓", Constants.Color_Background);
+                _octaveUpSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Str_UpArrow, Constants.Color_Background);
+                _octaveDownSurface = ResourceManager.SmallPFont.Render(Properties.Resources.Str_DownArrow, Constants.Color_Background);
             }
 
             s.Blit(_octaveSelectingSurface, new Point(

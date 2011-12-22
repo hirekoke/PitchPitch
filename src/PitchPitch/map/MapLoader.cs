@@ -402,9 +402,9 @@ namespace PitchPitch.map
                                 {
                                     string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                                     dirPath = Path.Combine(dirPath, Properties.Resources.Dirname_Config);
-                                    string fpath = Path.Combine(dirPath, "music.png");
+                                    string fpath = Path.Combine(dirPath, Properties.Resources.Filename_MusicLogImage);
                                     srcBmp.Save(fpath);
-                                    fpath = Path.Combine(dirPath, "music.txt");
+                                    fpath = Path.Combine(dirPath, Properties.Resources.Filename_MusicLogText);
                                     using (StreamWriter writer = new StreamWriter(fpath, false, Encoding.UTF8))
                                     {
                                         writer.WriteLine("max pitch: {0}", info.MaxPitch);

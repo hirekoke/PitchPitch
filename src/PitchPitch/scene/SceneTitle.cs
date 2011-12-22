@@ -110,7 +110,7 @@ namespace PitchPitch.scene
             s.Fill(Constants.Color_Background);
 
             if(_titleSurface == null)
-                _titleSurface = ResourceManager.LoadSurface("logo.png");
+                _titleSurface = ResourceManager.LoadSurface(Constants.Filename_TitleLogoImage);
 
             s.Blit(_coloredTitleSurface == null ? _titleSurface : _coloredTitleSurface,
                 new Point((int)(s.Width / 2.0 - _titleSurface.Width / 2.0), 50));

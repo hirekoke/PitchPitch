@@ -222,10 +222,10 @@ namespace PitchPitch.gameobj
             System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
 
             int[] tmp = { 0, 1, 2 };
-            _playerSurfaces = ResourceManager.LoadSurfaces(Array.ConvertAll<int, string>(tmp, (i) => { return string.Format("player-{0}.png", i); }));
+            _playerSurfaces = ResourceManager.LoadSurfaces(Array.ConvertAll<int, string>(tmp, (i) => { return string.Format(Constants.Filename_PlayerImage, i); }));
             _playerSurfaces.Add(_playerSurfaces[1]);
 
-            _explosionSurfaces = ResourceManager.LoadSurfaces("explosion.png", new Size(24, 24));
+            _explosionSurfaces = ResourceManager.LoadSurfaces(Constants.Filename_ExplosionImage, new Size(24, 24));
         }
 
         public bool Hit(map.Chip chip, PointD pointInView, int chipWidth, int chipHeight)

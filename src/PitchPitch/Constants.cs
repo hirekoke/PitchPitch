@@ -16,6 +16,15 @@ namespace PitchPitch
         public const string Dirname_Sound = "se";
         #endregion
 
+        #region 画像ファイル名
+        public const string Filename_LifeImage = "life.png";
+        public const string Filename_CursorImage = "cursor.png";
+        public const string Filename_ExplosionImage = "explosion.png";
+        public const string Filename_GameoverImage = "gameover.png";
+        public const string Filename_TitleLogoImage = "logo.png";
+        public const string Filename_PlayerImage = "player-{0}.png";
+        #endregion
+
         #region 色
         public static readonly Color Color_Transition = Color.Black;
         public static readonly Color Color_Foreground = Color.Black;

@@ -133,6 +133,24 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   music.png に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Filename_MusicLogImage {
+            get {
+                return ResourceManager.GetString("Filename_MusicLogImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   music.txt に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Filename_MusicLogText {
+            get {
+                return ResourceManager.GetString("Filename_MusicLogText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   mplus-2c-black.ttf に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Font_DefaultP {
@@ -358,6 +376,24 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   ↓ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_DownArrow {
+            get {
+                return ResourceManager.GetString("Str_DownArrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ← に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_LeftArrow {
+            get {
+                return ResourceManager.GetString("Str_LeftArrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   HP に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_Life {
@@ -430,11 +466,29 @@ namespace PitchPitch.Properties {
         }
         
         /// <summary>
+        ///   → に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_RightArrow {
+            get {
+                return ResourceManager.GetString("Str_RightArrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   :  に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Str_Separator {
             get {
                 return ResourceManager.GetString("Str_Separator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ↑ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Str_UpArrow {
+            get {
+                return ResourceManager.GetString("Str_UpArrow", resourceCulture);
             }
         }
         

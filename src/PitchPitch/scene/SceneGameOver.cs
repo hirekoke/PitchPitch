@@ -44,7 +44,7 @@ namespace PitchPitch.scene
 
             _cursor = ResourceManager.GetColoredCursorGraphic(_foreColor);
 
-            _overImgSurface = ResourceManager.LoadSurface("gameover.png");
+            _overImgSurface = ResourceManager.LoadSurface(Constants.Filename_GameoverImage);
             ImageUtil.SetColor(_overImgSurface, _foreColor);
 
             _menuSurfaces = new SurfaceCollection();

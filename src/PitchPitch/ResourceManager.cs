@@ -184,7 +184,7 @@ namespace PitchPitch
             {
                 if (_cursorGraphic == null)
                 {
-                    SurfaceCollection tmp = LoadSurfaces("cursor.png", new Size(24, 28));
+                    SurfaceCollection tmp = LoadSurfaces(Constants.Filename_CursorImage, new Size(24, 28));
                     AnimationCollection anim = new AnimationCollection();
                     anim.Add(tmp, 100, true);
                     anim.AlphaBlending = true;

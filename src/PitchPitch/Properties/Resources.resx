@@ -149,6 +149,14 @@
     <value>注意: このゲームでは酸欠・喉の痛み・頭痛が発生することがあります</value>
     <comment>説明文字列</comment>
   </data>
+  <data name="Filename_MusicLogImage" xml:space="preserve">
+    <value>music.png</value>
+    <comment>ファイル名</comment>
+  </data>
+  <data name="Filename_MusicLogText" xml:space="preserve">
+    <value>music.txt</value>
+    <comment>ファイル名</comment>
+  </data>
   <data name="Font_DefaultP" xml:space="preserve">
     <value>mplus-2c-black.ttf</value>
     <comment>フォント-デフォルトプロフォーショナル</comment>
@@ -249,6 +257,14 @@
     <value>距離</value>
     <comment>文字列</comment>
   </data>
+  <data name="Str_DownArrow" xml:space="preserve">
+    <value>↓</value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_LeftArrow" xml:space="preserve">
+    <value>←</value>
+    <comment>文字列</comment>
+  </data>
   <data name="Str_Life" xml:space="preserve">
     <value>HP</value>
     <comment>文字列</comment>
@@ -281,8 +297,16 @@
     <value>高さ</value>
     <comment>文字列</comment>
   </data>
+  <data name="Str_RightArrow" xml:space="preserve">
+    <value>→</value>
+    <comment>文字列</comment>
+  </data>
   <data name="Str_Separator" xml:space="preserve">
     <value>: </value>
+    <comment>文字列</comment>
+  </data>
+  <data name="Str_UpArrow" xml:space="preserve">
+    <value>↑</value>
     <comment>文字列</comment>
   </data>
   <data name="WindowTitle" xml:space="preserve">

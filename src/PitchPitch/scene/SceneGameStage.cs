@@ -173,9 +173,8 @@ namespace PitchPitch.scene
                 Key.Escape, Key.R, Key.M, Key.T
             };
 
-            #region 画像読み込み
-            _lifeSurfaces = ResourceManager.LoadSurfaces("life.png", new Size(30, 32));
-            #endregion
+            // 画像読み込み
+            _lifeSurfaces = ResourceManager.LoadSurfaces(Constants.Filename_LifeImage, new Size(30, 32));
 
             #region 配置
             _viewRect = new Rectangle(
