@@ -221,14 +221,34 @@ namespace PitchPitch.map
             XmlElement pitchElem = rootElem["Pitch"];
             if (pitchElem != null)
             {
-                object pitchObj = Enum.Parse(typeof(PitchType), pitchElem.InnerText.Trim(), true);
+                #region PitchType
                 try
                 {
-                    mi.PitchType = (PitchType)pitchObj;
+                    string pt = pitchElem["Type"] == null ? "" : pitchElem["Type"].InnerText.Trim();
+                    mi.PitchType = (PitchType)Enum.Parse(typeof(PitchType), pt, true);
                 }
                 catch (Exception) { mi.PitchType = PitchType.Variable; }
+                #endregion
+
+                #region Max/Min
+                if (mi.PitchType == PitchType.Fixed)
+                {
+                    double max = Config.Instance.MaxFreq;
+                    double min = Config.Instance.MinFreq;
+                    if (pitchElem["Max"] != null)
+                    {
+                        if (double.TryParse(pitchElem["Max"].InnerText.Trim(), out max)) mi.MaxPitch = max;
+                        if (double.TryParse(pitchElem["Min"].InnerText.Trim(), out min)) mi.MinPitch = min;
+                    }
+                }
+                #endregion
+            }
+            else
+            {
+                mi.PitchType = PitchType.Variable;
             }
             #endregion
+
             if (isValidMapInfo(mi)) return mi;
             return null;
         }
