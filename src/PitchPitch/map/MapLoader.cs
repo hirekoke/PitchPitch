@@ -400,7 +400,17 @@ namespace PitchPitch.map
                             {
                                 if (srcBmp != null)
                                 {
-                                    srcBmp.Save("test.png");
+                                    string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                                    dirPath = Path.Combine(dirPath, Properties.Resources.Dirname_Config);
+                                    string fpath = Path.Combine(dirPath, "music.png");
+                                    srcBmp.Save(fpath);
+                                    fpath = Path.Combine(dirPath, "music.txt");
+                                    using (StreamWriter writer = new StreamWriter(fpath, false, Encoding.UTF8))
+                                    {
+                                        writer.WriteLine("max pitch: {0}", info.MaxPitch);
+                                        writer.WriteLine("min pitch: {0}", info.MinPitch);
+                                    }
+
                                     map.LoadMapImage(srcBmp, null);
                                 }
                             }
