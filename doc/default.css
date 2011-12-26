@@ -1,0 +1,162 @@
+* {
+margin: 0;
+}
+
+p {
+	margin: 0.5em 1em 0.5em 3em;
+	line-height: 1.3em;
+}
+
+section {
+	padding: 0em 0em 0em 0em;
+	margin: 0.5em 1em 0.8em 0em;
+	/*border: 1px solid #000000;*/
+}
+section section {
+	margin-right: 0em;
+}
+
+h1 {
+	margin: 0em 1em 0.2em 0em;
+	font-size: 2.0em;
+}
+section h1 {
+	height: 26px;
+	line-height: 100%;
+	font-size: 26px;
+	padding: 10px 0px 14px 40px;
+	margin: 0em 0em 0em 0em;
+	border: 0px none #000000;
+	background: scroll transparent url("images/head.png") left top no-repeat;
+}
+h2 {
+	margin: 0.7em 1em 0.2em 1em;
+	padding: 0 1em 0em 0.2em;
+	font-size: 1.4em;
+	border-bottom: 1px solid #333333;
+	border-left: 3px solid #333333;
+}
+h3 {
+	margin: 0.5em 1em 0em 1.8em;
+	font-size: 1.2em;
+}
+h4 {
+	margin: 0.5em 1em 0em 2.8em;
+	font-size: 1.0em;
+}
+
+table {
+	border: 2px solid #333333;
+	border-collapse: collapse;
+	cell-spacing: 0;
+	margin: 0.5em 1em 0em 3em;
+}
+td, th {
+	border: 1px solid #666666;
+	text-align: left;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+}
+th {
+	border-bottom: 2px solid #333333;
+	border-right: 2px solid #333333;
+}
+table.rows th {
+	border-bottom: 1px solid #666666;
+}
+table.columns th {
+	border-right: 1px solid #666666;
+}
+table.color_table td.color_sample, th.color_sample {
+	border-right: 2px solid #333333;
+	width: 52px;
+}
+
+pre, div.code {
+	border : 1px solid #333333;
+	margin: 0.5em 2em 0.5em 3.6em;
+}
+
+div.caption {
+	margin: 0;
+	background-color: #333333;
+	color: #ffffff;
+	padding: 0.2em 0.5em 0.2em 0.5em;
+	font-weight: 600;
+}
+div.code_body {
+	margin: 0.2em 0.5em 0.2em 0.5em;
+}
+
+img {
+	margin: 0.5em 1em 0.5em 0em;
+	vertical-align: middle;
+	border: 1px solid #333333;
+}
+
+dl, ul, ol {
+	margin: 0.2em 1em 0.2em 3em;
+	line-height: 1.2em;
+}
+dl {
+	padding: 0;
+}
+ul {
+	padding: 0 0 0 24px;
+	list-style-image: url("images/list-head.png");
+}
+ol {
+	padding: 0 0 0 1.4em;
+}
+dt {
+	margin: 0.5em 0em 0em 0em;
+}
+dd {
+	margin: 0.2em 0em 0.2em 1em;
+}
+li {
+	margin: 0;
+}
+
+strong {
+	font-weight: 900;
+	color: #ff0000;
+}
+
+body {
+	padding: 20px 10px 20px 66px;
+	background: scroll #ffffff url("images/keys.png") left top repeat-y;
+}
+
+nav {
+	text-align: right;
+	margin: 0.2em 0em 1em 0em;
+	padding: 0.2em 1em 0.2em 1em;
+}
+
+footer {
+	text-align: right;
+	border-top: 1px solid #000000;
+	margin: 0.2em 0em 1em 0em;
+	padding: 0.2em 1em 0.2em 1em;
+}
+
+nav h1 {
+	display: none;
+}
+nav li {
+	display: inline;
+}
+nav li:before {
+	content: "[";
+}
+nav li:after {
+	content: "]";
+}
+
+span.tag {
+	color: #ff0000;
+}
+span.comment {
+	color: #666666;
+	font-style: italic;
+}
