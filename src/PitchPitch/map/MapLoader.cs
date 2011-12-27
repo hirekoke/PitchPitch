@@ -110,6 +110,7 @@ namespace PitchPitch.map
                 cdi.ChipType = MapChipType.Builtin;
                 cdi.FileName = "";
                 cdi.BuiltinType = MapChipBuiltinType.Binary;
+                cdi.Size = new Size(16, 16);
             }
             else
             {
@@ -147,28 +148,16 @@ namespace PitchPitch.map
                 #endregion
 
                 #region Size
-                XmlElement sizeElem = chipDataElem["Size"];
-                if (sizeElem != null)
+                int width = 16; int height = 16;
+                if (chipDataElem.Attributes["width"] != null)
                 {
-                    int width = 0; int height = 0;
-                    foreach (XmlNode node in sizeElem.ChildNodes)
-                    {
-                        switch (node.Name)
-                        {
-                            case "Width":
-                                int.TryParse(node.InnerText.Trim(), out width);
-                                break;
-                            case "Height":
-                                int.TryParse(node.InnerText.Trim(), out height);
-                                break;
-                        }
-                    }
-                    cdi.Size = new Size(width, height);
+                    if (!int.TryParse(chipDataElem.Attributes["width"].InnerText.Trim(), out width)) width = 16;
                 }
-                else
+                if (chipDataElem.Attributes["height"] != null)
                 {
-                    cdi.Size = new Size(16, 16);
+                    if (!int.TryParse(chipDataElem.Attributes["height"].InnerText.Trim(), out height)) height = 16;
                 }
+                cdi.Size = new Size(width, height);
                 #endregion
 
                 #region ChipInfo
