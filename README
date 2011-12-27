@@ -1,3 +1,5 @@
+PitchPitch: 音のPitchで自機のPitchを操作するゲーム
+
   - ライセンス: 修正BSDライセンス
 
   - 使用物のライセンス
@@ -9,30 +11,3 @@
     * SDL : GNU LGPL(1.2) -> zlib License(1.3)
     * AForge.NET : GNU LGPL
       http://code.google.com/p/aforge/
-
-  - 参考文献
-    * Core Audio API
-      = オーディオ・セッション
-        http://www.enoie.net/blog/2011/05/%E3%82%AA%E3%83%BC%E3%83%87%E3%82%A3%E3%82%AA%E3%83%BB%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3/
-      = WAV ファイルフォーマット
-        http://www.kk.iij4u.or.jp/~kondo/wave/
-    * ピッチ検出
-      = 周波数解析
-        http://www2.ttcn.ne.jp/~ymizu/hkiso2.html
-      = フーリエ変換の実際
-        http://www009.upp.so-net.ne.jp/hachinami/note004/index.htm
-      = 自己相関とパワースペクトル
-        http://www.tsunami.civil.tohoku.ac.jp/hokusai2/class/spec/07auto.pdf
-      = パワースペクトルと自己相関関数
-        http://thomas.phys.cs.is.nagoya-u.ac.jp/wiki/?plugin=attach&refer=%CA%AA%BC%C1%BE%F0%CA%F3%B3%D82%A1%CA2005%C7%AF%C5%D9%A1%CB&openfile=text05_8.pdf
-      = A Smarter Way to Find Pitch (Philip McLeod, Geoff Wyvill)
-        http://miracle.otago.ac.nz/tartini/papers/A_Smarter_Way_to_Find_Pitch.pdf
-      = 平均律の各音程における周波数一覧表
-        http://www.apache-band.com/apchhp/music_theory/frequency_temperament.html
-    * PID制御
-      = モータのPID制御法
-        http://www.picfun.com/motor05.html
-      = 簡単な自動制御の話
-        http://www.geocities.jp/mmkan2004/page479.html
-      = 滑らかで安定したライントレースを実現する
-        http://monoist.atmarkit.co.jp/mn/articles/1007/26/news083.html
