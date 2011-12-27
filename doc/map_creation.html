@@ -39,103 +39,185 @@
 					<div class="caption">map.xml</div>
 					<div class="code_body">
 					<code>
-					&lt;Map&gt;<br />
-					&nbsp;&nbsp;&lt;Name&gt;<a href="#xml_name">マップ名</a>&lt;/Name&gt;<br />
-					&nbsp;&nbsp;&lt;Author&gt;<a href="#xml_author">作者名</a>&lt;/Author&gt;<br />
-					&nbsp;&nbsp;&lt;Player&gt;<a href="#xml_player">自機情報</a>&lt;/Player&gt;<br />
-					&nbsp;&nbsp;&lt;Color&gt;<a href="#xml_colors">色情報</a>&lt;/Color&gt;<br />
-					&nbsp;&nbsp;&lt;Pitch&gt;<a href="#xml_pitch">ピッチ情報</a>&lt;/Pitch&gt;<br />
-					&nbsp;&nbsp;&lt;ChipData&gt;<a href="#xml_mapchip">マップチップ情報</a>&lt;/ChipData&gt;<br />
-					&nbsp;&nbsp;&lt;Source&gt;<a href="#xml_source">マップソース情報</a>&lt;/Source&gt;<br />
-					&lt;/Map&gt;
+						&lt;map&gt;<br />
+						&nbsp;&nbsp;&lt;name&gt;<a href="#xml_name">マップ名</a>&lt;/name&gt;<br />
+						&nbsp;&nbsp;&lt;author&gt;<a href="#xml_author">作者名</a>&lt;/author&gt;<br />
+						&nbsp;&nbsp;&lt;bgm&gt;<a href="#xml_bgm">BGM情報</a>&lt;/bgm&gt; <span class="comment">&lt;-- オプション --&gt;</span><br />
+						&nbsp;&nbsp;&lt;player&gt;<a href="#xml_player">自機情報</a>&lt;/player&gt; <span class="comment">&lt;-- オプション --&gt;</span><br />
+						&nbsp;&nbsp;&lt;pitch&gt;<a href="#xml_pitch">ピッチ情報</a>&lt;/pitch&gt; <span class="comment">&lt;-- オプション --&gt;</span><br />
+						&nbsp;&nbsp;&lt;color&gt;<a href="#xml_colors">色情報</a>&lt;/color&gt;<br />
+						&nbsp;&nbsp;&lt;chipdata&gt;<a href="#xml_mapchip">マップチップ情報</a>&lt;/chipdata&gt;<br />
+						&nbsp;&nbsp;&lt;source&gt;<a href="#xml_source">マップソース情報</a>&lt;/source&gt;<br />
+					&lt;/map&gt;
 					</code></div>
 				</div>
 
 				<p>
-					これ以降では、上の各要素について記述する内容を説明します。
+					オプションと書かれているものは、必要な場合のみ記述すれば良い要素です。<br />
+					以下、各要素に記述する内容について説明します。
 				</p>
 			</div>
 		</section>
 
 		<section id="xml_name">
-			<h1>Name - マップ名</h1>
+			<h1>name - マップ名</h1>
 			<div>
-				<p>マップ名は、マップ選択画面のリスト上で表示されるマップの名前です。</p>
+				<p>
+					マップ選択画面のリスト上で表示されるマップの名前を記述します。<br />
+					長過ぎると表示しきれないので注意。
+				</p>
 			</div>
 		</section>
 
 		<section id="xml_author">
-			<h1>Author - 作者名</h1>
+			<h1>author - 作者名</h1>
 			<div>
-				<p>作者名には、マップ作成者の名前を記述します。今のところどこにも使用されていません。</p>
+				<p>マップ作成者の名前を記述します。今のところどこにも使用されていません。</p>
+			</div>
+		</section>
+		
+		<section id="xml_bgm">
+			<h1>bgm - BGM情報</h1>
+			<div>
+				<p>
+					プレイ中に流すBGMを設定します。BGMが必要ない場合は記述する必要はありません。<br />
+					BGMは、自機がスタートラインを通過する際に演奏をスタートします。
+				</p>
+				
+				<div class="code">
+					<div class="caption">bgm要素記述内容</div>
+					<div class="code_body">
+						<code>
+							&lt;bgm volume="ボリューム(0～100)"&gt;BGMファイル名&lt;/bgm&gt;
+						</code>
+					</div>
+				</div>
 			</div>
 		</section>
 
 		<section id="xml_player">
-			<h1>Player - 自機情報</h1>
+			<h1>player - 自機情報</h1>
 			<div>
-				<p>自機情報には以下の情報を記述します。</p>
+				<p>自機に関する情報を記述します。</p>
+				
+				<div class="code">
+					<div class="caption">player要素記述内容</div>
+					<div class="code_body">
+						<code>
+							&lt;player&gt;<br />
+							&nbsp;&nbsp;&lt;vx&gt;速度&lt;/vx&gt;<br />
+							&lt;/player&gt;
+						</code>
+					</div>
+				</div>
+				
 				<table class="columns">
 					<tr><th>要素</th><th>説明</th></tr>
-					<tr><td>Vx</td><td>自機が右に進む速度の数値。デフォルトは1(1秒で60ピクセル進む)。</td>
+					<tr><td>vx</td><td>自機が右に進む速度の数値。デフォルトは1(1秒で60ピクセル進む)。</td>
 					</table>
 			</div>
 		</section>
 
-		<section id="xml_colors">
-			<h1>Color - 色情報</h1>
+		<section id="xml_pitch">
+			<h1>pitch - ピッチ情報</h1>
 			<div>
 				<p>
-					<image src="images/colors-ss.png" /><br />
-					前景色(Foreground)・背景色(Background)・強調色(Strong)の3つの色を指定できます。
+					最高音・最低音を決める方法を設定します。
 				</p>
+				
+				<div class="code">
+					<div class="caption">pitch記述内容</div>
+					<div class="code_body">
+						<code>
+							&lt;pitch max="最高ピッチ" min="最低ピッチ"&gt;ピッチ決定方法&lt;/pitch&gt;
+						</code>
+					</div>
+				</div>
+				
+				<table class="columns">
+					<tr><th>ピッチ決定方法</th><th>説明</th></tr>
+					<tr>
+						<td>Fixed</td>
+						<td>
+							音楽ファイルを使用する場合には、音楽中の最高音・最低音に従う。<br />
+							それ以外の場合には、属性max, minで指定したピッチに従う。
+						</td>
+					</tr>
+					<tr>
+						<td>Variable</td>
+						<td>プレイヤーが設定した最高音・最低音に従う。属性max, minは不要。</td>
+					</tr>
+				</table>
+				<p>
+					pitchの記述が無い場合は、<a href="#xml_source">マップソース情報</a>でtype=Music(音楽ファイルを使用する)にした場合はFixed、それ以外の場合はVariableになります。<br />
+					属性max, minを記述する場合には、最高音・最低音のピッチ(周波数)を数字で記述します。
+				</p>
+				
+			</div>
+		</section>
+		
+		<section id="xml_colors">
+			<h1>color - 色情報</h1>
+			<div>
+				<p>
+					前景色(foreground)・背景色(background)・強調色(strong)の3つの色を指定します。<br />
+					各色は以下の箇所を指します。<br />
+					<image src="images/colors-ss.png" />
+				</p>
+				
+				<div class="code">
+					<div class="caption">color記述内容</div>
+					<div class="code_body">
+						<code>
+							&lt;color&gt;<br />
+							&nbsp;&nbsp;&lt;foreground&gt;前景色&lt;/foreground&gt;<br />
+							&nbsp;&nbsp;&lt;background&gt;背景色&lt;/background&gt;<br />
+							&nbsp;&nbsp;&lt;strong&gt;強調色&lt;/strong&gt;<br />
+							&lt;/color&gt;
+						</code></div>
+				</div>
+				
 				<table class="columns">
 					<tr>
 						<th>要素</th><th>説明</th>
 					</tr><tr>
-						<td>Foreground</td>
-						<td>前景色。鍵盤の黒鍵部分、プレイヤー、プレイヤー情報部分の背景などに使用される。</td>
+						<td>foreground</td>
+						<td>鍵盤の黒鍵部分、プレイヤー、プレイヤー情報部分の背景などに使用される色</td>
 					</tr><tr>
-						<td>Background</td>
-						<td>背景色。鍵盤の白鍵部分、ステージの背景、プレイヤー情報部分の文字などに使用される。</td>
+						<td>background</td>
+						<td>鍵盤の白鍵部分、ステージの背景、プレイヤー情報部分の文字などに使用される色</td>
 					</tr><tr>
-						<td>Strong</td>
-						<td>強調色。鍵盤上での現在の位置、ミニマップ上での現在の位置表示に使われる。</td>
+						<td>strong</td>
+						<td>鍵盤上での現在の位置、ミニマップ上での現在の位置表示に使われる色</td>
 					</tr>
 				</table>
+				<p>色の指定の仕方は<a href="#color_table">こちら</a>を参照のこと。</p>
+				
 
 				<section class="sample">
 					<h2>Sample</h2>
 					<p>
-						上の画像のように指定するには、Color要素に以下のように記述します。
+						上の画像のように指定するには、color要素に以下のように記述します。
 					</p>
 
 					<div class="code">
-						<div class="caption">Color要素サンプル</div>
+						<div class="caption">color要素サンプル</div>
 						<div class="code_body">
 						<code>
-						&lt;Color&gt;<br />
-						&nbsp;&nbsp;&lt;Foreground&gt;Black&lt;/Foreground&gt;<br />
-						&nbsp;&nbsp;&lt;Background&gt;White&lt;/Background&gt;<br />
-						&nbsp;&nbsp;&lt;Strong&gt;Red&lt;/Strong&gt;<br />
-						&lt;/Color&gt;
+						&lt;color&gt;<br />
+						&nbsp;&nbsp;&lt;foreground&gt;Black&lt;/foreground&gt;<br />
+						&nbsp;&nbsp;&lt;background&gt;White&lt;/background&gt;<br />
+						&nbsp;&nbsp;&lt;strong&gt;Red&lt;/strong&gt;<br />
+						&lt;/color&gt;
 					</code></div>
 					</div>
 				</section>
-
-				<p>色の指定の仕方は<a href="#color_table">こちら</a>を参照のこと。</p>
-			</div>
-		</section>
-
-		<section id="xml_pitch">
-			<h1>Pitch - ピッチ情報</h1>
-			<div>
 
 			</div>
 		</section>
 
 		<section id="xml_mapchip">
-			<h1>ChipData - マップチップ情報</h1>
+			<h1>chipdata - マップチップ情報</h1>
 			<div>
 				<p>
 					マップチップとは、マップを構成する単位です。<br />
@@ -144,41 +226,45 @@
 					<image src="images/mapchip-exp.png" />
 				</p>
 				<p>
-					それぞれのチップにはHardness(硬さ)が設定されており、これが0だと自機との衝突判定無し、1以上で衝突判定有りになります。自機のHPは<br />
-					&lt;新しいHP&gt; = &lt;今までのHP&gt; - &lt;衝突チップのHardness&gt;<br />
+					それぞれのチップにはhardness(硬さ)が設定されており、これが0だと自機との衝突判定無し、1以上で衝突判定有りになります。自機のHPは<br />
+					&lt;新しいHP&gt; = &lt;今までのHP&gt; - &lt;衝突チップのhardness&gt;<br />
 					で計算されます。
 					<p>
-						マップチップ情報では、マップチップに使用する色・画像と硬さを指定できます。<br />
-						記述する情報は以下の通り。
+						マップチップ情報では、マップチップに使用する色・画像と硬さを指定できます。
 					</p>
 
 					<div class="code">
-						<div class="caption">ChipData記述内容</div>
+						<div class="caption">chipdata記述内容</div>
 						<div class="code_body">
 							<code>
-						&lt;ChipData&gt;<br />
-						&nbsp;&nbsp;&lt;Type&gt;<a href="#chip_typename">種類</a>&lt;/Type&gt;<br />
-						&nbsp;&nbsp;&lt;Name&gt;<a href="#chip_typename">名前</a>&lt;/Name&gt;<br />
-						&nbsp;&nbsp;&lt;Size&gt;<br />
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;Width&gt;<a href="#chip_size">1チップの横幅</a>&lt;/Width&gt;<br />
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;Height&gt;<a href="#chip_size">1チップの縦幅</a>&lt;/Height&gt;<br />
-						&nbsp;&nbsp;&lt;/Size&gt;<br />
-						&nbsp;&nbsp;&lt;Chip&gt; <span class="comment">&lt;!-- <a href="#chip_chipinfo">Chip情報</a>。ColorsかImageの場合に必要数繰り返す --&gt;</span><br />
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;Color&gt;色&lt;/Color&gt;<br />
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;Hardness&gt;硬さ&lt;/Hardness&gt;<br />
-						&nbsp;&nbsp;&lt;/Chip&gt;<br />
-						&lt;/ChipData&gt;</code></div>
+								&lt;chipcata width="<a href="#chip_size">1チップの横幅</a>" height="<a href="#chip_size">1チップの縦幅</a>"&gt;<br />
+						&nbsp;&nbsp;&lt;type&gt;<a href="#chip_typename">種類</a>&lt;/type&gt;<br />
+						&nbsp;&nbsp;&lt;name&gt;<a href="#chip_typename">名前</a>&lt;/name&gt;<br />
+						&nbsp;&nbsp;&lt;chip&gt; <span class="comment">&lt;!-- <a href="#chip_chipinfo">chip情報</a>。ColorsかImageの場合に必要数繰り返す --&gt;</span><br />
+						&nbsp;&nbsp;&nbsp;&nbsp;&lt;color&gt;色&lt;/color&gt;<br />
+						&nbsp;&nbsp;&nbsp;&nbsp;&lt;hardness&gt;硬さ&lt;/hardness&gt;<br />
+						&nbsp;&nbsp;&lt;/chip&gt;<br />
+						&lt;/chipdata&gt;</code></div>
 					</div>
 					
-					<section id="chip_typename">
-						<h2>Type・Name</h2>
+					<section id="chip_size">
+						<h2>width, height</h2>
 						<p>
-							種類・名前には以下を指定します。<br />
+							1チップあたりの横幅と縦幅をピクセルで指定します。<br />
+							チップの大きさはデフォルトでは16px&times;16pxです。<br />
+							あまり小さなサイズにするとマップの描画が重くなるので注意が必要です。
+						</p>
+					</section>
+					
+					<section id="chip_typename">
+						<h2>type・name</h2>
+						<p>
+							種類・名前には以下のいずれかを指定します。<br />
 							いずれにおいても、0番のチップはマップ上で描画されず、背景がそのまま見えます。
 						</p>
 						<table class="columns">
 							<tr>
-								<th>Type</th><th>Name</th><th>説明</th>
+								<th>type</th><th>name</th><th>説明</th>
 							</tr>
 							<tr>
 								<td rowspan="2">Builtin</td><td>Binary</td>
@@ -200,33 +286,25 @@
 						</table>
 					</section>
 
-					<section id="chip_size">
-						<h2>Size</h2>
-						<p>
-							1チップあたりの横幅と縦幅をピクセルで指定します。<br />
-							チップの大きさはデフォルトでは16px&times;16pxです。<br />
-							あまり小さなサイズにするとマップの描画が重くなるので注意が必要です。
-						</p>
-					</section>
-
 					<section id="chip_chipinfo">
-						<h2>Chip</h2>
-
+						<h2>chip</h2>
+						<p>チップの種類がColorsかImageの場合に、チップ数分だけ記述します。</p>
+						
 						<section>
-							<h3>Type=Builtin, Name=Colorsの場合</h3>
+							<h3>type=Builtin, name=Colorsの場合</h3>
 							<p>
-								各チップのColor(色)とHardness(硬さ)を必要数記述します。<br />
-								XML中でのChipの順番がマップチップの順番と一致します。すなわち、最初に記述したChip要素が0番目のチップ、次に記述したChip要素が1番目のチップ、…となります。<br />
-								※ Chipの記述が無い場合、0番の色は無色、硬さは0、1番の色は黒、硬さは1の2つからなるマップチップとなります。
+								各チップのcolor(色)とhardness(硬さ)を必要数記述します。<br />
+								XML中でのchipの順番がマップチップの順番と一致します。すなわち、最初に記述したchip要素が0番目のチップ、次に記述したchip要素が1番目のチップ、…となります。<br />
+								※ chipの記述が無い場合、0番の色は無色、硬さは0、1番の色は黒、硬さは1の2つからなるマップチップとなります。
 							</p>
 						</section>
 
 						<section>
-							<h3>Type=Imageの場合</h3>
+							<h3>type=Imageの場合</h3>
 							<p>
-								各チップのHardness(硬さ)を必要数記述します。<br />
-								XML中でのChipの順番がマップチップの順番と一致します。すなわち、最初に記述したChip要素が0番目のチップ、次に記述したChip要素が1番目のチップ、…となります。<br />
-								※ Chipの記述が無い場合、0番の硬さは0、それ以外のチップの硬さは1となります。
+								各チップのhardness(硬さ)を必要数記述します。<br />
+								XML中でのchipの順番がマップチップの順番と一致します。すなわち、最初に記述したchip要素が0番目のチップ、次に記述したchip要素が1番目のチップ、…となります。<br />
+								※ chipの記述が無い場合、0番の硬さは0、それ以外のチップの硬さは1となります。
 							</p>
 						</section>
 
@@ -239,22 +317,21 @@
 							<h3>Binary</h3>
 							<p>
 								大きさ10px&times;10pxの2つのチップから成るマップチップ。<br />
-								色は<code>&lt;Color&gt;</code>で指定されたもの。
+								色は<code>&lt;color&gt;</code>で指定されたもの。
 								チップの硬さは0番(背景)は0、1番(前景)は1で固定。
 							</p>
 							<div class="code">
 								<div class="caption">Binaryマップチップサンプル</div>
 								<div class="code_body">
 									<code>
-								&lt;ChipData&gt;<br />
-								&nbsp;&nbsp;&lt;Type&gt;Builtin&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;Binary&lt;/Name&gt;<br />
-								&nbsp;&nbsp;&lt;Size&gt;&lt;Width&gt;10&lt;/Width&gt;&lt;Height&gt;10&lt;/Height&gt;&lt;/Size&gt;<br />
-								&lt;/ChipData&gt;
+								&lt;chipdata width="10" height="10"&gt;<br />
+								&nbsp;&nbsp;&lt;type&gt;Builtin&lt;/type&gt;<br />
+								&nbsp;&nbsp;&lt;name&gt;Binary&lt;/name&gt;<br />
+								&lt;/chipdata&gt;
 							</code></div>
 							</div>
 							
-							<p>結果</p>
+							<p>結果(color要素でbackground=White, foreground=Blackとした場合)</p>
 							<table class="rows">
 								<tr><th>チップ番号</th><td>0</td><td>1</td></tr>
 								<tr><th>色</th>
@@ -273,20 +350,19 @@
 								<div class="caption">Colorsマップチップサンプル</div>
 								<div class="code_body">
 									<code>
-								&lt;ChipData&gt;<br />
-								&nbsp;&nbsp;&lt;Type&gt;Builtin&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;Colors&lt;/Name&gt;<br />
-								&nbsp;&nbsp;&lt;Size&gt;&lt;Width&gt;16&lt;/Width&gt;&lt;Height&gt;16&lt;/Height&gt;&lt;/Size&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt; <span class="comment">&lt;!-- 0番目のチップ --&gt;</span> &lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt; <span class="comment">&lt;!-- 1番目のチップ --&gt;</span><br />
-								&nbsp;&nbsp;&nbsp;&nbsp;&lt;Color&gt;#00cccc&lt;/Color&gt;<br />
-								&nbsp;&nbsp;&nbsp;&nbsp;&lt;Hardness&gt;1&lt;/Hardness&gt;<br />
-								&nbsp;&nbsp;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt; <span class="comment">&lt;!-- 2番目のチップ --&gt;</span><br />
-								&nbsp;&nbsp;&nbsp;&nbsp;&lt;Color&gt;#0000cc&lt;/Color&gt;<br />
-								&nbsp;&nbsp;&nbsp;&nbsp;&lt;Hardness&gt;2&lt;/Hardness&gt;<br />
-								&nbsp;&nbsp;&lt;/Chip&gt;<br />
-								&lt;/ChipData&gt;
+								&lt;chipdata width="16" height="16"&gt;<br />
+								&nbsp;&nbsp;&lt;type&gt;Builtin&lt;/type&gt;<br />
+								&nbsp;&nbsp;&lt;name&gt;Colors&lt;/name&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt; <span class="comment">&lt;!-- 0番目のチップ --&gt;</span> &lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt; <span class="comment">&lt;!-- 1番目のチップ --&gt;</span><br />
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;color&gt;#00cccc&lt;/color&gt;<br />
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;hardness&gt;1&lt;/hardness&gt;<br />
+								&nbsp;&nbsp;&lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt; <span class="comment">&lt;!-- 2番目のチップ --&gt;</span><br />
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;color&gt;#0000cc&lt;/color&gt;<br />
+								&nbsp;&nbsp;&nbsp;&nbsp;&lt;hardness&gt;2&lt;/hardness&gt;<br />
+								&nbsp;&nbsp;&lt;/chip&gt;<br />
+								&lt;/chipdata&gt;
 							</code></div>
 							</div>
 
@@ -312,17 +388,16 @@
 								<div class="caption">Imageマップチップサンプル</div>
 								<div class="code_body">
 									<code>
-								&lt;ChipData&gt;<br />
-								&nbsp;&nbsp;&lt;Type&gt;Image&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;mapchip.png&lt;/Name&gt;<br />
-								&nbsp;&nbsp;&lt;Size&gt;&lt;Width&gt;24&lt;/Width&gt;&lt;Height&gt;24&lt;/Height&gt;&lt;/Size&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;Hardness&gt;2&lt;/Hardness&gt;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;Hardness&gt;2&lt;/Hardness&gt;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;Hardness&gt;1&lt;/Hardness&gt;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;Hardness&gt;1&lt;/Hardness&gt;&lt;/Chip&gt;<br />
-								&nbsp;&nbsp;&lt;Chip&gt;&lt;Hardness&gt;2&lt;/Hardness&gt;&lt;/Chip&gt;<br />
-								&lt;/ChipData&gt;
+								&lt;chipdata width="24" height="24"&gt;<br />
+								&nbsp;&nbsp;&lt;type&gt;Image&lt;/type&gt;<br />
+								&nbsp;&nbsp;&lt;name&gt;mapchip.png&lt;/name&gt;<br />
+								&nbsp;&nbsp;&lt;chip /&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt;&lt;hardness&gt;2&lt;/hardness&gt;&lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt;&lt;hardness&gt;2&lt;/hardness&gt;&lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt;&lt;hardness&gt;1&lt;/hardness&gt;&lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt;&lt;hardness&gt;1&lt;/hardness&gt;&lt;/chip&gt;<br />
+								&nbsp;&nbsp;&lt;chip&gt;&lt;hardness&gt;2&lt;/hardness&gt;&lt;/chip&gt;<br />
+								&lt;/chipdata&gt;
 							</code></div>
 							</div>
 
@@ -346,30 +421,29 @@
 		</section>
 
 		<section id="xml_source">
-			<h1>Source - マップソース情報</h1>
+			<h1>source - マップソース情報</h1>
 			<div>
 				<p>
 					マップチップをどのように並べるかを決める情報です。<br />
 					マップソースからは数字の並びであるマップ情報を取得します。<br />
-					<img src="images/source-sample-map.png" id="source_sample_map" />&larr; 各数字がマップチップのチップ番号を表しています。<br />
-					記述する情報は以下の通り。
+					<img src="images/source-sample-map.png" id="source_sample_map" />&larr; 各数字がマップチップのチップ番号を表しています。
 				</p>
 
 				<div class="code">
-					<div class="caption">Source記述内容</div>
+					<div class="caption">source記述内容</div>
 					<div class="code_body">
 						<code>
-					&lt;Source&gt;<br />
-					&nbsp;&nbsp;&lt;Type&gt;<a href="#source_type">マップソースの種類</a>&lt;/Type&gt;<br />
-					&nbsp;&nbsp;&lt;Name&gt;マップ情報を記載したマップソースのファイル名&lt;/Name&gt;<br />
-					&nbsp;&nbsp;&lt;Mapping&gt;マップソースと番号の対応付け&lt;/Mapping&gt;<br />
-					&nbsp;&nbsp;&lt;Bgm&gt;<a href="#source_bgm">BGMファイル名</a>&lt;/Bgm&gt; <span class="comment">&lt;!-- 必要な場合のみ記述 --&gt;</span><br />
-					&lt;/Source&gt;
-				</code></div>
+							&lt;source&gt;<br />
+							&nbsp;&nbsp;&lt;type&gt;<a href="#source_type">マップソースの種類</a>&lt;/type&gt;<br />
+							&nbsp;&nbsp;&lt;name&gt;マップ情報を記載したマップソースのファイル名&lt;/name&gt;<br />
+							&nbsp;&nbsp;&lt;mapping&gt;マップソースと番号の対応付け&lt;/mapping&gt;<br />
+					&lt;/source&gt;
+						</code>
+					</div>
 				</div>
 
 				<section id="source_type">
-					<h2>Type</h2>
+					<h2>type</h2>
 
 					<p>マップソースの種類(Type)として指定できるのは以下の3種類です。</p>
 					<table class="columns">
@@ -383,7 +457,7 @@
 							<td><a href="#source_type_music">Music</a></td><td>音楽ファイルからマップを生成します。</td>
 						</tr>
 					</table>
-					<p>マップソースの種類として何を指定するかによって、マップソースファイル(Name)に指定するもの、対応付け(Mapping)で指定するものが変わります。</p>
+					<p>マップソースの種類として何を指定するかによって、マップソースファイル(name)に指定するもの、対応付け(mapping)で指定するものが変わります。</p>
 
 					<section id="source_type_image">
 						<h3>Image</h3>
@@ -393,8 +467,8 @@
 						</p>
 						<table class="columns">
 							<tr><th>要素</th><th>記述する内容</th></tr>
-							<tr><td>Name</td><td>マップ情報を表す画像ファイル名(png)</td></tr>
-							<tr><td>Mapping</td><td>マップチップの番号順に対応する色で塗りつぶした画像ファイル名(png)</td></tr>
+							<tr><td>name</td><td>マップ情報を表す画像ファイル名(png)</td></tr>
+							<tr><td>mapping</td><td>マップチップの番号順に対応する色で塗りつぶした画像ファイル名(png)</td></tr>
 						</table>
 
 						<section class="sample">
@@ -425,12 +499,13 @@
 								<div class="caption">Imageソースサンプル</div>
 								<div class="code_body">
 									<code>
-								&lt;Source&gt;<br />
-								&nbsp;&nbsp;&lt;Type&gt;Image&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;map.png&lt;/Name&gt;<br />
-								&nbsp;&nbsp;&lt;Mapping&gt;mapping.png&lt;/Mapping&gt;<br />
-								&lt;/Source&gt;
-							</code></div>
+										&lt;source&gt;<br />
+										&nbsp;&nbsp;&lt;type&gt;Image&lt;/type&gt;<br />
+										&nbsp;&nbsp;&lt;name&gt;map.png&lt;/name&gt;<br />
+										&nbsp;&nbsp;&lt;mapping&gt;mapping.png&lt;/mapping&gt;<br />
+										&lt;/source&gt;
+									</code>
+								</div>
 							</div>
 
 						</section>
@@ -444,8 +519,8 @@
 						</p>
 						<table class="columns">
 							<tr><th>要素</th><th>記述する内容</th></tr>
-							<tr><td>Name</td><td>マップ情報を記述したテキストファイル名</td></tr>
-							<tr><td>Mapping</td><td>テキストファイル中の文字を対応するマップチップの番号順に並べたもの</td></tr>
+							<tr><td>name</td><td>マップ情報を記述したテキストファイル名</td></tr>
+							<tr><td>mapping</td><td>テキストファイル中の文字を対応するマップチップの番号順に並べたもの</td></tr>
 						</table>
 
 						<section class="sample">
@@ -458,15 +533,15 @@
 								<div class="caption">map.txt</div>
 								<div class="code_body">
 									<code>
-								######<br />
-								#**###<br />
-								*..***<br />
-								*.....<br />
-								..*...<br />
-								.*#***<br />
-								*#####<br />
-								######
-							</code></div>
+										######<br />
+										#**###<br />
+										*..***<br />
+										*.....<br />
+										..*...<br />
+										.*#***<br />
+										*#####<br />
+										######
+									</code></div>
 							</div>
 							<p>
 								<code>.</code>が0番、<code>#</code>が1番、<code>*</code>が2番を表しています。<br />
@@ -475,13 +550,14 @@
 							<div class="code">
 								<div class="caption">Textソースサンプル</div>
 								<div class="code_body">
-								<code>
-								&lt;Source&gt;<br />
-								&nbsp;&nbsp;&lt;Type&gt;Text&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;map.txt&lt;/Name&gt;<br />
-								&nbsp;&nbsp;&lt;Mapping&gt;.#*&lt;/Mapping&gt;<br />
-								&lt;/Source&gt;
-							</code></div>
+									<code>
+										&lt;source&gt;<br />
+										&nbsp;&nbsp;&lt;type&gt;Text&lt;/type&gt;<br />
+										&nbsp;&nbsp;&lt;name&gt;map.txt&lt;/name&gt;<br />
+										&nbsp;&nbsp;&lt;mapping&gt;.#*&lt;/mapping&gt;<br />
+										&lt;/source&gt;
+									</code>
+								</div>
 							</div>
 						</section>
 					</section>
@@ -498,17 +574,10 @@
 						</p>
 						<table class="columns">
 							<tr><th>要素</th><th>記述する内容</th></tr>
-							<tr><td>Name</td><td>マップ情報生成に使用する音楽ファイル名(mid / mml)</td></tr>
-							<tr><td>Mapping</td><td>不要</td></tr>
+							<tr><td>name</td><td>マップ情報生成に使用する音楽ファイル名(mid / mml)</td></tr>
+							<tr><td>mapping</td><td>使用しません</td></tr>
 						</table>
 						
-						<p>
-							音楽ファイルを使う場合、生成されるマップを画像ファイルにしたものが
-							<code>&lt;ユーザディレクトリ&gt;\AppData\Roaming\PitchPitch</code>
-							以下に<code>music.png</code>として、<br />
-							またファイルを読み込んだ結果得られるピッチ情報が<code>music.txt</code>として保存されます。<br />
-							その画像をベースにして、ピッチ情報として上記ファイルから得られるピッチを用いて編集することで3つ以上のマップチップを使用することができます。
-						</p>
 						<section class="sample">
 							<h4>Sample</h4>
 							<p>音楽ファイルとして以下を用意します。</p>
@@ -528,21 +597,25 @@
 								<div class="caption">Musicソースサンプル</div>
 								<div class="code_body">
 									<code>
-								&lt;Source&gt;<br />
-								&nbsp;&nbsp;&lt;Music&gt;Text&lt;/Type&gt;<br />
-								&nbsp;&nbsp;&lt;Name&gt;map.mml&lt;/Name&gt;<br />
-								&lt;/Source&gt;
-							</code></div>
+										&lt;source&gt;<br />
+										&nbsp;&nbsp;&lt;type&gt;Text&lt;/type&gt;<br />
+										&nbsp;&nbsp;&lt;name&gt;map.mml&lt;/name&gt;<br />
+										&lt;/source&gt;
+									</code>
+								</div>
 							</div>
 						</section>
+						
+						<p>
+							音楽ファイルを使う場合、生成されるマップを画像ファイルにしたものが
+							<code>&lt;ユーザディレクトリ&gt;\AppData\Roaming\PitchPitch</code>
+							以下に<code>music.png</code>として、<br />
+							またファイルを読み込んだ結果得られるピッチ情報が<code>music.txt</code>として保存されます。
+						</p>
 					</section>
 
 				</section>
 
-				<section id="source_bgm">
-					<h2>Bgm</h2>
-
-				</section>
 			</div>
 		</section>
 
@@ -796,7 +869,7 @@
 		</section>
 
 		<footer>
-			Copyright 2010
+			(C) 2012 hirekoke
 		</footer>
 
 	</body>

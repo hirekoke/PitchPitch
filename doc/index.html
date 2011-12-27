@@ -1,67 +1,189 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="default.css" type="text/css" />
-<title>PitchPitch ヘルプ</title>
-</head>
-<body>
+	<head>
+		<meta charset="UTF-8">
+			<link rel="stylesheet" href="default.css" type="text/css" />
+			<title>PitchPitch ヘルプ</title>
+		</head>
+	<body>
 
-<header>
-<h1>PitchPitch ヘルプ</h1>
-<nav>
-<h1>ナビゲーション</h1>
-<ul>
-<li>ヘルプ</li>
-<li><a href="./map_creation.html">マップ作成</a></li>
-<li><a href="./licenses.html">ライセンス</a></li>
-<li><a href="./references.html">参考文献</a></li>
-</ul>
-</nav>
-</header>
+		<header>
+			<h1>PitchPitch ヘルプ</h1>
+			<nav>
+				<h1>ナビゲーション</h1>
+				<ul>
+					<li>ヘルプ</li>
+					<li><a href="./map_creation.html">マップ作成</a></li>
+					<li><a href="./licenses.html">ライセンス</a></li>
+					<li><a href="./references.html">参考文献</a></li>
+				</ul>
+			</nav>
+		</header>
 
-<article>
-	<h1>これは何？</h1>
-		<p>声の高さ(ピッチ)で自機の高さ(ピッチ)を操作して障害物に当たらないように避けるゲームです。</p>
+		<section>
+			<h1>これは何？</h1>
+			<div>
+				<p>
+					声の高さ(ピッチ)で自機の高さ(ピッチ)を操作して障害物に当たらないように避けるゲームです。				</p>
 
-	<h2>中身の構成</h2>
-		<dl>
-			<dt>PitchPitch.exe</dt>
-		</dl>
+				<section>
+					<h2>中身の構成</h2>
+					<table class="columns">
+						<tr><th>ファイル・ディレクトリ名</th><th>説明</th></tr>
+						<tr><td>PitchPitch.exe</td><td>ゲーム本体</td></tr>
+						<tr><td>map</td><td>マップデータ格納ディレクトリ</td></tr>
+						<tr><td>font</td><td>フォント格納ディレクトリ</td></tr>
+						<tr><td>licenses</td><td>使用ライブラリ・フォントのライセンスドキュメント</td></tr>
+						<tr><td>doc</td><td>ドキュメント</td></tr>
+						<tr><td>CoreAudioApi.dll</td><td>Core Audio APIラッパーDLL</td></tr>
+						<tr><td>AForge.Math.dll</td><td>AForge.NET DLL</td></tr>
+						<tr><td>SdlDotNet.dll, Tao.Sdl.dll</td><td>SDL.NET DLL</td></tr>
+						<tr><td>その他の*.dll</td><td>SDL.NETが使用するライブラリ<br />
+							jpeg.dll, libfreetype-6.dll, libogg-0.dll, libpng12-0.dll, libtiff-3.dll, libvorbis-0.dll, libvorbisfile-3.dll, SDL.dll, SDL_gfx.dll, SDL_image.dll, SDL_mixer.dll, SDL_net.dll, SDL_ttf.dll, smpeg.dll, zlib1.dll
+						</td></tr>
+					</table>
+				</section>
 
-	<h2>動作環境</h2>
-		<ul>
-			<li>Windows Vista/7</li>
-			<li>Microsoft .NET Framework 2.0</li>
-		</ul>
+				<section>
+					<h2>動作環境</h2>
+					<ul>
+						<li>Windows Vista/7</li>
+						<li>Microsoft .NET Framework 2.0</li>
+						<li>マイク (内臓マイクやヘッドセットのマイクでも可)</li>
+					</ul>
+				</section>
 
-	<h2>インストール方法</h2>
-		<ul>
-			<li>フォルダ毎好きな場所に置く</li>
-		</ul>
+				<section>
+					<h2>インストール方法</h2>
+					<ul>
+						<li>フォルダ毎好きな場所に置く</li>
+					</ul>
+				</section>
 
-	<h2>アンインストール方法</h2>
-		<ul>
-			<li>フォルダごと消す</li>
-			<li>設定ファイルは <code>&lt;ユーザディレクトリ>\AppData\Roaming\BeatDancer\&gt;</code> 以下にあるのでフォルダごと削除</li>
-		</ul>
-</article>
+				<section>
+					<h2>アンインストール方法</h2>
+					<ul>
+						<li>フォルダごと消す</li>
+						<li>設定ファイルは <code>&lt;ユーザディレクトリ>\AppData\Roaming\BeatDancer\&gt;</code> 以下にあるのでフォルダごと削除</li>
+					</ul>
+				</section>
 
-<article>
-	<h1>遊び方</h1>
-		<p>まず最初にオプションでオーディオ入力をするデバイスを選択する必要があります。</p>
-	<h2>オプション</h2>
-	<h2>マップ選択</h2>
-	<h2>ゲーム画面</h2>
-</article>
+			</div>
+		</section>
 
-<article>
-	<h1>あるかもしれないQA</h1>
-</article>
+		<section>
+			<h1>遊び方</h1>
+			<div>
+				<p>
+					最初にオプション画面でオーディオ入力をするデバイスの選択と最高音・最低音の設定をして下さい。
+				</p>
+				
+				<section>
+					<h2>操作</h2>
+					<p>
+						キーボードで操作します。<br />
+						メニュー項目の先頭にアルファベットが書いてある場合、ショートカットキーとして利用できます。
+					</p>
+					<table class="columns">
+						<tr><th>操作</th><th>操作内容</th></tr>
+						<tr><td>&uarr;&darr;&larr;&rarr;キー</td><td>メニューでのカーソルの移動</td></tr>
+						<tr><td>Return</td><td>メニュー決定</td></tr>
+						<tr><td>Escape</td><td>メニューキャンセル</td></tr>
+						<tr><td>Space</td><td>ゲーム画面中ではポーズ</td></tr>
+						<tr><td>発声</td><td>ゲーム画面での自機上下移動</td></tr>
+					</table>
+				</section>
+				
+				<section>
+					<h2>オプション</h2>
+					<p>
+						<img src="images/ss-option.png" /><br />
+						&uarr;&darr;&larr;&rarr;キーでカーソル移動。
+					</p>
+					
+					<table class="rows">
+						<tr><th>1</th><td>デバイスを&uarr;&darr;キーで選択。最後にカーソルが合っているデバイスが選択される。</td></tr>
+						<tr><th>2</th><td>音域設定。カーソルを合わせてReturnを押している間に発声することで最高音・最低音を設定する。</td></tr>
+						<tr><th>3</th><td>現在のデバイスで入力されている音の情報。</td></tr>
+						<tr><th>4</th><td>タイトルに戻る。Escapeを押すことでも選択できる。</td></tr>
+					</table>
+				</section>
 
-<footer>
-Copyright 2010
-</footer>
+				<section>
+					<h2>マップ選択</h2>
+					<p>
+						<img src="images/ss-mapselect.png" />
+					</p>
+					<table class="rows">
+						<tr><th>1</th><td>mapディレクトリから読み込まれたマップ一覧。</td></tr>
+						<tr><th>2</th><td>内部定義されたマップ一覧。</td></tr>
+						<tr><th>3</th><td>mapディレクトリのマップデータを再読み込みする。マップが追加された際や更新された際に選択。</td></tr>
+						<tr><th>4</th><td>タイトルに戻る。Escapeを押すことでも選択できる。</td></tr>
+					</table>
+					<p>
+						固定ピッチのマップを選択した後は、オクターブ単位でキーの高さ(-3オクターブ～+3オクターブの範囲)を&uarr;&darr;キーで選びます。
+					</p>
+				</section>
 
-</body>
+				<section>
+					<h2>ゲーム画面</h2>
+					<p>
+						<img src="images/ss-gamestage.png" /><br />
+						自機は一定の速度で右に進み、声の高さに合わせて上下に移動します。<br />
+						また声が出ていない間は大きくなります。
+					</p>
+					<table class="rows">
+						<tr><th>1</th><td>自機。音が出ている間は小さくなる。</td></tr>
+						<tr><th>2</th><td>自機の音の高さ。</td></tr>
+						<tr><th>3</th><td>スタートライン。</td></tr>
+						<tr><th>4</th><td>ライフ。0になるとゲームオーバー。</td></tr>
+						<tr><th>5</th><td>自機の音の高さ。C-Bでの表示と周波数表示。</td></tr>
+						<tr><th>6</th><td>マップ内での位置の数値表示。</td></tr>
+						<tr><th>7</th><td>ミニマップ表示。</td></tr>
+						<tr><th>8</th><td>マップ内での位置。</td></tr>
+					</table>
+				</section>
+			</div>
+		</section>
+
+		<section>
+			<h1>あるかもしれないQA</h1>
+			<div>
+				<dl>
+					<dt>動かない</dt>
+					<dd>
+						上述した内容物は揃っているか、動作環境を満たしているか、を確認して下さい。
+					</dd>
+					
+					<dt>使いたい入力デバイスが見当たらない</dt>
+					<dd>Windowsのボリュームコントロールでデバイスが有効になっているか確認して下さい。</dd>
+					
+					<dt>音がうまく入力されない</dt>
+					<dd>入力デバイスのレベルを調整して下さい。<br />
+						ノイズが大きすぎるとピッチの検出が上手くできません。</dd>
+					
+					<dt>息が苦しい、頭が痛い</dt>
+					<dd>決して無理はしないで下さい。無茶をして酸欠になっても責任は取れません。</dd>
+					
+				</dl>
+				
+				<p>どうしても動かない場合は環境と状況を、下記連絡先に連絡して下さい。</p>
+			</div>
+		</section>
+
+		<section>
+			<h1>連絡先</h1>
+			<div>
+				<ul>
+					<li>twitter: @hirekoke</li>
+					<li>GitHub: https://github.com/hirekoke</li>
+				</ul>
+			</div>
+		</section>
+		
+		<footer>
+			(C) 2012 hirekoke
+		</footer>
+
+	</body>
 </html>
