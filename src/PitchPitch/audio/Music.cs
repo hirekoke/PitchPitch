@@ -42,9 +42,14 @@ namespace PitchPitch.audio
             Dictionary<double, List<double>> refs = new Dictionary<double, List<double>>();
             Dictionary<double, double> offX = new Dictionary<double, double>();
 
-            Pen offPen = new Pen(Color.White, 6);
-            Pen onPen = new Pen(Color.White, 5);
-            Pen dipPen = new Pen(Color.White, 4);
+            int minrad = (int)Math.Ceiling(Program.PitchPitch.Player.MinRadius * 1.5 / (double)chipHeight);
+            int maxrad = (int)Math.Ceiling(Program.PitchPitch.Player.MaxRadius / (double)chipHeight);
+            int pminw = minrad * 2;
+            int pmaxw = maxrad * 2;
+
+            Pen offPen = new Pen(Color.White, pmaxw);
+            Pen onPen = new Pen(Color.White, pminw);
+            Pen dipPen = new Pen(Color.White, pmaxw);
 
             offPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Flat);
             onPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Flat);
@@ -93,11 +98,31 @@ namespace PitchPitch.audio
                                 // 縦線引く
                                 if (d != note.Pitch)
                                 {
+                                    // 前の音
                                     double x0 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                                     double y0 = getY(d, height, chipHeight);
+                                    // 次の音
                                     double x1 = x0;
                                     double y1 = getY(note.Pitch, height, chipHeight);
-                                    g.DrawLine(dipPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
+
+                                    if (y0 < y1)
+                                    {
+                                        g.FillPolygon(dipPen.Brush, new Point[] {
+                                            new Point((int)(x0 - minrad), (int)(y0 - maxrad)),
+                                            new Point((int)(x0 + maxrad), (int)(y0 - maxrad)),
+                                            new Point((int)(x1 + (y1-y0) * 0.5), (int)(y1 + maxrad)),
+                                            new Point((int)(x1 - minrad), (int)(y1 + maxrad))
+                                        });
+                                    }
+                                    else
+                                    {
+                                        g.FillPolygon(dipPen.Brush, new Point[] {
+                                            new Point((int)(x1 - minrad), (int)(y1 - maxrad)),
+                                            new Point((int)(x1 + (y0 - y1) * 0.5), (int)(y1 - maxrad)),
+                                            new Point((int)(x0 + maxrad), (int)(y0 + maxrad)),
+                                            new Point((int)(x0 - minrad), (int)(y0 + maxrad))
+                                        });
+                                    }
                                 }
                             }
                         }

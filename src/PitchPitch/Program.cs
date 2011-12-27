@@ -15,8 +15,8 @@ namespace PitchPitch
         {
             try
             {
-                PitchPitch game = new PitchPitch();
-                game.Run();
+                PitchPitch = new PitchPitch();
+                PitchPitch.Run();
             }
             catch (Exception ex)
             {
@@ -25,5 +25,7 @@ namespace PitchPitch
                 Logger.Instance.Log(LogType.Info, ex.StackTrace);
             }
         }
+
+        public static PitchPitch PitchPitch;
     }
 }
