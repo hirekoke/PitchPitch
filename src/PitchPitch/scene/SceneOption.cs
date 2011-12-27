@@ -12,6 +12,9 @@ namespace PitchPitch.scene
 {
     class SceneOption : Scene
     {
+        private const int IDX_MAXPITCH = 0;
+        private const int IDX_MINPITCH = 1;
+
         private Color _powerColor = Color.FromArgb(100, 100, 100);
         private Color _nsdfColor = Color.FromArgb(50, 50, 255);
         private Color _signalColor = Color.FromArgb(255, 50, 50);
@@ -32,8 +35,8 @@ namespace PitchPitch.scene
 
         private double _minFreqSum = 0;
         private double _maxFreqSum = 0;
-        private int _minFreqNum = 0;
-        private int _maxFreqNum = 0;
+        private Queue<double> _minFreqs;
+        private Queue<double> _maxFreqs;
 
         private List<DeviceInfo> _deviceInfos;
         private SurfaceCollection _devSurfaces;
@@ -128,6 +131,9 @@ namespace PitchPitch.scene
             ImageUtil.CreateStrMenu(_endHeadStrs, Constants.Color_Strong,
                 ResourceManager.MiddlePFont,
                 ref _endHeadSurfaces, ref _endHeadRects, _endHeadRect.Width);
+
+            _minFreqs = new Queue<double>(Constants.FreqAvgMaxCount);
+            _maxFreqs = new Queue<double>(Constants.FreqAvgMaxCount);
         }
 
         public override void Init(PitchPitch parent)
@@ -139,7 +145,7 @@ namespace PitchPitch.scene
             updateDevices();
 
             _isCalStarted = false;
-            _calSelectedIdx = 0;
+            _calSelectedIdx = IDX_MAXPITCH;
             _state = SelectionState.Device;
         }
 
@@ -216,6 +222,96 @@ namespace PitchPitch.scene
                 info.DataFlow == CoreAudioApi.EDataFlow.eCapture ? 
                 Properties.Resources.DeviceTypeName_Capture : Properties.Resources.DeviceTypeName_Render,
                 info.FriendlyName);
+        }
+        #endregion
+
+        #region キャリブレーション
+
+        private void startCalibration()
+        {
+            switch (_calSelectedIdx)
+            {
+                case IDX_MAXPITCH:
+                    _maxFreqs.Clear();
+                    _maxFreqSum = 0;
+                    break;
+                case IDX_MINPITCH:
+                    _minFreqs.Clear();
+                    _minFreqSum = 0;
+                    break;
+            }
+        }
+
+        private void updateCalibration(double n)
+        {
+            switch (_calSelectedIdx)
+            {
+                case IDX_MAXPITCH:
+                    _maxFreqs.Enqueue(n);
+                    _maxFreqSum += n;
+                    if (_maxFreqs.Count > Constants.FreqAvgMaxCount)
+                    {
+                        for (int i = _maxFreqs.Count; i > Constants.FreqAvgMaxCount; i--)
+                        {
+                            double d = _maxFreqs.Dequeue();
+                            _maxFreqSum -= d;
+                        }
+                    }
+                    break;
+                case IDX_MINPITCH:
+                    _minFreqs.Enqueue(n);
+                    _minFreqSum += n;
+                    if (_minFreqs.Count > Constants.FreqAvgMaxCount)
+                    {
+                        for (int i = _minFreqs.Count; i > Constants.FreqAvgMaxCount; i--)
+                        {
+                            double d = _minFreqs.Dequeue();
+                            _minFreqSum -= d;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private double getAvgValue(int idx)
+        {
+            switch (idx)
+            {
+                case IDX_MAXPITCH:
+                    if (_maxFreqs.Count > 0)
+                        return _maxFreqSum / (double)_maxFreqs.Count;
+                    else
+                        return 0;
+                case IDX_MINPITCH:
+                    if (_minFreqs.Count > 0)
+                        return _minFreqSum / (double)_minFreqs.Count;
+                    else
+                        return 0;
+            }
+            return 0;
+        }
+
+        private void stopCalibration()
+        {
+            if (_isCalStarted)
+            {
+                switch (_calSelectedIdx)
+                {
+                    case IDX_MAXPITCH:
+                        Config.Instance.MaxFreq = getAvgValue(IDX_MAXPITCH);
+                        break;
+                    case IDX_MINPITCH:
+                        Config.Instance.MinFreq = getAvgValue(IDX_MINPITCH);
+                        break;
+                }
+                if (Config.Instance.MinFreq > Config.Instance.MaxFreq)
+                {
+                    double t = Config.Instance.MaxFreq;
+                    Config.Instance.MaxFreq = Config.Instance.MinFreq;
+                    Config.Instance.MinFreq = t;
+                }
+                _isCalStarted = false;
+            }
         }
         #endregion
 
@@ -373,30 +469,6 @@ namespace PitchPitch.scene
             }
         }
 
-        private void stopCalibration()
-        {
-            if (_isCalStarted)
-            {
-                switch (_calSelectedIdx)
-                {
-                    case 0:
-                        if (_maxFreqNum > 0)
-                            Config.Instance.MaxFreq = _maxFreqSum / (double)_maxFreqNum;
-                        break;
-                    case 1:
-                        if (_minFreqNum > 0)
-                            Config.Instance.MinFreq = _minFreqSum / (double)_minFreqNum;
-                        break;
-                }
-                if (Config.Instance.MinFreq > Config.Instance.MaxFreq)
-                {
-                    double t = Config.Instance.MaxFreq;
-                    Config.Instance.MaxFreq = Config.Instance.MinFreq;
-                    Config.Instance.MinFreq = t;
-                }
-                _isCalStarted = false;
-            }
-        }
 
         protected override void proc(KeyboardEventArgs e)
         {
@@ -418,23 +490,14 @@ namespace PitchPitch.scene
                 #region キー押し中
                 if (_state == SelectionState.Calibration)
                 {
-                    _isCalStarted = true;
-                    switch (_calSelectedIdx)
+                    if (!_isCalStarted)
                     {
-                        case 0:
-                            if (pitch >= 0)
-                            {
-                                _maxFreqSum += pitch;
-                                _maxFreqNum++;
-                            }
-                            break;
-                        case 1:
-                            if (pitch >= 0)
-                            {
-                                _minFreqSum += pitch;
-                                _minFreqNum++;
-                            }
-                            break;
+                        startCalibration();
+                    }
+                    _isCalStarted = true;
+                    if (pitch >= 0)
+                    {
+                        updateCalibration(pitch);
                     }
                 }
                 #endregion
@@ -510,13 +573,11 @@ namespace PitchPitch.scene
             {
                 switch (_calSelectedIdx)
                 {
-                    case 0:
-                        if (_maxFreqNum == 0) maxFreq = 0; 
-                        else maxFreq = _maxFreqSum / (double)_maxFreqNum;
+                    case IDX_MAXPITCH:
+                        maxFreq = getAvgValue(IDX_MAXPITCH);
                         break;
-                    case 1:
-                        if (_minFreqNum == 0) minFreq = 0;
-                        else minFreq = _minFreqSum / (double)_minFreqNum;
+                    case IDX_MINPITCH:
+                        minFreq = getAvgValue(IDX_MINPITCH);
                         break;
                 }
             }

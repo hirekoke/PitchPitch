@@ -45,6 +45,8 @@ namespace PitchPitch
         public const int MaxPitch = 16000;
         public const int MaxOctave = 3;
         public const int MinOctave = -3;
+
+        public const int FreqAvgMaxCount = 20;
         #endregion
 
         #region 画面レイアウト
