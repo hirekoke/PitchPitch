@@ -189,6 +189,8 @@ namespace PitchPitch.scene
                 _loadEnd = false;
                 _loadingMapInfo = null;
                 _loadedMap = null;
+                _octaveSelecting = false;
+                _octave = 0;
             }
             else
             {
@@ -491,6 +493,7 @@ namespace PitchPitch.scene
             {
                 if (_loadingMapInfo == null)
                 {
+                    _loadTransition = false;
                     SetAlert(true, Properties.Resources.Str_MapLoadError);
                 }
                 else
@@ -503,6 +506,7 @@ namespace PitchPitch.scene
                         }
                         else
                         {
+                            _loadTransition = false;
                             SetAlert(true, Properties.Resources.Str_MapLoadError);
                         }
                     }
