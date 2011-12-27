@@ -29,6 +29,7 @@ namespace PitchPitch.map
 
     enum PitchType
     {
+        Undefined,
         Fixed,
         Variable,
     }
@@ -40,7 +41,7 @@ namespace PitchPitch.map
         public string MapName = "";
         public string AuthorName = "Unknown";
 
-        public string Bgm = "";
+        public BgmInfo BgmInfo = null;
 
         public int Level = 3;
         public int OctaveLevel = 0;
@@ -61,6 +62,12 @@ namespace PitchPitch.map
         public Color ForegroundColor = Color.Black;
         public Color StrongColor = Color.Red;
         public Color BackgroundColor = Color.White;
+    }
+
+    class BgmInfo
+    {
+        public string Name;
+        public int Volume;
     }
 
     class ChipInfo

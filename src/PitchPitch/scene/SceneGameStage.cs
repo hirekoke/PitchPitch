@@ -252,7 +252,9 @@ namespace PitchPitch.scene
             if (_map.Bgm != null)
             {
                 SdlDotNet.Audio.MusicPlayer.Load(_map.Bgm);
-                SdlDotNet.Audio.MusicPlayer.Volume = 30;
+                int ivol = (int)(128 * _map.BgmVolume / 100.0);
+                ivol = ivol < 0 ? 0 : (ivol > 128 ? 128 : ivol);
+                SdlDotNet.Audio.MusicPlayer.Volume = ivol;
             }
             #endregion
 

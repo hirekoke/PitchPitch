@@ -48,6 +48,12 @@ namespace PitchPitch.map
                 _bgm = value;
             }
         }
+        protected int _bgmVolume = 50;
+        public int BgmVolume
+        {
+            get { return _bgmVolume; }
+            set { _bgmVolume = value; }
+        }
 
         #region 色
         protected Color _backColor = Color.LightSalmon;

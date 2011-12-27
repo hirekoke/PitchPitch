@@ -67,184 +67,285 @@ namespace PitchPitch.map
             XmlDocument mapXml = new XmlDocument();
             mapXml.Load(mapXmlFile);
 
-            XmlElement rootElem = mapXml["Map"];
-            if (rootElem == null) return null;
+            XmlNode rootNode = mapXml.FirstChild;
+            if (rootNode == null || rootNode.Name.ToLower() != "map") return null;
 
             mi.DirectoryPath = dirPath;
             mi.Id = Path.GetFileName(dirPath);
+            mi.PitchType = PitchType.Undefined;
 
-            mi.MapName = rootElem["Name"] == null ? "" : rootElem["Name"].InnerText.Trim();
-            mi.AuthorName = rootElem["Author"] == null ? "Unknown" : rootElem["Author"].InnerText.Trim();
-
-            #region Source
-            XmlElement srcElem = rootElem["Source"];
-            if (srcElem == null)
+            foreach (XmlNode node in rootNode)
             {
-                mi.MapSourceType = MapSourceType.None;
-            }
-            else
-            {
-                #region SourceType
-                try
+                switch (node.Name.ToLower())
                 {
-                    string mt = srcElem["Type"] == null ? "" : srcElem["Type"].InnerText.Trim();
-                    mi.MapSourceType = (MapSourceType)Enum.Parse(typeof(MapSourceType), mt, true);
-                }
-                catch (ArgumentException)
-                {
-                    mi.MapSourceType = MapSourceType.None;
-                }
-                #endregion
-
-                mi.Bgm = srcElem["Bgm"] == null ? null : srcElem["Bgm"].InnerText.Trim();
-                mi.MapSourceFileName = srcElem["Name"] == null ? "" : srcElem["Name"].InnerText.Trim();
-                mi.Mapping = srcElem["Mapping"] == null ? "" : srcElem["Mapping"].InnerText.Trim();
-            }
-            #endregion
-
-            #region ChipDataInfo
-            XmlElement chipDataElem = rootElem["ChipData"];
-            ChipDataInfo cdi = new ChipDataInfo();
-            if (chipDataElem == null)
-            {
-                cdi.ChipType = MapChipType.Builtin;
-                cdi.FileName = "";
-                cdi.BuiltinType = MapChipBuiltinType.Binary;
-                cdi.Size = new Size(16, 16);
-            }
-            else
-            {
-                #region ChipType
-                try
-                {
-                    string ct = chipDataElem["Type"] == null ? "" : chipDataElem["Type"].InnerText.Trim();
-                    cdi.ChipType = (MapChipType)Enum.Parse(typeof(MapChipType), ct, true);
-                }
-                catch (ArgumentException)
-                {
-                    cdi.ChipType = MapChipType.None;
-                }
-                #endregion
-
-                #region Name
-                if (cdi.ChipType == MapChipType.Builtin)
-                {
-                    string cnt = chipDataElem["Name"] == null ? "" : chipDataElem["Name"].InnerText.Trim();
-                    try
-                    {
-                        if (string.IsNullOrEmpty(cnt)) cdi.BuiltinType = MapChipBuiltinType.Binary;
-                        else cdi.BuiltinType = (MapChipBuiltinType)Enum.Parse(typeof(MapChipBuiltinType), cnt, true);
-                    }
-                    catch (ArgumentException)
-                    {
-                        cdi.BuiltinType = MapChipBuiltinType.Binary;
-                    }
-                }
-                else
-                {
-                    cdi.FileName = chipDataElem["Name"] == null ? "" : chipDataElem["Name"].InnerText.Trim();
-                    cdi.BuiltinType = MapChipBuiltinType.None;
-                }
-                #endregion
-
-                #region Size
-                int width = 16; int height = 16;
-                if (chipDataElem.Attributes["width"] != null)
-                {
-                    if (!int.TryParse(chipDataElem.Attributes["width"].InnerText.Trim(), out width)) width = 16;
-                }
-                if (chipDataElem.Attributes["height"] != null)
-                {
-                    if (!int.TryParse(chipDataElem.Attributes["height"].InnerText.Trim(), out height)) height = 16;
-                }
-                cdi.Size = new Size(width, height);
-                #endregion
-
-                #region ChipInfo
-                {
-                    cdi.ChipInfos = new List<ChipInfo>();
-                    XmlNodeList chipsLst = chipDataElem.GetElementsByTagName("Chip");
-                    foreach (XmlNode chipNode in chipsLst)
-                    {
-                        ChipInfo ci = new ChipInfo();
-                        if (chipNode["Color"] == null)
+                    #region name
+                    case "name":
                         {
-                            ci.Color = null;
+                            mi.MapName = node.InnerText.Trim();
                         }
-                        else
+                        break;
+                    #endregion
+                    #region author
+                    case "author":
                         {
-                            string ciColorStr = chipNode["Color"].InnerText.Trim();
-                            ci.Color = ImageUtil.GetColor(ciColorStr);
+                            mi.AuthorName = node.InnerText.Trim();
                         }
-                        string ciHardStr = chipNode["Hardness"] == null ? "0" : chipNode["Hardness"].InnerText.Trim();
-                        if (!int.TryParse(ciHardStr, out ci.Hardness)) ci.Hardness = 0;
-                        cdi.ChipInfos.Add(ci);
-                    }
-                }
-                #endregion
-            }
-            mi.ChipDataInfo = cdi;
-            #endregion
+                        break;
+                    #endregion
+                    #region player
+                    case "player":
+                        {
+                            foreach (XmlNode plNode in node)
+                            {
+                                switch (plNode.Name.ToLower())
+                                {
+                                    case "vx":
+                                        int vx = 1;
+                                        string vxt = plNode.InnerText.Trim();
+                                        if (int.TryParse(vxt, out vx)) mi.PlayerVx = vx;
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region color
+                    case "color":
+                        {
+                            foreach (XmlNode coNode in node)
+                            {
+                                switch (coNode.Name.ToLower())
+                                {
+                                    case "foreground":
+                                        mi.ForegroundColor = ImageUtil.GetColor(coNode.InnerText.Trim());
+                                        break;
+                                    case "background":
+                                        mi.BackgroundColor = ImageUtil.GetColor(coNode.InnerText.Trim());
+                                        break;
+                                    case "strong":
+                                        mi.StrongColor = ImageUtil.GetColor(coNode.InnerText.Trim());
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region pitch
+                    case "pitch":
+                        {
+                            #region PitchType
+                            try
+                            {
+                                string pt = node.InnerText.Trim();
+                                mi.PitchType = (PitchType)Enum.Parse(typeof(PitchType), pt, true);
+                            }
+                            catch (Exception) { mi.PitchType = PitchType.Undefined; }
+                            #endregion
 
-            #region Player
-            XmlElement playerElem = rootElem["Player"];
-            if (playerElem != null)
-            {
-                int vx = 1;
-                string vxt = playerElem["Vx"] == null ? "1" : playerElem["Vx"].InnerText.Trim();
-                if (int.TryParse(vxt, out vx)) mi.PlayerVx = vx;
-            }
-            #endregion
+                            #region max/min
+                            if (mi.PitchType == PitchType.Fixed)
+                            {
+                                double max = Config.Instance.MaxFreq;
+                                double min = Config.Instance.MinFreq;
+                                foreach (XmlAttribute attr in node.Attributes)
+                                {
+                                    switch (attr.Name.ToLower())
+                                    {
+                                        case "max":
+                                            if (double.TryParse(attr.InnerText.Trim(), out max)) mi.MaxPitch = max;
+                                            break;
+                                        case "min":
+                                            if (double.TryParse(attr.InnerText.Trim(), out min)) mi.MinPitch = min;
+                                            break;
+                                    }
+                                }
+                            }
+                            #endregion
+                        }
+                        break;
+                    #endregion
+                    #region chipdata
+                    case "chipdata":
+                        {
+                            ChipDataInfo cdi = new ChipDataInfo();
+                            #region default
+                            cdi.ChipType = MapChipType.Builtin;
+                            cdi.FileName = "";
+                            cdi.BuiltinType = MapChipBuiltinType.Binary;
+                            #endregion
 
-            #region Colors
-            XmlElement colorElem = rootElem["Color"];
-            if (colorElem != null)
-            {
-                mi.BackgroundColor = colorElem["Background"] == null ? Color.White : ImageUtil.GetColor(colorElem["Background"].InnerText.Trim());
-                mi.StrongColor = colorElem["Strong"] == null ? Color.Red : ImageUtil.GetColor(colorElem["Strong"].InnerText.Trim());
-                mi.ForegroundColor = colorElem["Foreground"] == null ? Color.Black : ImageUtil.GetColor(colorElem["Foreground"].InnerText.Trim());
-            }
-            #endregion
+                            #region size
+                            int width = 16; int height = 16;
+                            foreach (XmlAttribute attr in node.Attributes)
+                            {
+                                switch (attr.Name.ToLower())
+                                {
+                                    case "width":
+                                        if (!int.TryParse(attr.InnerText.Trim(), out width)) width = 16;
+                                        break;
+                                    case "height":
+                                        if (!int.TryParse(attr.InnerText.Trim(), out height)) height = 16;
+                                        break;
+                                }
+                            }
+                            cdi.Size = new Size(width, height);
+                            #endregion
 
-            #region Pitch
-            /*
-             * <Pitch max="{MaxPitch}" min="{MinPitch}">{Fixed / Variable}</Pitch>
-             */
-            XmlElement pitchElem = rootElem["Pitch"];
-            if (pitchElem != null)
-            {
-                #region PitchType
-                try
-                {
-                    string pt = pitchElem.InnerText.Trim();
-                    mi.PitchType = (PitchType)Enum.Parse(typeof(PitchType), pt, true);
-                }
-                catch (Exception) { mi.PitchType = PitchType.Variable; }
-                #endregion
+                            string name = null;
+                            foreach (XmlNode cdiNode in node)
+                            {
+                                switch (cdiNode.Name.ToLower())
+                                {
+                                    #region type
+                                    case "type":
+                                        {
+                                            try
+                                            {
+                                                string ct = cdiNode.InnerText.Trim();
+                                                cdi.ChipType = (MapChipType)Enum.Parse(typeof(MapChipType), ct, true);
+                                            }
+                                            catch (ArgumentException)
+                                            {
+                                                cdi.ChipType = MapChipType.None;
+                                            }
+                                        }
+                                        break;
+                                    #endregion
+                                    #region name
+                                    case "name":
+                                        {
+                                            name = cdiNode.InnerText.Trim();
+                                        }
+                                        break;
+                                    #endregion
+                                    #region chip
+                                    case "chip":
+                                        {
+                                            if (cdi.ChipInfos == null) cdi.ChipInfos = new List<ChipInfo>();
 
-                #region Max/Min
-                if (mi.PitchType == PitchType.Fixed)
-                {
-                    double max = Config.Instance.MaxFreq;
-                    double min = Config.Instance.MinFreq;
-                    if (pitchElem.Attributes["max"] != null)
-                    {
-                        if (double.TryParse(pitchElem.Attributes["max"].InnerText.Trim(), out max)) mi.MaxPitch = max;
-                    }
-                    if (pitchElem.Attributes["min"] != null)
-                    {
-                        if (double.TryParse(pitchElem.Attributes["min"].InnerText.Trim(), out min)) mi.MinPitch = min;
-                    }
+                                            ChipInfo ci = new ChipInfo();
+                                            ci.Color = null;
+                                            ci.Hardness = cdi.ChipInfos.Count == 0 ? 0 : 1;
+
+                                            foreach (XmlNode ciNode in cdiNode)
+                                            {
+                                                switch (ciNode.Name.ToLower())
+                                                {
+                                                    case "color":
+                                                        {
+                                                            string ciColorStr = ciNode.InnerText.Trim();
+                                                            ci.Color = ImageUtil.GetColor(ciColorStr);
+                                                        }
+                                                        break;
+                                                    case "hardness":
+                                                        {
+                                                            string ciHardStr = ciNode.InnerText.Trim();
+                                                            if (!int.TryParse(ciHardStr, out ci.Hardness)) ci.Hardness = cdi.ChipInfos.Count == 0 ? 0 : 1;
+                                                        }
+                                                        break;
+                                                }
+                                            }
+                                            cdi.ChipInfos.Add(ci);
+                                        }
+                                        break;
+                                    #endregion
+                                }
+                            }
+
+                            #region name解釈
+                            if (cdi.ChipType == MapChipType.Builtin)
+                            {
+                                try
+                                {
+                                    if (string.IsNullOrEmpty(name)) cdi.BuiltinType = MapChipBuiltinType.Binary;
+                                    else cdi.BuiltinType = (MapChipBuiltinType)Enum.Parse(typeof(MapChipBuiltinType), name, true);
+                                }
+                                catch (ArgumentException)
+                                {
+                                    cdi.BuiltinType = MapChipBuiltinType.Binary;
+                                }
+                            }
+                            else
+                            {
+                                cdi.FileName = name;
+                                cdi.BuiltinType = MapChipBuiltinType.None;
+                            }
+                            #endregion
+
+                            mi.ChipDataInfo = cdi;
+                        }
+                        break;
+                    #endregion
+                    #region source
+                    case "source":
+                        foreach (XmlNode soNode in node)
+                        {
+                            switch (soNode.Name.ToLower())
+                            {
+                                #region type
+                                case "type":
+                                    try
+                                    {
+                                        string mt = soNode.InnerText.Trim();
+                                        mi.MapSourceType = (MapSourceType)Enum.Parse(typeof(MapSourceType), mt, true);
+                                    }
+                                    catch (ArgumentException)
+                                    {
+                                        mi.MapSourceType = MapSourceType.None;
+                                    }
+                                    break;
+                                #endregion
+                                #region name
+                                case "name":
+                                    mi.MapSourceFileName = soNode.InnerText.Trim();
+                                    break;
+                                #endregion
+                                #region mapping
+                                case "mapping":
+                                    mi.Mapping = soNode.InnerText.Trim();
+                                    break;
+                                #endregion
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region bgm
+                    case "bgm":
+                        {
+                            BgmInfo bi = new BgmInfo();
+                            bi.Name = node.InnerText.Trim();
+                            foreach (XmlAttribute attr in node.Attributes)
+                            {
+                                switch (attr.Name.ToLower())
+                                {
+                                    #region volume
+                                    case "volume":
+                                        {
+                                            int vol = 50;
+                                            if (int.TryParse(attr.InnerText.Trim(), out vol))
+                                            {
+                                                vol = vol < 0 ? 0 : (vol > 100 ? 100 : vol);
+                                            }
+                                            bi.Volume = vol;
+                                        }
+                                        break;
+                                    #endregion
+                                }
+                            }
+                            mi.BgmInfo = bi;
+                        }
+                        break;
+                    #endregion
+                    default:
+                        break;
                 }
-                #endregion
             }
-            else
+
+            #region Pitchの記述が無い場合
+            if (mi.PitchType == PitchType.Undefined)
             {
-                mi.PitchType = PitchType.Variable;
-                if (mi.MapSourceType == MapSourceType.Music)
-                {
-                    mi.PitchType = PitchType.Fixed;
-                }
+                if (mi.MapSourceType == MapSourceType.Music) mi.PitchType = PitchType.Fixed;
+                else mi.PitchType = PitchType.Variable;
             }
             #endregion
 
@@ -257,6 +358,7 @@ namespace PitchPitch.map
             if (info.MapSourceType == MapSourceType.None) return false;
             if (info.ChipDataInfo == null) return false;
             if (info.ChipDataInfo.ChipType == MapChipType.None) return false;
+            if (info.PitchType == PitchType.Undefined) return false;
 
             ChipDataInfo ci = info.ChipDataInfo;
             if (ci.ChipType == MapChipType.Image)
@@ -437,10 +539,11 @@ namespace PitchPitch.map
                         break;
                 }
 
-                if (!string.IsNullOrEmpty(info.Bgm))
+                if (info.BgmInfo != null && !string.IsNullOrEmpty(info.BgmInfo.Name))
                 {
-                    string bgmPath = Path.Combine(info.DirectoryPath, info.Bgm);
+                    string bgmPath = Path.Combine(info.DirectoryPath, info.BgmInfo.Name);
                     map.Bgm = new SdlDotNet.Audio.Music(bgmPath);
+                    map.BgmVolume = info.BgmInfo.Volume;
                 }
 
                 map.MapInfo = info;
