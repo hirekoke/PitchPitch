@@ -218,13 +218,16 @@ namespace PitchPitch.map
             #endregion
 
             #region Pitch
+            /*
+             * <Pitch max="{MaxPitch}" min="{MinPitch}">{Fixed / Variable}</Pitch>
+             */
             XmlElement pitchElem = rootElem["Pitch"];
             if (pitchElem != null)
             {
                 #region PitchType
                 try
                 {
-                    string pt = pitchElem["Type"] == null ? "" : pitchElem["Type"].InnerText.Trim();
+                    string pt = pitchElem.InnerText.Trim();
                     mi.PitchType = (PitchType)Enum.Parse(typeof(PitchType), pt, true);
                 }
                 catch (Exception) { mi.PitchType = PitchType.Variable; }
@@ -235,10 +238,13 @@ namespace PitchPitch.map
                 {
                     double max = Config.Instance.MaxFreq;
                     double min = Config.Instance.MinFreq;
-                    if (pitchElem["Max"] != null)
+                    if (pitchElem.Attributes["max"] != null)
                     {
-                        if (double.TryParse(pitchElem["Max"].InnerText.Trim(), out max)) mi.MaxPitch = max;
-                        if (double.TryParse(pitchElem["Min"].InnerText.Trim(), out min)) mi.MinPitch = min;
+                        if (double.TryParse(pitchElem.Attributes["max"].InnerText.Trim(), out max)) mi.MaxPitch = max;
+                    }
+                    if (pitchElem.Attributes["min"] != null)
+                    {
+                        if (double.TryParse(pitchElem.Attributes["min"].InnerText.Trim(), out min)) mi.MinPitch = min;
                     }
                 }
                 #endregion
@@ -246,6 +252,10 @@ namespace PitchPitch.map
             else
             {
                 mi.PitchType = PitchType.Variable;
+                if (mi.MapSourceType == MapSourceType.Music)
+                {
+                    mi.PitchType = PitchType.Fixed;
+                }
             }
             #endregion
 
