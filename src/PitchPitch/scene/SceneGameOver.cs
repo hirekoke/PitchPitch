@@ -56,6 +56,7 @@ namespace PitchPitch.scene
         {
             if (_prevSurface != null) _prevSurface.Dispose();
             _prevSurface = null;
+            _selectedIdx = 0;
 
             base.Init(parent);
         }
