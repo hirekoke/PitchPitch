@@ -248,9 +248,11 @@ namespace PitchPitch.scene
 
             _view.X = -_mapMargin;
 
+            // BGM
             if (_map.Bgm != null)
             {
                 SdlDotNet.Audio.MusicPlayer.Load(_map.Bgm);
+                SdlDotNet.Audio.MusicPlayer.Volume = 30;
             }
             #endregion
 
@@ -525,12 +527,14 @@ namespace PitchPitch.scene
             {
                 case 0:
                     {
+                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                         break;
                     }
                 case 1:
                     {
+                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                         break;
@@ -577,17 +581,20 @@ namespace PitchPitch.scene
                     }
                 case 1:
                     {
+                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         _parent.RetryMap(); break;
                     }
                 case 2:
                     {
+                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                         break;
                     }
                 case 3:
                     {
+                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                         break;
@@ -674,7 +681,10 @@ namespace PitchPitch.scene
                 // 自機の位置更新
                 if (_isCleared && (_map.HasEnd && _parent.Player.X > _map.Width + _parent.Player.Width + _mapMargin))
                 {
-                    // クリア済み
+                    // クリア済み + 十分な量右に進んだ
+
+                    // end
+                    if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                 }
                 else
                 {
@@ -704,16 +714,15 @@ namespace PitchPitch.scene
                 if (_prevX < 0 && _parent.Player.X >= 0)
                 {
                     // start
-                    if (_map.Bgm != null)
-                    {
-                        SdlDotNet.Audio.MusicPlayer.Play();
-                    }
+                    if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Play();
                 }
 
                 // ゲームオーバー判定
                 if (_parent.Player.Hp <= 0)
                 {
                     _isOver = true;
+                    // end
+                    if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                 }
 
                 _prevX = _parent.Player.X;
