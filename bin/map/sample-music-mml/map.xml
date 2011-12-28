@@ -1,0 +1,21 @@
+<Map>
+	<Name>サンプル 交響曲第9番第4楽章</Name>
+	<Author>test</Author>
+	<Source>
+		<Type>Music</Type>
+		<Name>joy.mml</Name>
+	</Source>
+	<bgm volume="30">joy.ogg</bgm>
+	<Pitch>Fixed</Pitch>
+	<Player>
+		<Vx>1</Vx>
+	</Player>
+	<Color>
+		<Foreground>Black</Foreground>
+		<Background>White</Background>
+	</Color>
+	<ChipData width="16" height="16">
+		<Type>Builtin</Type>
+		<Name>Binary</Name>
+	</ChipData>
+</Map>
