@@ -77,7 +77,7 @@ namespace PitchPitch.gameobj
         }
 
         private double _radInc = 1;
-        private double _radDec = 2;
+        private double _radDec = 4;
         /// <summary>大きさ増分</summary>
         public double RadInc
         {
