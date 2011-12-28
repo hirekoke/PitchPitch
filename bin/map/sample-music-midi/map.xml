@@ -5,7 +5,7 @@
 		<Type>Music</Type>
 		<Name>soprano.mid</Name>
 	</Source>
-	<bgm volume="30">chorus.mid</bgm>
+	<bgm volume="30">chorus.ogg</bgm>
 	<Pitch>Fixed</Pitch>
 	<Player>
 		<Vx>1</Vx>
