@@ -439,10 +439,6 @@ namespace PitchPitch.map
             {
                 map = null;
             }
-            if (map != null)
-            {
-                map.MapInfo = info;
-            }
             return map;
         }
 
