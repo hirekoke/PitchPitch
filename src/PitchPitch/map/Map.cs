@@ -310,19 +310,18 @@ namespace PitchPitch.map
 
             foreach (KeyValuePair<RectLoc, Rectangle> kv in _miniMapMarginRects)
             {
-                uint chip = _chipData.WallChip;
+                Color c = BackColor;
                 switch (kv.Key)
                 {
                     case RectLoc.CenterBottom:
                     case RectLoc.CenterTop:
-                        chip = _chipData.WallChip;
+                        c = ForeColor;
                         break;
                     case RectLoc.LeftMiddle:
                     case RectLoc.RightMiddle:
-                        chip = _chipData.BackChip;
                         break;
                 }
-                _chipData.Draw(s, chip, kv.Value);
+                s.Fill(kv.Value, c);
             }
 
             int x0, x1;
