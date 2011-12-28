@@ -63,7 +63,7 @@ namespace PitchPitch
 
             #region 画面初期化
             Video.WindowCaption = Properties.Resources.WindowTitle;
-            _screen = Video.SetVideoMode(Constants.ScreenWidth, Constants.ScreenHeight, true, false, false, true);
+            _screen = Video.SetVideoMode(Constants.ScreenWidth, Constants.ScreenHeight, false, false, false, true);
             _screen.AlphaBlending = true;
             #endregion
 
