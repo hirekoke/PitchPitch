@@ -1,0 +1,26 @@
+<Map>
+	<Name>サンプル テキストマップ</Name>
+	<Source>
+		<Type>Text</Type>
+		<Name>map.txt</Name>
+		<Mapping>.#*_</Mapping>
+	</Source>
+	<ChipData width="16" height="16">
+		<Type>Builtin</Type>
+		<Name>Colors</Name>
+		<Chip>
+		</Chip>
+		<Chip>
+			<Color>Black</Color>
+			<Hardness>1</Hardness>
+		</Chip>
+		<Chip>
+			<Color>#009900</Color>
+			<Hardness>1</Hardness>
+		</Chip>
+		<Chip>
+			<color>#00cc00</color>
+			<hardness>1</hardness>
+		</Chip>
+	</ChipData>
+</Map>
