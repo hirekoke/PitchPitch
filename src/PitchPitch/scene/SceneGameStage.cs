@@ -684,9 +684,6 @@ namespace PitchPitch.scene
                 if (_isCleared && (_map.HasEnd && _parent.Player.X > _map.Width + _parent.Player.Width + _mapMargin))
                 {
                     // クリア済み + 十分な量右に進んだ
-
-                    // end
-                    if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                 }
                 else
                 {
