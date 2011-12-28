@@ -42,19 +42,20 @@ namespace PitchPitch.audio
             Dictionary<double, List<double>> refs = new Dictionary<double, List<double>>();
             Dictionary<double, double> offX = new Dictionary<double, double>();
 
-            int minrad = (int)Math.Ceiling(Program.PitchPitch.Player.MaxRadius * 0.5 / (double)chipHeight);
+            int minrad = (int)Math.Ceiling(Program.PitchPitch.Player.MinRadius * 3.0 / (double)chipHeight);
             int maxrad = (int)Math.Ceiling(Program.PitchPitch.Player.MaxRadius * 1.5 / (double)chipHeight);
             int pminw = minrad * 2;
             int pmaxw = maxrad * 2;
             int pmidw = maxrad;
+            double coef = 1.2 * vx;
 
             Pen offPen = new Pen(Color.White, pmaxw);
             Pen onPen = new Pen(Color.White, pminw);
             Pen dipPen = new Pen(Color.White, pmidw);
 
-            offPen.SetLineCap(LineCap.Square, LineCap.Square, DashCap.Round);
-            onPen.SetLineCap(LineCap.Square, LineCap.Square, DashCap.Round);
-            dipPen.SetLineCap(LineCap.Square, LineCap.Square, DashCap.Round);
+            offPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Round);
+            onPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Round);
+            dipPen.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Round);
 
             Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
@@ -84,7 +85,7 @@ namespace PitchPitch.audio
                         {
                             foreach (double d in refs[note.Pitch])
                             {
-                                // 横線引く
+                                // 横線(off)引く
                                 if (offX.ContainsKey(d))
                                 {
                                     if (note.TimeInSec > offX[d])
@@ -93,7 +94,7 @@ namespace PitchPitch.audio
                                         double y0 = getY(d, height, chipHeight);
                                         double x1 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                                         double y1 = y0;
-                                        g.DrawLine(offPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
+                                        g.DrawLine(offPen, new Point((int)x0, (int)y0), new Point((int)x1 + 1, (int)y1));
                                     }
                                 }
                                 // 縦線引く
@@ -109,19 +110,19 @@ namespace PitchPitch.audio
                                     if (y0 < y1)
                                     {
                                         g.FillPolygon(dipPen.Brush, new Point[] {
-                                            new Point((int)(x0 - minrad), (int)(y0 - pmidw)),
-                                            new Point((int)(x0 + pmidw), (int)(y0 - pmidw)),
-                                            new Point((int)(x1 + (y1 - y0) * 0.8 * vx), (int)(y1 + pmidw)),
-                                            new Point((int)(x1 - minrad), (int)(y1 + pmidw))
+                                            new Point((int)(x0 - minrad), (int)y0),
+                                            new Point((int)(x0 + pmidw), (int)y0),
+                                            new Point((int)(x1 + (y1 - y0) * coef), (int)y1),
+                                            new Point((int)(x1 - minrad), (int)y1)
                                         });
                                     }
                                     else
                                     {
                                         g.FillPolygon(dipPen.Brush, new Point[] {
-                                            new Point((int)(x1 - minrad), (int)(y1 - pmidw)),
-                                            new Point((int)(x1 + (y0 - y1) * 0.8 * vx), (int)(y1 - pmidw)),
-                                            new Point((int)(x0 + pmidw), (int)(y0 + pmidw)),
-                                            new Point((int)(x0 - minrad), (int)(y0 + pmidw))
+                                            new Point((int)(x1 - minrad), (int)y1),
+                                            new Point((int)(x1 + (y0 - y1) * coef), (int)y1),
+                                            new Point((int)(x0 + pmidw), (int)y0),
+                                            new Point((int)(x0 - minrad), (int)y0)
                                         });
                                     }
                                 }
@@ -157,11 +158,17 @@ namespace PitchPitch.audio
 
                         if (offX.ContainsKey(note.Pitch))
                         {
+                            // 横線(on)引く
                             double x0 = getX(offX[note.Pitch], width, fps, vx, chipWidth);
                             double y0 = getY(note.Pitch, height, chipHeight);
                             double x1 = getX(note.TimeInSec, width, fps, vx, chipWidth);
                             double y1 = y0;
                             g.DrawLine(onPen, new Point((int)x0, (int)y0), new Point((int)x1, (int)y1));
+
+                            int x2 = (int)(x0 + pmaxw); if (x2 > x1) x2 = (int)x1;
+                            g.DrawLine(offPen, new Point((int)x0, (int)y0), new Point((int)x2, (int)y0));
+
+                            g.FillRectangle(Brushes.Black, (int)(x1 + maxrad), 0, width - (int)(x1 + maxrad), height);
                         }
 
                         if (offX.ContainsKey(note.Pitch)) offX[note.Pitch] = note.TimeInSec;

@@ -172,6 +172,21 @@ namespace PitchPitch.audio.SMF
 
             MinPitch = ToneAnalyzer.PitchFromTone(minTone.ToneIdx, minTone.Octave);
             MaxPitch = ToneAnalyzer.PitchFromTone(maxTone.ToneIdx, maxTone.Octave);
+
+            _points.Sort((MusicNote n1, MusicNote n2) =>
+            {
+                if (n1.TimeInSec != n2.TimeInSec) return n1.TimeInSec.CompareTo(n2.TimeInSec);
+                if (n1.Start)
+                {
+                    if (n2.Start) return 0;
+                    return 1;
+                }
+                else
+                {
+                    if (n2.Start) return -1;
+                    return 0;
+                }
+            });
         }
 
         public override IEnumerable<MusicNote> GetNotes()
