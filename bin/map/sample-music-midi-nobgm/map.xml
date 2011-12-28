@@ -1,11 +1,11 @@
 <Map>
-	<Name>サンプル 交響曲第9番第4楽章</Name>
+	<Name>サンプル MIDI(かえるのうた)</Name>
 	<Author>test</Author>
 	<Source>
 		<Type>Music</Type>
-		<Name>joy.mml</Name>
+		<Name>kaeru.mid</Name>
+		<Mapping>mapping.png</Mapping>
 	</Source>
-	<bgm volume="50">joy.ogg</bgm>
 	<Pitch>Fixed</Pitch>
 	<Player>
 		<Vx>1</Vx>
@@ -16,6 +16,14 @@
 	</Color>
 	<ChipData width="16" height="16">
 		<Type>Builtin</Type>
-		<Name>Binary</Name>
+		<Name>Colors</Name>
+		<Chip>
+			<Color>White</Color>
+			<Hardness>0</Hardness>
+		</Chip>
+		<Chip>
+			<Color>DarkGreen</Color>
+			<Hardness>1</Hardness>
+		</Chip>
 	</ChipData>
 </Map>

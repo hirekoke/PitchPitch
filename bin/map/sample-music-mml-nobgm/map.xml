@@ -1,19 +1,18 @@
 <Map>
-	<Name>サンプル MIDI(主よ、人の望みの喜びよ)</Name>
-	<Author>test</Author>
+	<Name>サンプル MML(きらきら星)</Name>
 	<Source>
 		<Type>Music</Type>
-		<Name>soprano.mid</Name>
+		<Name>twinkle_star.mml</Name>
 	</Source>
-	<bgm volume="50">chorus.ogg</bgm>
 	<Player>
-		<Vx>1</Vx>
+		<Vx>2</Vx>
 	</Player>
 	<Color>
 		<Foreground>Black</Foreground>
 		<Background>White</Background>
+		<Strong>AliceBlue</Strong>
 	</Color>
-	<ChipData width="16" height="16">
+	<ChipData width="32" height="32">
 		<Type>Builtin</Type>
 		<Name>Binary</Name>
 	</ChipData>
