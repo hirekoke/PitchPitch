@@ -160,16 +160,20 @@ namespace PitchPitch
             Color[,] tmp = s.GetColors(new Rectangle(0, 0, s.Width, s.Height));
             s.Unlock();
 
+            int num = 0;
             double a = 0; double r = 0; double g = 0; double b = 0;
             for (int i = 0; i < tmp.GetLength(0); i++)
             {
                 for (int j = 0; j < tmp.GetLength(1); j++)
                 {
                     Color pc = tmp[i, j];
-                    a += pc.A; r += pc.R; g += pc.G; b += pc.B;
+                    if (pc.A != 0)
+                    {
+                        a += pc.A; r += pc.R; g += pc.G; b += pc.B;
+                        num++;
+                    }
                 }
             }
-            int num = tmp.GetLength(0) * tmp.GetLength(1);
             if (num == 0) return Color.Transparent;
 
             a /= (double)num; r /= (double)num; g /= (double)num; b /= (double)num;
