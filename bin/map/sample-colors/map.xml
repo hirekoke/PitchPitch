@@ -1,0 +1,30 @@
+<Map>
+	<Name>サンプル カラー指定チップ</Name>
+	<Source>
+		<Type>Image</Type>
+		<Name>map.png</Name>
+		<Mapping>mapping.png</Mapping>
+	</Source>
+	<color>
+		<foreground>#000066</foreground>
+		<background>#ffffff</background>
+		<strong>#ff0000</strong>
+	</color>
+	<ChipData width="16" height="16">
+		<Type>Builtin</Type>
+		<Name>Colors</Name>
+		<Chip />
+		<Chip>
+			<Color>#00ccff</Color>
+			<Hardness>1</Hardness>
+		</Chip>
+		<Chip>
+			<Color>#0000cc</Color>
+			<Hardness>1</Hardness>
+		</Chip>
+		<Chip>
+			<Color>#000066</Color>
+			<Hardness>2</Hardness>
+		</Chip>
+	</ChipData>
+</Map>

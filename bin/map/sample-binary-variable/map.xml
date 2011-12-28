@@ -1,0 +1,16 @@
+<Map>
+	<Name>サンプル 白黒チップ (可変ピッチ)</Name>
+	<Source>
+		<Type>Image</Type>
+		<Name>map.png</Name>
+	</Source>
+	<ChipData width="16" height="16">
+		<Type>Builtin</Type>
+		<Name>Binary</Name>
+	</ChipData>
+	<Color>
+		<Background>White</Background>
+		<Foreground>Black</Foreground>
+		<Strong>Red</Strong>
+	</Color>
+</Map>

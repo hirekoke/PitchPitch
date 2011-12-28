@@ -1,0 +1,17 @@
+<Map>
+	<Name>サンプル 白黒チップ (固定ピッチ)</Name>
+	<Source>
+		<Type>Image</Type>
+		<Name>map.png</Name>
+	</Source>
+	<Pitch max="880" min="220">Fixed</Pitch>
+	<ChipData width="16" height="16">
+		<Type>Builtin</Type>
+		<Name>Binary</Name>
+	</ChipData>
+	<Color>
+		<Background>DarkGreen</Background>
+		<Foreground>White</Foreground>
+		<Strong>Yellow</Strong>
+	</Color>
+</Map>
