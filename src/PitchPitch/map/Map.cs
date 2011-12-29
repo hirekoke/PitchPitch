@@ -350,9 +350,10 @@ namespace PitchPitch.map
             double cdh = _miniMapRect.Height / (double)_rowNum;
 
             Point lt = new Point((int)(_xFirstIdx * cdw) + _miniMapRect.X, (int)(_yFirstIdx * cdh) + _miniMapRect.Y);
-            Point rb = new Point((int)(_xLastIdx * cdw) + _miniMapRect.X, (int)(_yLastIdx * cdh) + _miniMapRect.Y);
+            Point rb = new Point((int)(_xLastIdx * cdw) + _miniMapRect.X, (int)((_yLastIdx - 1) * cdh) + _miniMapRect.Y);
             lt.Offset(r.Location);
             rb.Offset(r.Location);
+            if (rb.Y - lt.Y > r.Height) rb.Y = lt.Y + r.Height;
 
             SdlDotNet.Graphics.Primitives.Box viewBox = new SdlDotNet.Graphics.Primitives.Box(lt, rb);
             SdlDotNet.Graphics.Primitives.Box viewBoxIn = new SdlDotNet.Graphics.Primitives.Box(new Point(lt.X + 1, lt.Y + 1), new Point(rb.X - 1, rb.Y - 1));
