@@ -14,8 +14,8 @@
 				<ul>
 					<li><a href="./index.html">ヘルプ</a></li>
 					<li>マップ作成</li>
-					<li><a href="./licenses.html">ライセンス</a></li>
 					<li><a href="./references.html">参考文献</a></li>
+					<li><a href="./licenses.html">ライセンス</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -27,11 +27,11 @@
 					マップは<code>"map"</code>ディレクトリの中に1マップあたり1ディレクトリとして作成します。
 				</p>
 				<p>
-					マップディレクトリ内には、必ず<code>"map.xml"</code>というXMLファイルが必要です。<br />
+					マップディレクトリ内には、必ず<code>map.xml</code>というXMLファイルが必要です。<br />
 					また、使用する画像ファイルなどは同じディレクトリ内に格納してください。
 				</p>
 				<p>
-					map.xmlはマップ定義を記述するXMLファイルです。文字コードはUTF-8で記述します。<br />
+					<code>map.xml</code>はマップ定義を記述するXMLファイルです。文字コードはUTF-8で記述します。<br />
 					以下のような内容になっています。
 				</p>
 
@@ -493,7 +493,7 @@
 							</table>
 							<p>
 								黄色が0番、黒が1番、赤色が2番を表します。<br />
-								map.xmlには以下のように記述します。
+								<code>map.xml</code>には以下のように記述します。
 							</p>
 							<div class="code">
 								<div class="caption">Imageソースサンプル</div>
@@ -545,7 +545,7 @@
 							</div>
 							<p>
 								<code>.</code>が0番、<code>#</code>が1番、<code>*</code>が2番を表しています。<br />
-								map.xmlには以下のように記述します。
+								<code>map.xml</code>には以下のように記述します。
 							</p>
 							<div class="code">
 								<div class="caption">Textソースサンプル</div>
@@ -565,11 +565,22 @@
 					<section id="source_type_music">
 						<h3>Music</h3>
 						<p>
-							音楽ファイルからマップを生成します。マップチップは0番と1番のみ使用されます。<br />
-							マップチップにはBinary, Colors, Imageのいずれも使用可能です。
+							音楽ファイルからマップを生成します。<br />
+							マップチップにはBinary, Colors, Imageが使用可能です。
+							2番のチップのhardness(硬さ)は0にするようにして下さい。<br />
+							マップチップとの対応付けには以下を参考にしてください。
 						</p>
+						<table class="columns">
+							<tr><th>チップ番号</th><th>マップの箇所</th></tr>
+							<tr><td>0</td><td>穴</td></tr>
+							<tr><td>1</td><td>壁</td></tr>
+							<tr><td>2</td><td>音の中心, マップチップがBinaryの場合は使用しません</td></tr>
+						</table>
+						
 						<p>
 							音楽ファイルにはMIDIファイル(フォーマット0/1)か、MMLファイルが使用できます。<br />
+							MIDIファイルやMMLファイルのフォーマットは参考文献を参照してください。<br />
+							MIDIファイルは一般的なMIDIシーケンサでも作成できます。<br />
 							<strong>今のところ、いずれもピッチベンドには対応していません。</strong>
 						</p>
 						<table class="columns">
@@ -585,13 +596,14 @@
 								<div class="caption">map.mml (きらきら星)</div>
 								<div class="code_body">
 								<code>
-									t120o4l4v15ccggaagrffeeddcr<br />
+									t120o4l4v15<br />
+									ccggaagrffeeddcr<br />
 									(ggffeedr)ccggaagrffeeddcr<br />
 								</code>
 							</div>
 							</div>
 							
-							<p>これを用いたmap.xmlのマップソース部分は以下のようになります。</p>
+							<p>これを用いた<code>map.xml</code>のマップソース部分、及びマップチップ部分は以下のようになります。</p>
 							
 							<div class="code">
 								<div class="caption">Musicソースサンプル</div>
@@ -600,18 +612,43 @@
 										&lt;source&gt;<br />
 										&nbsp;&nbsp;&lt;type&gt;Text&lt;/type&gt;<br />
 										&nbsp;&nbsp;&lt;name&gt;map.mml&lt;/name&gt;<br />
-										&lt;/source&gt;
+										&lt;/source&gt;<br />
+										&lt;chipdata width="16" height="16"&gt;<br />
+										&lt;type&gt;Builtin&lt;/type&gt;<br />
+										&lt;name&gt;Colors&lt;/name&gt;<br />
+										&nbsp;&nbsp;&lt;chip /&gt;<br />
+										&nbsp;&nbsp;&lt;chip&gt;<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&lt;color&gt;Black&lt;/color&gt;<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&lt;hardness&gt;1&lt;/hardness&gt;<br />
+										&nbsp;&nbsp;&lt;/chip&gt;<br />
+										&nbsp;&nbsp;&lt;chip&gt;<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&lt;color&gt;Yellow&lt;/color&gt;<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&lt;hardness&gt;0&lt;/hardness&gt;<br />
+										&nbsp;&nbsp;&lt;/chip&gt;<br />
+										&lt;/chipdata&gt;
 									</code>
 								</div>
 							</div>
+							
+							<p>ゲーム画面は<br />
+								<img src="images/source-music-sample-0.png" /><br />
+								のようになります。</p>
 						</section>
 						
 						<p>
 							音楽ファイルを使う場合、生成されるマップを画像ファイルにしたものが
 							<code>&lt;ユーザディレクトリ&gt;\AppData\Roaming\PitchPitch</code>
 							以下に<code>music.png</code>として、<br />
-							またファイルを読み込んだ結果得られるピッチ情報が<code>music.txt</code>として保存されます。
+							またファイルを読み込んだ結果得られるピッチ情報が<code>music.txt</code>として保存されます。<br />
+							上のサンプルの場合、<code>music.png</code>は<img src="images/source-music-sample-1.png" />のようになります。<br />
+							<code>music.png</code>とマップチップとの対応は、以下のようになります。
 						</p>
+						<table class="columns">
+							<tr><th>チップ番号</th><th>色</th></tr>
+							<tr><td>0</td><td>White(#ffffff)</td></tr>
+							<tr><td>1</td><td>Black(#000000)</td></tr>
+							<tr><td>2</td><td>Red(#ff0000)</td></tr>
+						</table>
 					</section>
 
 				</section>
