@@ -516,7 +516,9 @@ namespace PitchPitch.map
                             info.MaxPitch = music.MaxPitch;
                             info.MinPitch = music.MinPitch;
                             using (Bitmap srcBmp = music.GetMap(SdlDotNet.Core.Events.TargetFps, info.PlayerVx,
-                                info.ChipDataInfo.Size.Width, info.ChipDataInfo.Size.Height))
+                                info.ChipDataInfo.Size.Width, info.ChipDataInfo.Size.Height,
+                                !(info.ChipDataInfo.ChipType == MapChipType.Builtin && 
+                                    info.ChipDataInfo.BuiltinType == MapChipBuiltinType.Binary)))
                             {
                                 if (srcBmp != null)
                                 {
@@ -531,7 +533,10 @@ namespace PitchPitch.map
                                         writer.WriteLine("min pitch: {0}", info.MinPitch);
                                     }
 
-                                    map.LoadMapImage(srcBmp, null);
+                                    using (Bitmap mappingBmp = Music.GetMappingBmp())
+                                    {
+                                        map.LoadMapImage(srcBmp, mappingBmp);
+                                    }
                                 }
                             }
                         }

@@ -118,7 +118,10 @@ namespace PitchPitch.map
                     cd.ViewX = vpxs[s];
                     cd.ViewY = vpys[t];
                     cd.ChipData = _chips[lidx][j];
-                    cd.Hardness = _chipData.Hardness[cd.ChipData];
+                    if (cd.ChipData >= 0 && cd.ChipData < _chipData.Hardness.Length)
+                        cd.Hardness = _chipData.Hardness[cd.ChipData];
+                    else
+                        cd.Hardness = cd.ChipData == 0 ? 0 : 1;
                     yield return cd;
                 }
             }

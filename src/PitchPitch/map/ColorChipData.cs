@@ -21,7 +21,8 @@ namespace PitchPitch.map
         {
             if (chip != 0)
             {
-                s.Fill(r, _colors[chip]);
+                if (chip >= 0 && chip < _colors.Length)
+                    s.Fill(r, _colors[chip]);
             }
         }
 
