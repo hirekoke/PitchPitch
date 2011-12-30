@@ -34,8 +34,8 @@ namespace PitchPitch.map
             _mapInfo.ForegroundColor = dark;
             _mapInfo.StrongColor = strong;
 
-            _holeRadMax = 10 - _mapInfo.Level;
-            _holeRadMin = 7 - _mapInfo.Level;
+            _holeRadMax = 8 - _mapInfo.Level / 2.0;
+            _holeRadMin = 5 - _mapInfo.Level / 2.0;
             _holeGap = 3 * _mapInfo.Level / 4.0;
             if (_holeGap < 1) _holeGap = 1;
             _holeRadGap = 3 * _mapInfo.Level / 4.0;
