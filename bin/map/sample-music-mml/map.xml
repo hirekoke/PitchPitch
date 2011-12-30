@@ -7,8 +7,11 @@
 	</source>
 	<bgm volume="50">joy.ogg</bgm>
 	<player><vx>1</vx></player>
-	<chipdata width="24" height="24">
-		<type>Image</type>
-		<name>chip.png</name>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Colors</name>
+		<chip />
+		<chip><color>Black</color><hardness>1</hardness></chip>
+		<chip><color>Gray</color><hardness>0</hardness></chip>
 	</chipdata>
 </map>

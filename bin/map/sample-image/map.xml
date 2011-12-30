@@ -1,0 +1,16 @@
+<map>
+	<name>サンプル 画像チップ</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Image</type>
+		<name>map.png</name>
+		<mapping>mapping.png</mapping>
+	</source>
+	<player>
+		<vx>2</vx>
+	</player>
+	<chipdata width="16" height="16">
+		<type>Image</type>
+		<name>chip.png</name>
+	</chipdata>
+</map>
