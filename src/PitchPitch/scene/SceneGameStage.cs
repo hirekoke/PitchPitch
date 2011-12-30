@@ -883,9 +883,19 @@ namespace PitchPitch.scene
                 }
 
                 y += dh;
-                using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0:F0} ／ {1}", _parent.Player.X, _map.Width), _backColor))
+                if (_map.HasEnd)
                 {
-                    s.Blit(ts, new Point(x, y));
+                    using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0:F0} ／ {1}", _parent.Player.X, _map.Width), _backColor))
+                    {
+                        s.Blit(ts, new Point(x, y));
+                    }
+                }
+                else
+                {
+                    using (Surface ts = ResourceManager.SmallTTFont.Render(string.Format("{0:F0}", _parent.Player.X), _backColor))
+                    {
+                        s.Blit(ts, new Point(x, y));
+                    }
                 }
             }
             #endregion
