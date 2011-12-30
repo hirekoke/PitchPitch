@@ -65,7 +65,14 @@ namespace PitchPitch.map
             if (!File.Exists(mapXmlFile)) return null;
 
             XmlDocument mapXml = new XmlDocument();
-            mapXml.Load(mapXmlFile);
+            try
+            {
+                mapXml.Load(mapXmlFile);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             XmlNode rootNode = mapXml.FirstChild;
             if (rootNode == null || rootNode.Name.ToLower() != "map") return null;
