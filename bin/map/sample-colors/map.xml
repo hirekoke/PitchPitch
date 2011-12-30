@@ -1,30 +1,31 @@
-<Map>
-	<Name>サンプル カラー指定チップ</Name>
-	<Source>
-		<Type>Image</Type>
-		<Name>map.png</Name>
-		<Mapping>mapping.png</Mapping>
-	</Source>
+<map>
+	<name>サンプル カラー指定チップ</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Image</type>
+		<name>map.png</name>
+		<mapping>mapping.png</mapping>
+	</source>
 	<color>
 		<foreground>#000066</foreground>
 		<background>#ffffff</background>
 		<strong>#ff0000</strong>
 	</color>
-	<ChipData width="16" height="16">
-		<Type>Builtin</Type>
-		<Name>Colors</Name>
-		<Chip />
-		<Chip>
-			<Color>#00ccff</Color>
-			<Hardness>1</Hardness>
-		</Chip>
-		<Chip>
-			<Color>#0000cc</Color>
-			<Hardness>1</Hardness>
-		</Chip>
-		<Chip>
-			<Color>#000066</Color>
-			<Hardness>2</Hardness>
-		</Chip>
-	</ChipData>
-</Map>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Colors</name>
+		<chip />
+		<chip>
+			<color>#00ccff</color>
+			<hardness>1</hardness>
+		</chip>
+		<chip>
+			<color>#0000cc</color>
+			<hardness>1</hardness>
+		</chip>
+		<chip>
+			<color>#000066</color>
+			<hardness>2</hardness>
+		</chip>
+	</chipdata>
+</map>

@@ -1,21 +1,14 @@
-<Map>
-	<Name>サンプル 交響曲第9番第4楽章</Name>
-	<Author>test</Author>
-	<Source>
-		<Type>Music</Type>
-		<Name>joy.mml</Name>
-	</Source>
+<map>
+	<name>サンプル MML(交響曲第9番第4楽章)</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Music</type>
+		<name>joy.mml</name>
+	</source>
 	<bgm volume="50">joy.ogg</bgm>
-	<Pitch>Fixed</Pitch>
-	<Player>
-		<Vx>1</Vx>
-	</Player>
-	<Color>
-		<Foreground>Black</Foreground>
-		<Background>White</Background>
-	</Color>
-	<ChipData width="16" height="16">
-		<Type>Builtin</Type>
-		<Name>Binary</Name>
-	</ChipData>
-</Map>
+	<player><vx>1</vx></player>
+	<chipdata width="24" height="24">
+		<type>Image</type>
+		<name>chip.png</name>
+	</chipdata>
+</map>

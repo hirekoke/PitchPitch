@@ -1,19 +1,18 @@
-<Map>
-	<Name>サンプル MML(きらきら星)</Name>
-	<Source>
-		<Type>Music</Type>
-		<Name>twinkle_star.mml</Name>
-	</Source>
-	<Player>
-		<Vx>2</Vx>
-	</Player>
-	<Color>
-		<Foreground>Black</Foreground>
-		<Background>White</Background>
-		<Strong>AliceBlue</Strong>
-	</Color>
-	<ChipData width="32" height="32">
-		<Type>Builtin</Type>
-		<Name>Binary</Name>
-	</ChipData>
-</Map>
+<map>
+	<name>サンプル MML(きらきら星)</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Music</type>
+		<name>twinkle_star.mml</name>
+	</source>
+	<player>
+		<vx>2</vx>
+	</player>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Colors</name>
+		<chip />
+		<chip><color>Black</color><hardness>1</hardness></chip>
+		<chip><color>Yellow</color><hardness>0</hardness></chip>
+	</chipdata>
+</map>

@@ -1,17 +1,18 @@
-<Map>
-	<Name>サンプル 白黒チップ (固定ピッチ)</Name>
-	<Source>
-		<Type>Image</Type>
-		<Name>map.png</Name>
-	</Source>
-	<Pitch max="880" min="220">Fixed</Pitch>
-	<ChipData width="16" height="16">
-		<Type>Builtin</Type>
-		<Name>Binary</Name>
-	</ChipData>
-	<Color>
-		<Background>DarkGreen</Background>
-		<Foreground>White</Foreground>
-		<Strong>Yellow</Strong>
-	</Color>
-</Map>
+<map>
+	<name>サンプル 白黒チップ (固定ピッチ)</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Image</type>
+		<name>map.png</name>
+	</source>
+	<pitch max="880" min="220">Fixed</pitch>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Binary</name>
+	</chipdata>
+	<color>
+		<background>DarkGreen</background>
+		<foreground>White</foreground>
+		<strong>Yellow</strong>
+	</color>
+</map>

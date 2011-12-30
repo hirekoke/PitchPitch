@@ -1,29 +1,24 @@
-<Map>
-	<Name>サンプル MIDI(かえるのうた)</Name>
-	<Author>test</Author>
-	<Source>
-		<Type>Music</Type>
-		<Name>kaeru.mid</Name>
-		<Mapping>mapping.png</Mapping>
-	</Source>
-	<Pitch>Fixed</Pitch>
-	<Player>
-		<Vx>1</Vx>
-	</Player>
-	<Color>
-		<Foreground>Black</Foreground>
-		<Background>White</Background>
-	</Color>
-	<ChipData width="16" height="16">
-		<Type>Builtin</Type>
-		<Name>Colors</Name>
-		<Chip>
-			<Color>White</Color>
-			<Hardness>0</Hardness>
-		</Chip>
-		<Chip>
-			<Color>DarkGreen</Color>
-			<Hardness>1</Hardness>
-		</Chip>
-	</ChipData>
-</Map>
+<map>
+	<name>サンプル MIDI(かえるのうた)</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Music</type>
+		<name>kaeru.mid</name>
+	</source>
+	<player>
+		<vx>1</vx>
+	</player>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Colors</name>
+		<chip />
+		<chip>
+			<color>DarkGreen</color>
+			<hardness>1</hardness>
+		</chip>
+		<chip>
+			<color>LightGreen</color>
+			<hardness>0</hardness>
+		</chip>
+	</chipdata>
+</map>

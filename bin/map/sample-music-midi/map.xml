@@ -1,20 +1,13 @@
-<Map>
-	<Name>サンプル MIDI(主よ、人の望みの喜びよ)</Name>
-	<Author>test</Author>
-	<Source>
-		<Type>Music</Type>
-		<Name>soprano.mid</Name>
-	</Source>
+<map>
+	<name>サンプル MIDI(主よ、人の望みの喜びよ)</name>
+	<author>hirekoke</author>
+	<source>
+		<type>Music</type>
+		<name>soprano.mid</name>
+	</source>
 	<bgm volume="50">chorus.ogg</bgm>
-	<Player>
-		<Vx>1</Vx>
-	</Player>
-	<Color>
-		<Foreground>Black</Foreground>
-		<Background>White</Background>
-	</Color>
-	<ChipData width="16" height="16">
-		<Type>Builtin</Type>
-		<Name>Binary</Name>
-	</ChipData>
-</Map>
+	<chipdata width="16" height="16">
+		<type>Builtin</type>
+		<name>Binary</name>
+	</chipdata>
+</map>
