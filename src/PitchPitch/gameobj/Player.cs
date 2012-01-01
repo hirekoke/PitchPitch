@@ -164,20 +164,18 @@ namespace PitchPitch.gameobj
 
         public Player() : base()
         {
+            _collisionPoints = new Point[8];
+            updateCollisionPoints();
+            loadImages();
         }
 
         public override void Init(PitchPitch Parent)
         {
-            Dispose();
-
             base.Init(Parent);
             _rad = _minRad * 2;
             _vx = _defaultVx;
             _hp = _maxHp;
 
-            _collisionPoints = new Point[8];
-            updateCollisionPoints();
-            loadImages();
             initExplosion();
         }
 
@@ -219,10 +217,9 @@ namespace PitchPitch.gameobj
 
         protected virtual void loadImages()
         {
-            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-
             int[] tmp = { 0, 1, 2 };
-            _playerSurfaces = ResourceManager.LoadSurfaces(Array.ConvertAll<int, string>(tmp, (i) => { return string.Format(Constants.Filename_PlayerImage, i); }));
+            _playerSurfaces = ResourceManager.LoadSurfaces(
+                Array.ConvertAll<int, string>(tmp, (i) => { return string.Format(Constants.Filename_PlayerImage, i); }));
             _playerSurfaces.Add(_playerSurfaces[1]);
 
             _explosionSurfaces = ResourceManager.LoadSurfaces(Constants.Filename_ExplosionImage, new Size(24, 24));

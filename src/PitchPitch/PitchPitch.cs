@@ -68,7 +68,6 @@ namespace PitchPitch
             #endregion
 
             _player = new gameobj.Player();
-            _player.Init(this);
 
             initAudio();
 
