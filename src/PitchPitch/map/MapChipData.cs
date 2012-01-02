@@ -17,6 +17,12 @@ namespace PitchPitch.map
         public int Hardness;
     }
 
+    enum ChipResizeMethod
+    {
+        Stretch,
+        Tile,
+    }
+
     abstract class MapChipData : IDisposable
     {
         protected int _chipWidth = 16;
@@ -34,11 +40,7 @@ namespace PitchPitch.map
 
         public MapChipData() { }
 
-        public virtual void Draw(Surface s, uint chip, Point p)
-        {
-            Draw(s, chip, new Rectangle(p.X, p.Y, _chipWidth, _chipHeight));
-        }
-        public abstract void Draw(Surface s, uint chip, Rectangle r);
+        public abstract void Draw(Surface s, uint chip, Rectangle r, ChipResizeMethod resizeMethod);
 
         public abstract void Dispose();
     }

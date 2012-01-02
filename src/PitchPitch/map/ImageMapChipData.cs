@@ -18,20 +18,21 @@ namespace PitchPitch.map
             _wallChip = 1;
         }
 
-        public override void Draw(Surface s, uint chip, Rectangle r)
+        public override void Draw(Surface s, uint chip, Rectangle r, ChipResizeMethod m)
         {
             if (chip < 0 || chip >= _chipSurfaces.Count) return;
             if (chip == 0) return;
 
-            if (r.Width == _chipWidth && r.Height == _chipHeight)
+            switch (m)
             {
-                Surface ss = _chipSurfaces[(int)chip];
-                s.Blit(ss, r);
-            }
-            else
-            {
-                Color c = _avgColors[chip];
-                s.Fill(r, c);
+                case ChipResizeMethod.Stretch:
+                    Color c = _avgColors[chip];
+                    s.Fill(r, c);
+                    break;
+                case ChipResizeMethod.Tile:
+                    Surface ss = _chipSurfaces[(int)chip];
+                    s.Blit(ss, r);
+                    break;
             }
         }
 

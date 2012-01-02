@@ -23,7 +23,7 @@ namespace PitchPitch.map
             _hardness = new int[]{ 0, 1 };
         }
 
-        public override void Draw(Surface s, uint chip, Rectangle r)
+        public override void Draw(Surface s, uint chip, Rectangle r, ChipResizeMethod m)
         {
             if (chip != 0)
             {

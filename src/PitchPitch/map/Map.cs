@@ -303,7 +303,9 @@ namespace PitchPitch.map
         {
             foreach (Chip cd in this.EnumViewChipData())
             {
-                _chipData.Draw(s, cd.ChipData, new Point((int)(r.X + cd.ViewX), (int)(r.Y + cd.ViewY)));
+                _chipData.Draw(s, cd.ChipData,
+                    new Rectangle((int)(r.X + cd.ViewX), (int)(r.Y + cd.ViewY), _chipData.ChipWidth, _chipData.ChipHeight),
+                    ChipResizeMethod.Tile);
             }
         }
 
@@ -348,7 +350,8 @@ namespace PitchPitch.map
                     else y1 = (int)((j + 1) * cdh);
 
                     _chipData.Draw(s, _chips[i][j],
-                        new Rectangle(_miniMapRect.X + (int)x0, _miniMapRect.Y + (int)y0, (int)(x1 - x0), (int)(y1 - y0)));
+                        new Rectangle(_miniMapRect.X + (int)x0, _miniMapRect.Y + (int)y0, (int)(x1 - x0), (int)(y1 - y0)),
+                        ChipResizeMethod.Stretch);
                 }
             }
         }
