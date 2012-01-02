@@ -53,10 +53,8 @@ namespace PitchPitch.map
             _lastColumnIndex = 0;
         }
 
-        public override void SetView(View view)
+        private void initChips()
         {
-            base.SetView(view);
-
             // ぎりぎりしか作っていない
             if (_lastColumnIndex < _xLastIdx)
             {
@@ -86,6 +84,8 @@ namespace PitchPitch.map
 
         public override IEnumerable<Chip> EnumViewChipData()
         {
+            initChips();
+
             double[] vpxs = new double[_xLastIdx - _xFirstIdx];
             double[] vpys = new double[_yLastIdx - _yFirstIdx];
             double[] ppxs = new double[_xLastIdx - _xFirstIdx];

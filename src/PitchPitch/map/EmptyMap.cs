@@ -42,6 +42,19 @@ namespace PitchPitch.map
                 _chips.Add(row);
             }
         }
+
+        public override long Height
+        {
+            get
+            {
+                return _chipData.ChipHeight * _needRowNum;
+            }
+        }
+
+        public override double GetDefaultY(double xInView)
+        {
+            return convertIdx2PY((int)(_needRowNum / 2.0));
+        }
     }
 
     class EmptyFixedMap : EmptyMap

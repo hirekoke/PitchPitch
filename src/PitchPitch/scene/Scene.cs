@@ -20,7 +20,6 @@ namespace PitchPitch.scene
         MapSelect,
         Option,
         GameStage,
-        EndlessGameStage,
         GameOver,
     }
 

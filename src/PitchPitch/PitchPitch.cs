@@ -214,7 +214,7 @@ namespace PitchPitch
             _prevSceneType = _currentScene.SceneType;
             scene.Scene s = null;
 
-            if (sceneType == SceneType.GameStage || sceneType == SceneType.EndlessGameStage)
+            if (sceneType == SceneType.GameStage)
             {
                 map.Map map = null;
                 if (arg != null) map = arg as map.Map;
@@ -235,20 +235,13 @@ namespace PitchPitch
 
         public void RetryMap()
         {
-            if (_prevSceneType == SceneType.EndlessGameStage)
+            if (_prevMap == null)
             {
-                EnterScene(SceneType.EndlessGameStage);
+                EnterScene(SceneType.MapSelect);
             }
             else
             {
-                if (_prevMap == null)
-                {
-                    EnterScene(SceneType.MapSelect);
-                }
-                else
-                {
-                    EnterScene(SceneType.GameStage, _prevMap);
-                }
+                EnterScene(SceneType.GameStage, _prevMap);
             }
         }
 
@@ -294,9 +287,6 @@ namespace PitchPitch
                         break;
                     case SceneType.GameStage:
                         scene = new SceneGameStage(arg as map.Map);
-                        break;
-                    case SceneType.EndlessGameStage:
-                        scene = new SceneEndlessGameStage();
                         break;
                     case SceneType.GameOver:
                         scene = new SceneGameOver();

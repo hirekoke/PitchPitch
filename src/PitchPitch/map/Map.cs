@@ -16,7 +16,7 @@ namespace PitchPitch.map
         public Size Size { get { return new Size(Width, Height); } }
     }
 
-    abstract class Map : IDisposable
+    class Map : IDisposable
     {
         protected MapInfo _mapInfo;
         public MapInfo MapInfo { get { return _mapInfo; } set { _mapInfo = value; } }
@@ -107,6 +107,9 @@ namespace PitchPitch.map
             _chipHeight = _chipData.ChipHeight;
             _chipWidthInv = 1 / (double)_chipData.ChipWidth;
             _chipHeightInv = 1 / (double)_chipData.ChipHeight;
+
+            _needRowNum = (int)Math.Ceiling(viewSize.Height / (double)_chipData.ChipHeight) + 1;
+            _needColumnNum = (int)Math.Ceiling(viewSize.Width / (double)_chipData.ChipWidth) + 1;
         }
 
         public virtual bool HasEnd { get { return true; } }
@@ -262,7 +265,7 @@ namespace PitchPitch.map
                 {
                     Chip cd = new Chip();
                     cd.XIdx = i;
-                    cd.YIdx = 0;
+                    cd.YIdx = int.MinValue;
                     cd.ViewX = vpxs[s];
                     cd.ViewY = d;
                     cd.ChipData = _chipData.WallChip;

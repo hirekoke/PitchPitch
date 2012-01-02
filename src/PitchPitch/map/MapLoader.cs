@@ -444,7 +444,7 @@ namespace PitchPitch.map
             }
             else if (info is RandomEndlessMap.RandomEndlessMapInfo)
             {
-                map = null;
+                map = new RandomEndlessMap(info.Level);
             }
             return map;
         }
@@ -469,7 +469,7 @@ namespace PitchPitch.map
                                     break;
                                 case MapChipBuiltinType.Colors:
                                     chipData = ColorChipData.LoadChipData(info);
-                                    map = new BasicMap();
+                                    map = new ColorsMap();
                                     map.ChipData = chipData;
                                     break;
                             }
@@ -478,7 +478,7 @@ namespace PitchPitch.map
                     case MapChipType.Image:
                         {
                             chipData = ImageMapChipData.LoadChipData(info);
-                            map = new BasicMap();
+                            map = new Map();
                             map.ChipData = chipData;
                         }
                         break;

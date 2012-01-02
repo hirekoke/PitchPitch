@@ -498,21 +498,14 @@ namespace PitchPitch.scene
                 }
                 else
                 {
-                    if (_loadingMapInfo.HasEnd)
+                    if (_loadedMap != null)
                     {
-                        if (_loadedMap != null)
-                        {
-                            _parent.EnterScene(scene.SceneType.GameStage, _loadedMap);
-                        }
-                        else
-                        {
-                            _loadTransition = false;
-                            SetAlert(true, Properties.Resources.Str_MapLoadError);
-                        }
+                        _parent.EnterScene(scene.SceneType.GameStage, _loadedMap);
                     }
                     else
                     {
-                        _parent.EnterScene(scene.SceneType.EndlessGameStage);
+                        _loadTransition = false;
+                        SetAlert(true, Properties.Resources.Str_MapLoadError);
                     }
                 }
                 _loadingMapInfo = null;

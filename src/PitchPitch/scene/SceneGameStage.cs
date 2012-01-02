@@ -153,13 +153,6 @@ namespace PitchPitch.scene
             _map = map;
 
             #region メニューアイテム
-            _pauseMenuItems = new MenuItem[]
-            {
-                new MenuItem(Key.Escape, Properties.Resources.MenuItem_ResumeGame),
-                new MenuItem(Key.R, Properties.Resources.MenuItem_RetryStage),
-                new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
-                new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
-            };
             _clearMenuItems = new MenuItem[]
             {
                 new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
@@ -232,6 +225,7 @@ namespace PitchPitch.scene
 
             #region View/Map/Player
             _mapMargin = (int)(_viewRect.Width * 3 / 4.0) * _map.MapInfo.PlayerVx;
+            Console.WriteLine(_mapMargin);
 
             _view.Width = _viewRect.Width;
             _view.Height = _viewRect.Height;
@@ -259,6 +253,26 @@ namespace PitchPitch.scene
             #endregion
 
             #region メニュー作成
+            if (_map.HasEnd)
+            {
+                _pauseMenuItems = new MenuItem[]
+                {
+                    new MenuItem(Key.Escape, Properties.Resources.MenuItem_ResumeGame),
+                    new MenuItem(Key.R, Properties.Resources.MenuItem_RetryStage),
+                    new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
+                    new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
+                };
+            }
+            else
+            {
+                _pauseMenuItems = new MenuItem[]
+                {
+                    new MenuItem(Key.Escape, Properties.Resources.MenuItem_ResumeGame),
+                    new MenuItem(Key.M, Properties.Resources.MenuItem_MapSelect),
+                    new MenuItem(Key.T, Properties.Resources.MenuItem_ReturnTitle)
+                };
+            }
+
             _pauseMenuSurfaces = new SurfaceCollection(); _pauseMenuRects = new Rectangle[_pauseMenuItems.Length];
             ImageUtil.CreateStrMenu(_pauseMenuItems, _backColor, ref _pauseMenuSurfaces, ref _pauseMenuRects);
 
@@ -574,33 +588,53 @@ namespace PitchPitch.scene
 
         protected virtual void procMenuPaused(int idx)
         {
-            switch (idx)
+            if (_map.HasEnd)
             {
-                case 0:
-                    {
-                        PlaySeCancel();
-                        IsPaused = false; break;
-                    }
-                case 1:
-                    {
-                        if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
-                        PlaySeOK();
-                        _parent.RetryMap(); break;
-                    }
-                case 2:
-                    {
+                switch (idx)
+                {
+                    case 0:
+                        {
+                            PlaySeCancel();
+                            IsPaused = false; break;
+                        }
+                    case 1:
+                        {
+                            if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
+                            PlaySeOK();
+                            _parent.RetryMap(); break;
+                        }
+                    case 2:
+                        {
+                            if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
+                            PlaySeOK();
+                            startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
+                            break;
+                        }
+                    case 3:
+                        {
+                            if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
+                            PlaySeOK();
+                            startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                switch (idx)
+                {
+                    case 0: IsPaused = false; break;
+                    case 1:
                         if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.MapSelect); });
                         break;
-                    }
-                case 3:
-                    {
+                    case 2:
                         if (_map.Bgm != null) SdlDotNet.Audio.MusicPlayer.Stop();
                         PlaySeOK();
                         startTransition(() => { _parent.EnterScene(scene.SceneType.Title); });
                         break;
-                    }
+                }
             }
         }
         protected virtual int procKeyPaused(Key key)
