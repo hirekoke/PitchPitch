@@ -515,11 +515,11 @@ namespace PitchPitch.scene
         {
             int mw = _map.ChipData.ChipWidth;
             int mh = _map.ChipData.ChipHeight;
+            PointD pp = convertToViewCoord(_parent.Player.X, _parent.Player.Y);
+
             foreach (map.Chip chip in _map.EnumViewChipData())
             {
                 if (chip.Hardness <= 0) continue;
-
-                PointD pp = convertToViewCoord(_parent.Player.X, _parent.Player.Y);
 
                 if (_parent.Player.Hit(chip, pp, mw, mh))
                 {

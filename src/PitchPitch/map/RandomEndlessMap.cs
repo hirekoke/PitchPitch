@@ -53,6 +53,13 @@ namespace PitchPitch.map
             _lastColumnIndex = 0;
         }
 
+        public override void SetView(View view)
+        {
+            base.SetView(view);
+            initChips();
+        }
+
+        private List<Chip> _viewChips = null;
         private void initChips()
         {
             // ぎりぎりしか作っていない
@@ -80,48 +87,62 @@ namespace PitchPitch.map
                     _chips.RemoveRange(0, _chips.Count - _needColumnNum);
                 }
             }
+            if (_viewChips != null) _viewChips.Clear();
+            _viewChips = null;
         }
 
         public override IEnumerable<Chip> EnumViewChipData()
         {
-            initChips();
-
-            double[] vpxs = new double[_xLastIdx - _xFirstIdx];
-            double[] vpys = new double[_yLastIdx - _yFirstIdx];
-            double[] ppxs = new double[_xLastIdx - _xFirstIdx];
-            double[] ppys = new double[_yLastIdx - _yFirstIdx];
-
-            int lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
-            int rlen = _chips.Count > 0 ? _chips[0].Length : 0;
-            for (int i = _xFirstIdx, s = 0; i < _xLastIdx; i++, lidx++, s++)
+            if (_viewChips == null)
             {
-                if (lidx < 0) continue;
-                vpxs[s] = convertIdx2VX(i);
-                ppxs[s] = vpxs[s] + view.X;
-            }
-            for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < rlen; j++, t++)
-            {
-                if (j < 0) continue;
-                vpys[t] = convertIdx2VY(j);
-                ppys[t] = vpys[t] + view.Y;
-            }
+                _viewChips = new List<Chip>();
 
-            lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
-            for (int i = _xFirstIdx, s=0; i < _xLastIdx; i++, lidx++, s++)
-            {
-                if (lidx < 0) continue;
-                for (int j = _yFirstIdx,t=0; j < _yLastIdx && j < _chips[lidx].Length; j++,t++)
+                double[] vpxs = new double[_xLastIdx - _xFirstIdx];
+                double[] vpys = new double[_yLastIdx - _yFirstIdx];
+                double[] ppxs = new double[_xLastIdx - _xFirstIdx];
+                double[] ppys = new double[_yLastIdx - _yFirstIdx];
+
+                int lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
+                int rlen = _chips.Count > 0 ? _chips[0].Length : 0;
+                for (int i = _xFirstIdx, s = 0; i < _xLastIdx; i++, lidx++, s++)
+                {
+                    if (lidx < 0) continue;
+                    vpxs[s] = convertIdx2VX(i);
+                    ppxs[s] = vpxs[s] + view.X;
+                }
+                for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < rlen; j++, t++)
                 {
                     if (j < 0) continue;
-                    Chip cd = new Chip();
-                    cd.XIdx = lidx; cd.YIdx = j;
-                    cd.ViewX = vpxs[s];
-                    cd.ViewY = vpys[t];
-                    cd.ChipData = _chips[lidx][j];
-                    if (cd.ChipData >= 0 && cd.ChipData < _chipData.Hardness.Length)
-                        cd.Hardness = _chipData.Hardness[cd.ChipData];
-                    else
-                        cd.Hardness = cd.ChipData == 0 ? 0 : 1;
+                    vpys[t] = convertIdx2VY(j);
+                    ppys[t] = vpys[t] + view.Y;
+                }
+
+                lidx = _xFirstIdx - (_lastColumnIndex - _chips.Count);
+                for (int i = _xFirstIdx, s = 0; i < _xLastIdx; i++, lidx++, s++)
+                {
+                    if (lidx < 0) continue;
+                    for (int j = _yFirstIdx, t = 0; j < _yLastIdx && j < _chips[lidx].Length; j++, t++)
+                    {
+                        if (j < 0) continue;
+                        Chip cd = new Chip();
+                        cd.XIdx = lidx; cd.YIdx = j;
+                        cd.ViewX = vpxs[s];
+                        cd.ViewY = vpys[t];
+                        cd.ChipData = _chips[lidx][j];
+                        if (cd.ChipData >= 0 && cd.ChipData < _chipData.Hardness.Length)
+                            cd.Hardness = _chipData.Hardness[cd.ChipData];
+                        else
+                            cd.Hardness = cd.ChipData == 0 ? 0 : 1;
+
+                        _viewChips.Add(cd);
+                        yield return cd;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Chip cd in _viewChips)
+                {
                     yield return cd;
                 }
             }

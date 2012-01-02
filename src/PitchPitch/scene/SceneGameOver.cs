@@ -156,6 +156,7 @@ namespace PitchPitch.scene
             if (_overImgSurface != null) _overImgSurface.Dispose();
             if (_prevSurface != null) _prevSurface.Dispose();
             if (_overSurface != null) _overSurface.Dispose();
+            if (_menuSurfaces != null) foreach (Surface s in _menuSurfaces) s.Dispose();
             base.Dispose();
         }
     }
