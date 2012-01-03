@@ -55,8 +55,8 @@ namespace PitchPitch.map
 
         public override void SetView(View view)
         {
+            _viewChips = null;
             base.SetView(view);
-            initChips();
         }
 
         private List<Chip> _viewChips = null;
@@ -88,13 +88,13 @@ namespace PitchPitch.map
                 }
             }
             if (_viewChips != null) _viewChips.Clear();
-            _viewChips = null;
         }
 
         public override IEnumerable<Chip> EnumViewChipData()
         {
             if (_viewChips == null)
             {
+                initChips();
                 _viewChips = new List<Chip>();
 
                 double[] vpxs = new double[_xLastIdx - _xFirstIdx];
