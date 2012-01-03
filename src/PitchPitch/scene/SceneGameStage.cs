@@ -474,7 +474,7 @@ namespace PitchPitch.scene
                 player.Rad += player.RadInc;
             }
 
-            #region デバッグ用
+#if DEBUG
             if (Keyboard.IsKeyPressed(Key.UpArrow))
                 player.Y--;
             else if (Keyboard.IsKeyPressed(Key.DownArrow))
@@ -483,7 +483,7 @@ namespace PitchPitch.scene
                 player.Rad -= player.RadDec;
             if (Keyboard.IsKeyPressed(Key.RightArrow))
                 player.X += 1;
-            #endregion
+#endif
 
             if (player.Y < _view.Y) player.Y = _view.Y;
             if (player.Y > _view.Height + _view.Y) player.Y = _view.Height + _view.Y;
