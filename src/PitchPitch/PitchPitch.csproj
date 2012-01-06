@@ -117,7 +117,6 @@
     <Compile Include="gameobj\GameObj.cs" />
     <Compile Include="gameobj\Player.cs" />
     <Compile Include="map\ColorsMap.cs" />
-    <Compile Include="Scorer.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="map\BinaryChipData.cs" />
