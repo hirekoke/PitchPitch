@@ -57,6 +57,17 @@ namespace PitchPitch.map
             return ret;
         }
 
+        private string getFilePath(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+            string ret = str.Replace(".." + Path.DirectorySeparatorChar, "")
+                .Replace(Path.DirectorySeparatorChar + "." + Path.DirectorySeparatorChar, "");
+            if (ret.Length > 0 && ret[0] == Path.DirectorySeparatorChar)
+                ret = ret.Substring(1);
+            if (ret.StartsWith("." + Path.DirectorySeparatorChar))
+                ret = ret.Substring(("." + Path.DirectorySeparatorChar).Length);
+            return ret;
+        }
         public MapInfo LoadMapInfo(string dirPath)
         {
             MapInfo mi = new MapInfo();
@@ -274,7 +285,7 @@ namespace PitchPitch.map
                             }
                             else
                             {
-                                cdi.FileName = name;
+                                cdi.FileName = getFilePath(name);
                                 cdi.BuiltinType = MapChipBuiltinType.None;
                             }
                             #endregion
@@ -304,7 +315,7 @@ namespace PitchPitch.map
                                 #endregion
                                 #region name
                                 case "name":
-                                    mi.MapSourceFileName = soNode.InnerText.Trim();
+                                    mi.MapSourceFileName = getFilePath(soNode.InnerText.Trim());
                                     break;
                                 #endregion
                                 #region mapping
@@ -320,7 +331,7 @@ namespace PitchPitch.map
                     case "bgm":
                         {
                             BgmInfo bi = new BgmInfo();
-                            bi.Name = node.InnerText.Trim();
+                            bi.Name = getFilePath(node.InnerText.Trim());
                             foreach (XmlAttribute attr in node.Attributes)
                             {
                                 switch (attr.Name.ToLower())
